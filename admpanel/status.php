@@ -80,6 +80,7 @@ try
         print_r($result);
         */
         $pull = $ddeliveryUI->getPullOrdersStatus();
+        $ddeliveryUI->createTables();
         if(count($pull))
         {
             foreach($pull as $p)

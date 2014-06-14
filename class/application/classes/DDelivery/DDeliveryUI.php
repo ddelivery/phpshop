@@ -797,8 +797,8 @@ class DDeliveryUI
         $result_points = array();
         if( $this->shop->preGoToFindPoints( $order ))
         {
-            //$points = $this->cache->render( 'getSelfPointsDetail', array( $order->city ) ); /** cache **/
-            $points = $this->getSelfPointsDetail( $order->city ); /** cache **/
+            $points = $this->cache->render( 'getSelfPointsDetail', array( $order->city ) ); /** cache **/
+            //$points = $this->getSelfPointsDetail( $order->city ); /** cache **/
 
             $companyInfo = $this->getSelfDeliveryInfoForCity( $order );
 
