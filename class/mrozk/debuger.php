@@ -46,6 +46,13 @@ $IntegratorShop = new IntegratorShop();
 // Turn off all error reporting
 try
 {
+
+    $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
+    $ddeliveryUI->createTables();
+    /*
+    $ddeliveryUI->createTables();
+    */
+    /*
     $start_memory_usage = memory_get_usage(); $start_time = microtime(true);
     $end_memory_usage = memory_get_usage();
     $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop);
@@ -65,7 +72,7 @@ try
     echo '<pre>';
     print_r($points);
     echo '</pre>';
-
+    */
     //$order = $ddeliveryUI->getOrder();
    //print_r($order);
     //$order->city = 151185;
@@ -74,12 +81,12 @@ try
    // $ddeliveryUI->onCmsOrderFinish(107, 2,3,2);
 
     //$orders = $ddeliveryUI->getAllOrders();
-
+    /*
     echo '<pre>';
     print_r($order);
     echo '</pre>';
     $end_time = microtime(true);
-
+    */
    // print_r($orders);
     /*
     foreach( $orders AS $item )

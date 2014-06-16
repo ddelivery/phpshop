@@ -37,10 +37,9 @@ class IntegratorShop extends PluginFilters {
         $PHPShopOrm = new PHPShopOrm($PHPShopModules->getParam("base.ddelivery.ddelivery_system"));
         print_r($PHPShopModules->getParam("base.ddelivery.ddelivery_system"));
         $this->cmsSettings = $PHPShopOrm->select();
-
         */
 
-        $query = 'SELECT * FROM phpshop_modules_ddelivery_system WHERE id = 1';
+        $query = 'SELECT * FROM ddelivery_module_system WHERE id = 1';
         $cur = mysql_query($query);
         $this->cmsSettings = mysql_fetch_assoc($cur);
 
@@ -61,7 +60,7 @@ class IntegratorShop extends PluginFilters {
 
         return array(
             'pdo' => new \PDO('mysql:host=' . $host . ';dbname=' . $dbase , $user_db, $pass_db, array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")),
-            'prefix' => '',
+            'prefix' => 'ddelivery_module_',
         );
 
         return array(

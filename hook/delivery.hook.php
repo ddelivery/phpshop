@@ -28,7 +28,7 @@ function delivery_hook($obj, $data)
 {
     $_RESULT=$data[0];
     $xid=$data[1];
-    $query = 'SELECT delivery_id FROM phpshop_modules_ddelivery_system WHERE id=1';
+    $query = 'SELECT delivery_id FROM ddelivery_module_system WHERE id=1';
     $cur = mysql_query($query);
     $res = mysql_fetch_array($cur);
 

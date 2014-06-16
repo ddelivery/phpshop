@@ -78,7 +78,7 @@ class DDeliveryUI
     /**
      * @var string префикс таблицы
      */
-    private $pdoTablePrefix = 'ddelivery';
+    private $pdoTablePrefix;
 
     /**
      * Запускает движок SDK
@@ -128,8 +128,10 @@ class DDeliveryUI
 
     public function createTables()
     {
+        echo 'ozk';
         $cache = new DataBase\Cache($this->pdo, $this->pdoTablePrefix);
         $cache->createTable();
+
         $order = new DataBase\Order($this->pdo, $this->pdoTablePrefix);
         $order->createTable();
     }
