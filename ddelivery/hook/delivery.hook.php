@@ -32,7 +32,9 @@ function delivery_hook($obj, $data)
     $cur = mysql_query($query);
     $res = mysql_fetch_array($cur);
 
-    if( $xid == $res[0] )
+    $dd = explode( ',', $res[0] );
+
+    if( is_array($dd) && in_array($xid, $dd) )
     {
         $ddID = (int)$_POST['order_id'];
         if( $ddID )

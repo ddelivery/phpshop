@@ -129,32 +129,6 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
 
     }
 
-    public function getDbConfig()
-    {
-
-        return array(
-            'pdo' => new \PDO('mysql:host=localhost;dbname=c1test', 'c1dba', 'OH2AgbFiU', array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES cp1251")),
-            'prefix' => '',
-        );
-        return array(
-            'type' => self::DB_SQLITE,
-            'dbPath' => $this->getPathByDB(),
-            'prefix' => '',
-        );
-        return array(
-            'pdo' => new \PDO('mysql:host=localhost;dbname=ddelivery', 'root', '0', array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")),
-            'prefix' => '',
-        );
-        return array(
-            'type' => self::DB_MYSQL,
-            'dsn' => 'mysql:host=localhost;dbname=ddelivery',
-            'user' => 'root',
-            'pass' => '0',
-            'prefix' => '',
-        );
-
-    }
-
     /**
      * Какой процент от стоимости страхуется
      * @return float
@@ -231,11 +205,11 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
      */
     public function getIntervalsByPoint()
     {
-        return array();
+        //return array();
         return array(
             array('min' => 0, 'max'=>100, 'type'=>self::INTERVAL_RULES_MARKET_AMOUNT, 'amount'=>30),
             array('min' => 100, 'max'=>200, 'type'=>self::INTERVAL_RULES_CLIENT_ALL, 'amount'=>60),
-            array('min' => 300, 'max'=>400, 'type'=>self::INTERVAL_RULES_MARKET_PERCENT, 'amount'=>3),
+            array('min' => 300, 'max'=>5000, 'type'=>self::INTERVAL_RULES_MARKET_PERCENT, 'amount'=>0),
             array('min' => 1000, 'max'=>null, 'type'=>self::INTERVAL_RULES_MARKET_ALL),
         );
     }

@@ -9,7 +9,8 @@
     function DDeliveryStart()
     {
 
-         var DDid = @DDid@;
+         //var DDid = @DDid@;
+
          //document.getElementById('parent_popup').style.display='block'
          ddelivery_order_id = document.getElementById('ddelivery_order_id');
          if( ddelivery_order_id.value != '' )
@@ -21,9 +22,9 @@
             orderID = 0;
          }
 
-         //alert(orderID);
+
          var params = {
-         orderId: orderID // Если у вас есть id заказа который изменяется, то укажите его в этом параметре
+            orderId: orderID // Если у вас есть id заказа который изменяется, то укажите его в этом параметре
          };
          var callback = {
              close: function(){
@@ -31,8 +32,9 @@
              //alert('Окно закрыто');
              },
              change: function(data) {
-
+                 DDid = jQuery_1_11('#dostavka_metod').val();
                  jQuery_1_11('#test-modal').modal().close();
+
                  UpdateDelivery2( DDid, data.orderId );
                  console.log(data.comment);
                  jQuery_1_11('#adr_name').val(data.comment);

@@ -177,19 +177,16 @@ class DDeliveryOrder
         /**
          * Возвращает сразу массив DDeliveryProduct
          */
-
         $this->productList = $productList;
+        
         if (count( $this->productList ) == 0)
         {
-
             throw new DDeliveryOrderException("Корзина пуста");
-
         }
-
+        
         // Получаем параметры для товаров в заказе
-
         $this->getProductParams();
-
+		
     }
 
     /**

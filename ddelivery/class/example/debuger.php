@@ -20,26 +20,27 @@ include_once("IntegratorShop.php");
 
 $task = $_GET['task'];
 
+$shopAdapter = new IntegratorShop();
+$DDeliveryUI = new DDelivery\DDeliveryUI( $shopAdapter );
+echo $DDeliveryUI->getOrder()->amount;
 if(function_exists($task))
 {
-    $task();
+    $task( $DDeliveryUI );
 }
 else
 {
-    dumpOrders();
+    dumpOrders( $DDeliveryUI );
 }
 
-function products()
+function products( $DDeliveryUI )
 {
-    $shopAdapter = new IntegratorShop();
-    $DDeliveryUI = new DDelivery\DDeliveryUI( $shopAdapter );
+
     print_r($DDeliveryUI->getOrder());
 }
 
-function dumpOrders()
+function dumpOrders( $DDeliveryUI )
 {
-    $shopAdapter = new IntegratorShop();
-    $DDeliveryUI = new DDelivery\DDeliveryUI( $shopAdapter, true );
+
     $orders = $DDeliveryUI->getAllOrders();
     if(count($orders))
     {
@@ -51,10 +52,8 @@ function dumpOrders()
     }
 }
 
-function unfinished()
+function unfinished( $DDeliveryUI )
 {
-    $shopAdapter = new IntegratorShop();
-    $DDeliveryUI = new DDelivery\DDeliveryUI( $shopAdapter, true );
     $orders = $DDeliveryUI->getUnfinishedOrders();
     if(count($orders))
     {
@@ -66,10 +65,9 @@ function unfinished()
     }
 }
 
-function createpull()
+function createpull( $DDeliveryUI )
 {
-    $shopAdapter = new IntegratorShop();
-    $DDeliveryUI = new DDelivery\DDeliveryUI( $shopAdapter, true );
+
     $pull = $DDeliveryUI->createPullOrders();
     if(count($pull))
     {
@@ -81,10 +79,9 @@ function createpull()
     }
 }
 
-function statuspull()
+function statuspull($DDeliveryUI)
 {
-    $shopAdapter = new IntegratorShop();
-    $DDeliveryUI = new DDelivery\DDeliveryUI( $shopAdapter, true);
+
     $pull = $DDeliveryUI->getPullOrdersStatus();
     if(count($pull))
     {

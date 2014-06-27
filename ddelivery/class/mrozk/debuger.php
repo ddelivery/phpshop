@@ -46,18 +46,26 @@ try
 {
 
     $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop);
+    /*
     $order = $ddeliveryUI->getOrder();
-    $order->city = 151184;
-    $_REQUEST['type'] = 2;
-    $_REQUEST['city_id'] = 151184;
-    $_REQUEST['order_id'] = 51;
-   $ser = serialize( $order->getProducts() );
-    print_r(unserialize( $ser ));
-    $id = $ddeliveryUI->saveFullOrder($order);
-    echo $id;
-    echo '<hr>';
+    $orders = $ddeliveryUI->initOrder(array(86));
+    $point = $orders[0]->getPoint();
+    print_r($point);
+    $this->shop->filterSelfInfo( $point->getDeliveryInfo() );
+    echo $poi   nt->getDeliveryInfo()->clientPrice;
+*/
+    $price = $ddeliveryUI->getDeliveryPrice(86);
+    echo $price;
+    /*
+   echo $price;
+   8/
+   /*
+   echo '<pre>';
+   print_r($ddeliveryUI->getAllOrders());
+   echo '</pre>';
+   */
    // print_r( $ddeliveryUI->initOrder( array($id) ) );
-    echo $ddeliveryUI->render(isset($_REQUEST) ? $_REQUEST : array());
+   // echo $ddeliveryUI->render(isset($_REQUEST) ? $_REQUEST : array());
 
     /*
     $order->city = 151184;

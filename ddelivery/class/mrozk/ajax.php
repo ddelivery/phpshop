@@ -40,11 +40,14 @@ $IntegratorShop = new IntegratorShop();
 
 
 // Turn off all error reporting
+try{
+    $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop);
+    // В зависимости от параметров может выводить полноценный html или json
+    $ddeliveryUI->render(isset($_REQUEST) ? $_REQUEST : array());
+}catch (\DDelivery\DDeliveryException $e){
+    echo $e->getMessage();
+}
 
-$ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop);
-
-// В зависимости от параметров может выводить полноценный html или json
-$ddeliveryUI->render(isset($_REQUEST) ? $_REQUEST : array());
 
 
 

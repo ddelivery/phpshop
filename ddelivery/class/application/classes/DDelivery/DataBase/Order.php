@@ -78,7 +78,7 @@ class Order {
             $query = "CREATE TABLE `{$this->prefix}orders` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `payment_variant` varchar(255) DEFAULT NULL,
-                `shop_refnum` varchar(64) DEFAULT NULL,
+                `shop_refnum` int(11) DEFAULT NULL,
                 `local_status` int(11) DEFAULT NULL,
                 `dd_status` int(11) DEFAULT NULL,
                 `type` int(11) DEFAULT NULL,
@@ -109,7 +109,7 @@ class Order {
                 `point` text DEFAULT NULL,
                 `comment` varchar(255) DEFAULT NULL,
                 PRIMARY KEY (`id`)
-              ) ENGINE=InnoDB DEFAULT CHARSET=cp1251";
+              ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
             $this->pdo->exec($query);
         }elseif($this->pdoType == DShopAdapter::DB_SQLITE){
             $this->pdo->exec("CREATE TABLE IF NOT EXISTS orders (
@@ -158,8 +158,7 @@ class Order {
 	 */
 	public function getOrderByCmsOrderID( $cmsOrderID )
 	{
-
-        if($this->pdoType == DShopAdapter::DB_MYSQL || $this->pdoType == DShopAdapter::DB_SQLITE) {
+        if($this->pdoType == DShopAdapter::DB_SQLITE || $this->pdoType == DShopAdapter::DB_MYSQL) {
 		    $query = "SELECT id FROM {$this->prefix}orders WHERE shop_refnum = :cmsOrderId";
         }
         $sth = $this->pdo->prepare( $query );
