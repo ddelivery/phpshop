@@ -6,6 +6,61 @@
 <link rel="stylesheet" type="text/css" href="phpshop/modules/ddelivery/class/example/assets/demo-modals.css" media="screen" />
 <script src="phpshop/modules/ddelivery/class/example/assets/jquery.the-modal.js"></script>
 <script type="text/javascript">
+
+    function UpdateDelivery2(xid, order_id) {
+
+        var req = new Subsys_JsHttpRequest_Js();
+        var sum = document.getElementById('OrderSumma').value;
+        var wsum = document.getElementById('WeightSumma').innerHTML;
+        //var order_id = ddelivery_order_id = document.getElementById('ddelivery_order_id').value;
+
+        req.onreadystatechange = function() {
+            if (req.readyState == 4) {
+                if (req.responseJS) {
+                    document.getElementById('DosSumma').innerHTML = (req.responseJS.delivery||'');
+                    document.getElementById('d').value = xid;
+                    document.getElementById('TotalSumma').innerHTML = (req.responseJS.total||'');
+                    document.getElementById('seldelivery').innerHTML = (req.responseJS.dellist||'');
+                }
+            }
+        }
+
+        req.caching = false;
+        // Подготваливаем объект.
+        // Реальное размещение
+        //var dir=dirPath();
+
+        req.open('POST', 'phpshop/ajax/delivery.php', true);
+        req.send({
+            xid: xid,
+            sum: sum,
+            wsum: wsum,
+            order_id: order_id
+        });
+
+    }
+    function orderCallBack( data )
+    {
+        //document.getElementById('DosSumma').innerHTML = (data.clientPrice);
+        if( data.userInfo.toStreet!= null )
+        {
+            document.getElementById('adr_name').value = data.userInfo.toStreet + ' ' + data.userInfo.toHouse + ' ' + data.userInfo.toFlat + ' ' ;
+        }
+        mail = document.getElementsByName('mail');
+        if(data.userInfo.toEmail!=null)
+        {
+            mail[0].value = data.userInfo.toEmail;
+        }
+
+        //total = document.getElementById('TotalSumma').value;
+        //document.getElementById('TotalSumma').innerHTML = (parseInt( total ) + data.clientPrice);
+        ddelivery_order_id = document.getElementById('ddelivery_order_id');
+        ddelivery_order_id.value = data.orderId;
+        name_person = document.getElementsByName('name_person');
+        name_person[0].value = data.userInfo.firstName + ' ' + data.userInfo.secondName;
+        tel_name = document.getElementsByName('tel_name');
+        tel_name[0].value = data.userInfo.toPhone;
+    }
     function DDeliveryStart()
     {
 
@@ -81,10 +136,13 @@
     // Просчет доставки
     function OrderChekDDelivery()
     {
-        var DDid = @DDid@;
+
+       var DDid = new Array(@DDid@);
+
         dostavka_metod = document.getElementById("dostavka_metod").value;
         ddelivery_order_id = document.getElementById('ddelivery_order_id').value;
-        if( dostavka_metod == DDid && !ddelivery_order_id )
+
+        if( ( jQuery_1_11.inArray(parseInt( dostavka_metod ) , DDid) >= 0 ) && !ddelivery_order_id )
         {
             alert("Выберите способ доставки DDelivery");
             return false;
@@ -107,65 +165,12 @@
 
             document.forma_order.submit();
         }
-    }
-    function UpdateDelivery2(xid, order_id) {
-
-
-        var req = new Subsys_JsHttpRequest_Js();
-        var sum = document.getElementById('OrderSumma').value;
-        var wsum = document.getElementById('WeightSumma').innerHTML;
-        //var order_id = ddelivery_order_id = document.getElementById('ddelivery_order_id').value;
-
-        req.onreadystatechange = function() {
-            if (req.readyState == 4) {
-                if (req.responseJS) {
-                    document.getElementById('DosSumma').innerHTML = (req.responseJS.delivery||'');
-                    document.getElementById('d').value = xid;
-                    document.getElementById('TotalSumma').innerHTML = (req.responseJS.total||'');
-                    document.getElementById('seldelivery').innerHTML = (req.responseJS.dellist||'');
-                }
-            }
-        }
-
-        req.caching = false;
-        // Подготваливаем объект.
-        // Реальное размещение
-        //var dir=dirPath();
-
-        req.open('POST', 'phpshop/ajax/delivery.php', true);
-        req.send({
-            xid: xid,
-            sum: sum,
-            wsum: wsum,
-            order_id: order_id
-        });
 
     }
 
 
-        function orderCallBack( data )
-        {
-            //console.log(data);
-            //document.getElementById('DosSumma').innerHTML = (data.clientPrice);
-            if( data.userInfo.toStreet!= null )
-            {
-                document.getElementById('adr_name').value = data.userInfo.toStreet + ' ' + data.userInfo.toHouse + ' ' + data.userInfo.toFlat + ' ' ;
-            }
-            mail = document.getElementsByName('mail');
-            if(data.userInfo.toEmail!=null)
-            {
-                mail[0].value = data.userInfo.toEmail;
-            }
 
-            //total = document.getElementById('TotalSumma').value;
-            //document.getElementById('TotalSumma').innerHTML = (parseInt( total ) + data.clientPrice);
-            ddelivery_order_id = document.getElementById('ddelivery_order_id');
-            ddelivery_order_id.value = data.orderId;
-            name_person = document.getElementsByName('name_person');
-            name_person[0].value = data.userInfo.firstName + ' ' + data.userInfo.secondName;
-            tel_name = document.getElementsByName('tel_name');
-            tel_name[0].value = data.userInfo.toPhone;
-        }
+
 
     function sendCheck()
     {

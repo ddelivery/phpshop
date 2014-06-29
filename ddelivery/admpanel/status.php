@@ -96,24 +96,60 @@ try
     }
     elseif($_GET['action'] == '3')
     {
-        //// Импорт из ps_dd_cities.sql
-        $tempLine = '';
-        $lines = file(__DIR__.'/ps_dd_cities.sql');
+        for( $i = 0; $i < 17; $i++ )
+        {
+            $lines = file(__DIR__.'/../install/cities/cities' . $i. '.sql');
+            foreach ($lines as $line){
+                if (substr($line, 0, 2) == '--' || $line == '')
+                    continue;
 
+                $tempLine .= $line;
+                if (substr(trim($line), -1, 1) == ';'  )
+                {
+                    mysql_query($tempLine);
+                    $tempLine = '';
+                }
+            }
+        }
+        //// Импорт из ps_dd_cities.sql
+        /*
+        $tempLine = '';
+        $lines = file(__DIR__.'/../install/ps_dd_cities.sql');
+        $limit = (int)(count($lines)/16);
+        echo $limit;
+        $counter_files = 0;
+        $all_count = 0;
         foreach ($lines as $line)
         {
+            $i++;
+            $all_count++;
             if (substr($line, 0, 2) == '--' || $line == '')
                 continue;
 
             $tempLine .= $line;
-            if (substr(trim($line), -1, 1) == ';')
+            if ( ((substr(trim($line), -1, 1) == ';') && ($i > $limit) ) || ( $all_count ==  count($lines)) )
+            {
+                $i = 0;
+
+                $counter_files++;
+                $file_name = __DIR__.'/../install/cities/cities' . $counter_files . '.sql';
+               // echo $file_name;
+                file_put_contents($file_name, $tempLine);
+                $tempLine = '';
+
+            }
+            */
+            /*
+            if (substr($line, 0, 2) == '--' || $line == '')
+                continue;
+
+            $tempLine .= $line;
+            if (substr(trim($line), -1, 1) == ';'  )
             {
                 mysql_query($tempLine);
                 $tempLine = '';
             }
-        }
-
-
+            */
     }
 }
 catch (\DDelivery\DDeliveryException $e)

@@ -1,18 +1,3 @@
-SET FOREIGN_KEY_CHECKS=0;
-
-DROP TABLE IF EXISTS `ddelivery_module_ps_dd_cities`;
-CREATE TABLE `ddelivery_module_ps_dd_cities` (
-  `_id` int(11) NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `area` varchar(255) DEFAULT NULL,
-  `region` varchar(255) DEFAULT NULL,
-  `kladr` varchar(30) DEFAULT NULL,
-  `type` varchar(5) DEFAULT NULL,
-  `dpd_id` int(11) DEFAULT NULL,
-  `priority` int(11) DEFAULT NULL,
-  PRIMARY KEY (`_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=cp1251;
-
 INSERT INTO `ddelivery_module_ps_dd_cities` VALUES ('1', 'Майкоп', null, 'Адыгея', '01000001000', 'г', '196050111', null),
 ('2', 'Адыгейск', null, 'Адыгея', '01000002000', 'г', '196059750', null),
 ('3', 'Агидель', null, 'Башкортостан', '02000002000', 'г', '196042156', null),

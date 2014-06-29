@@ -95,4 +95,17 @@ CREATE TABLE IF NOT EXISTS `ddelivery_module_orders` (
   `point` text DEFAULT NULL,
   `comment` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=cp1251
+) ENGINE=InnoDB DEFAULT CHARSET=cp1251;
+
+DROP TABLE IF EXISTS `ddelivery_module_ps_dd_cities`;
+CREATE TABLE `ddelivery_module_ps_dd_cities` (
+  `_id` int(11) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `area` varchar(255) DEFAULT NULL,
+  `region` varchar(255) DEFAULT NULL,
+  `kladr` varchar(30) DEFAULT NULL,
+  `type` varchar(5) DEFAULT NULL,
+  `dpd_id` int(11) DEFAULT NULL,
+  `priority` int(11) DEFAULT NULL,
+  PRIMARY KEY (`_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=cp1251;

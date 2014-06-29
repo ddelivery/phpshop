@@ -18,16 +18,16 @@ function mail_ddelivery_hook($obj,$row,$rout) {
         {
 
             $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
+
             $order = $ddeliveryUI->initOrder(array($id));
-            $clientPrice = $order[0]->getPoint()->getDeliveryInfo()->clientPrice;
-            echo $clientPrice;
-            echo $obj->delivery;
+            $clientPrice = $ddeliveryUI->getDeliveryPrice($id);
+            //echo $clientPrice;
+            //echo $obj->delivery;
         }
         catch(\DDelivery\DDeliveryException $e)
         {
-            exit( 'asdasdasdasdassadasd' );
+            echo $e->getMessage();
         }
-        exit;
         $obj->set('cart', $obj->PHPShopCart->display('mailcartforma', array('currency' => $obj->currency)));
         $obj->set('sum', $obj->sum);
         $obj->set('currency', $obj->currency);
