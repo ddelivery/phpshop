@@ -45,7 +45,7 @@ function delivery_hook($obj, $data)
             $hook['delivery'] = $deliveryPrice;
             $hook['total']= $_RESULT['total'] + $deliveryPrice;
         }
-        $hook['dellist'] = '<table collspan="0" rowspan="0"><tr><td>' . $_RESULT['dellist'] . '</td><td >' . '<a href="javascript::void(0)"  class="trigger">Выбрать способ доставки</a>' . '</td></tr></table>';
+        $hook['dellist'] = '<table collspan="0" rowspan="0"><tr><td>' . $_RESULT['dellist'] . '</td><td >' . '<a href="javascript::void(0)" style="" class="trigger ddbutton">Выбрать способ доставки</a>' . '</td></tr></table>';
         return  $hook;
     }
     //$title_id = search_ddelivery_delivery($option['city'], $xid);

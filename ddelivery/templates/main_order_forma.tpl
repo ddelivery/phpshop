@@ -5,6 +5,33 @@
 <link rel="stylesheet" type="text/css" href="phpshop/modules/ddelivery/class/example/assets/the-modal.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="phpshop/modules/ddelivery/class/example/assets/demo-modals.css" media="screen" />
 <script src="phpshop/modules/ddelivery/class/example/assets/jquery.the-modal.js"></script>
+<style type="text/css">
+    .ddbutton {
+        background-image: none;
+        background-color: #33BC33;
+        background-repeat: repeat-x;
+        display: inline-block;
+        padding: 3px 6px 3px;
+        color: #fff;
+        text-decoration: none;
+        text-transform: uppercase;
+        font-weight: bold;
+        line-height: 1;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        border-radius: 5px;
+        -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.25);
+        border: 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+        position: relative;
+        cursor: pointer;
+        font: 12px Tahoma, sans-serif !important;
+        margin:0 3px;
+        text-decoration: none !important;
+    }
+</style>
 <script type="text/javascript">
 
     function UpdateDelivery2(xid, order_id) {
