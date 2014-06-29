@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `ddelivery_module_system` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=cp1251 ;
 
 
-INSERT INTO `ddelivery_module_system` (`id`, `type`, `rezhim`, `declared`, `width`, `height`, `api`, `length`, `weight`, `payment`, `status`, `famile`, `name`, `def_width`, `def_lenght`, `def_height`, `def_weight`) VALUES(1, '0', '0', '100', 'option1', 'option3', '73e402bc645d73e91721ecbc123e121d', 'option2', 'weight', '2', '23', 'famile', 'name', '10', '11', '10', '1');
+INSERT INTO `ddelivery_module_system` (`id`, `type`, `rezhim`, `declared`, `width`, `height`, `api`, `length`, `weight`, `payment`, `status`, `famile`, `name`, `def_width`, `def_lenght`, `def_height`, `def_weight`) VALUES(1, '0', '0', '100', 'option1', 'option3', 'ec928a345de9632dd75115d73d01f57c', 'option2', 'weight', '2', '23', 'famile', 'name', '10', '11', '10', '1');
 
 DROP TABLE IF EXISTS `ddelivery_module_cache`;
 

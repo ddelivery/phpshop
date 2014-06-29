@@ -66,9 +66,19 @@ function actionStart() {
     // Выборка
     $data = $PHPShopOrm->select();
     @extract($data);
+    if( empty($delivery_id) )
+    {
+        $phpshop_delivery = $GLOBALS['SysValue']['base']['delivery'];
+        $query = 'INSERT INTO ' . $phpshop_delivery .
+            '(`city`, `price`, `enabled`, `flag`, `price_null`, `price_null_enabled`, `PID`, `taxa`, `is_folder`)' .
+            'VALUES ' . "('DDelivery', 0, '1', '', 0, '', 0, 0, '0')";
 
+        mysql_query($query);
+        $delivery_id = mysql_insert_id();
+        $query = 'UPDATE ddelivery_module_system SET delivery_id = ' . $delivery_id;
+        mysql_query($query);
 
-
+    }
 
     $type_value[]=array('ПВЗ и Курьеры','0');
     $type_value[]=array('ПВЗ','1');
