@@ -77,8 +77,8 @@ function actionStart() {
         $delivery_id = mysql_insert_id();
         $query = 'UPDATE ddelivery_module_system SET delivery_id = ' . $delivery_id;
         mysql_query($query);
-
     }
+
 
     $type_value[]=array('ПВЗ и Курьеры','0');
     $type_value[]=array('ПВЗ','1');

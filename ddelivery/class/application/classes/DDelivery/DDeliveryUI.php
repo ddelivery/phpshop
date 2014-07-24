@@ -191,7 +191,6 @@ class DDeliveryUI
 
     /**
      * Функция вызывается при изменении статуса внутри cms для отправки
-     * @deprecated Не работает.
      *
      * @param $cmsID
      * @param $cmsStatus

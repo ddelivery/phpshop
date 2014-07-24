@@ -1,42 +1,50 @@
 <?php
+include_once( $_SERVER['DOCUMENT_ROOT'] .  '/phpshop/modules/ddelivery/class/application/bootstrap.php');
+include_once( $_SERVER['DOCUMENT_ROOT'] .  '/phpshop/modules/ddelivery/class/mrozk/IntegratorShop.php' );
 
 function addDDeliveryPanel( $data ){
     global $PHPShopGUI;
-
-
-    //DDelivery
-    include_once( $_SERVER['DOCUMENT_ROOT'] .  '/phpshop/modules/ddelivery/class/application/bootstrap.php');
-    include_once( $_SERVER['DOCUMENT_ROOT'] .  '/phpshop/modules/ddelivery/class/mrozk/IntegratorShop.php' );
-    $IntegratorShop = new IntegratorShop();
-    $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
-    //print_r($_REQUEST['visitorID']);
-    $ddOrder = $ddeliveryUI->getOrderByCmsID($data['uid']) ;   // ( $_REQUEST['visitorID'] ) ;
-    if( $ddOrder !== null )
-    {
-        $ddeliveryPrice =  $ddeliveryUI->getDeliveryPrice( $ddOrder->localId );
-        $ddID = (empty($ddOrder->ddeliveryID)? '': 'ID Р·Р°СЏРІРєРё РЅР° ddelivery.ru - ' . $ddOrder->ddeliveryID);
-        $Tab1 = $PHPShopGUI->setField(__("DDelivery"), 'РЎС‚РѕРёРјРѕСЃС‚СЊ РґРѕСЃС‚Р°РІРєРё - ' . $ddeliveryPrice . '<br /> ' . $ddID, 'left');
-
+    try{
         //DDelivery
-
-        //$Tab3.=$PHPShopGUI->setField('РЎРєСЂРёРЅС€РѕС‚',GetSkinsIcon($data['skincat']),$float="none",$margin_left=5);
-
-        $PHPShopGUI->addTab(array("Доставка DDelivery",$Tab1,450));
+        $IntegratorShop = new IntegratorShop();
+        $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
+        $ddOrder = $ddeliveryUI->getOrderByCmsID($data['uid']) ;   // ( $_REQUEST['visitorID'] ) ;
+        if( $ddOrder !== null )
+        {
+            $ddeliveryPrice =  $ddeliveryUI->getDeliveryPrice( $ddOrder->localId );
+            $ddID = (empty($ddOrder->ddeliveryID)? 'Заявка на DDelivery.ru не создана': 'ID заявки на DDelivery.ru - ' . $ddOrder->ddeliveryID);
+            $Tab1 = $PHPShopGUI->setField(__("DDelivery"), 'Стоимость доставки - ' . $ddeliveryPrice . '<br /> ' . $ddID, 'left');
+            $PHPShopGUI->addTab(array("Доставка DDelivery",$Tab1,450));
+        }
+    }catch ( \DDelivery\DDeliveryException $e){
+        $ddeliveryUI->logMessage($e);
     }
-    /*
-        // Р”РѕР±Р°РІР»СЏРµРј Р·РЅР°С‡РµРЅРёСЏ РІ С„СѓРЅРєС†РёСЋ actionStart
-        $Tab3=GetSkinList($data['skincat']);
-        $Tab3.=$PHPShopGUI->setField('РЎРєСЂРёРЅС€РѕС‚',GetSkinsIcon($data['skincat']),$float="none",$margin_left=5);
-        $PHPShopGUI->addTab(array("Skin",$Tab3,450));
-     */
 }
 
+function checkCreateDDelivery( $post ){
+    global $PHPShopModules, $PHPShopOrm;
 
+    $data = $PHPShopOrm->select(array('*'), array('id' => '=' . intval($_POST['visitorID'])));
+
+    try{
+        //DDelivery
+        $IntegratorShop = new IntegratorShop();
+        $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
+        $ddOrder = $ddeliveryUI->getOrderByCmsID($data['uid']) ;   // ( $_REQUEST['visitorID'] ) ;
+
+        if( $ddOrder !== null )
+        {
+           echo $ddeliveryUI->onCmsChangeStatus( $data['uid'], $post['statusi_new']);
+        }
+    }catch ( \DDelivery\DDeliveryException $e){
+        $ddeliveryUI->logMessage($e);
+    }
+}
 
 
 $addHandler=array(
     'actionStart'=>'addDDeliveryPanel',
     'actionDelete'=>false,
-    'actionUpdate'=>false
+    'actionUpdate'=>'checkCreateDDelivery'
 );
 ?>
