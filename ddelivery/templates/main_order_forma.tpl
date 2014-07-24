@@ -32,6 +32,11 @@
         text-decoration: none !important;
     }
 </style>
+
+
+
+
+
 <script type="text/javascript">
 
     function UpdateDelivery2(xid, order_id) {

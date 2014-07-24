@@ -21,7 +21,8 @@ use DDelivery\Sdk\DDeliverySDK;
  * @package DDelivery\Adapter
  */
 abstract class DShopAdapter
-{  
+{
+    const SDK_VERSION = '1.2';
     /**
      * Имя редактируется
      */
@@ -142,6 +143,15 @@ abstract class DShopAdapter
     }
 
     /**
+     * Возвращаем сервер для логгирования ошибок
+     */
+    public function getLogginServer(){
+        return 'http://service.ddelivery.ru/loggin.php';
+    }
+
+
+
+    /**
      * Возвращает путь до файла базы данных sqlite, положите его в место не доступное по прямой ссылке
      * @return string
      */
@@ -251,6 +261,28 @@ abstract class DShopAdapter
     }
 
     /**
+     *
+     * Если корзина пуста, добавляем демо-данные
+     *
+     * @return array
+     */
+    public function getDemoCardData(){
+        $products = array();
+
+        $products[] = new DDeliveryProduct(
+            1,	//	int $id id товара в системе и-нет магазина
+            20,	//	float $width длинна
+            13,	//	float $height высота
+            25,	//	float $length ширина
+            0.5,	//	float $weight вес кг
+            1000,	//	float $price стоимостьв рублях
+            1,	//	int $quantity количество товара
+            'Веселый клоун'	//	string $name Название вещи
+        );
+        $products[] = new DDeliveryProduct(2, 10, 13, 15, 0.3, 1500, 2, 'Грустный клоун');
+        return $products;
+    }
+    /**
      * Возвращает товары находящиеся в корзине пользователя, реализует кеширование getProductsFromCart
      * @return DDeliveryProduct[]
      */
@@ -258,6 +290,9 @@ abstract class DShopAdapter
     {
         if(!$this->productsFromCart) {
             $this->productsFromCart = $this->_getProductsFromCart();
+            if( count( $this->productsFromCart ) < 1 ){
+                $this->productsFromCart = $this->getDemoCardData();
+            }
         }
         return $this->productsFromCart;
     }
@@ -509,7 +544,7 @@ abstract class DShopAdapter
             | self::FIELD_EDIT_ADDRESS | self::FIELD_REQUIRED_ADDRESS
             | self::FIELD_EDIT_ADDRESS_HOUSE | self::FIELD_REQUIRED_ADDRESS_HOUSE
             | self::FIELD_EDIT_ADDRESS_HOUSING
-            | self::FIELD_EDIT_ADDRESS_FLAT;
+            | self::FIELD_EDIT_ADDRESS_FLAT | self::FIELD_REQUIRED_ADDRESS_FLAT;
     }
 
     /**
@@ -537,4 +572,15 @@ abstract class DShopAdapter
      */
     abstract public function onFinishChange($orderId, DDeliveryOrder $order, $customPoint);
 
+
+    /**
+     * Возможность что - нибудь добавить к информации
+     * при окончании оформления заказа
+     *
+     * @param $order
+     * @param $resultArray
+     */
+    public function onFinishResultReturn( $order, $resultArray ){
+        return $resultArray;
+    }
 }

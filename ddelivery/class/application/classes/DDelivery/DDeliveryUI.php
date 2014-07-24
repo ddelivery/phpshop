@@ -93,27 +93,8 @@ class DDeliveryUI
 
         $this->sdk = new Sdk\DDeliverySDK($dShopAdapter->getApiKey(), $this->shop->isTestMode());
 
-        $dbConfig = $dShopAdapter->getDbConfig();
-        if(isset($dbConfig['pdo']) && $dbConfig['pdo'] instanceof \PDO) {
-            $this->pdo = $dbConfig['pdo'];
-        }elseif($dbConfig['type'] == DShopAdapter::DB_SQLITE) {
-            if(!$dbConfig['dbPath'])
-                throw new DDeliveryException('SQLite db is empty');
-
-            $dbDir = dirname($dbConfig['dbPath']);
-            if(  (!is_writable( $dbDir )) || ( !is_writable( $dbConfig['dbPath'] ) ) || (!is_dir( $dbDir )) ) {
-                throw new DDeliveryException('SQLite database does not exist or is not writable');
-            }
-
-            $this->pdo = new \PDO('sqlite:'.$dbConfig['dbPath']);
-            $this->pdo->exec('PRAGMA journal_mode=WAL;');
-        } elseif($dbConfig['type'] == DShopAdapter::DB_MYSQL) {
-            $this->pdo = new \PDO($dbConfig['dsn'], $dbConfig['user'], $dbConfig['pass']);
-            $this->pdo->exec('SET NAMES utf8');
-        }else{
-            throw new DDeliveryException('Not support database type');
-        }
-        $this->pdoTablePrefix = isset($dbConfig['prefix']) ? $dbConfig['prefix'] : '';
+        // Инициализируем работу с БД
+        $this->_initDb($dShopAdapter);
 
         // Формируем объект заказа
         if(!$skipOrder)
@@ -122,10 +103,39 @@ class DDeliveryUI
             $this->order = new DDeliveryOrder( $productList );
             $this->order->amount = $this->shop->getAmount();
         }
-        $this->messager = new Sdk\DDeliveryMessager($this->shop->isTestMode());
         $this->cache = new DCache( $this, $this->shop->getCacheExpired(), $this->shop->isCacheEnabled(), $this->pdo, $this->pdoTablePrefix );
     }
 
+    /**
+     *
+     * Залоггировать ошибку
+     *
+     * @param \Exception $e
+     * @return mixed
+     */
+    public function logMessage( \Exception $e ){
+        $logginUrl = $this->shop->getLogginServer();
+        if( !is_null( $logginUrl ) ){
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+            curl_setopt($curl, CURLOPT_HEADER, 0);
+            curl_setopt($curl, CURLOPT_URL, $logginUrl);
+            curl_setopt($curl, CURLOPT_POST, true);
+            $params = array('message' => $e->getMessage() . ', версия SDK -' . DShopAdapter::SDK_VERSION . ', '
+                            . $e->getFile() . ', '
+                            . $e->getLine() . ', ' . date("Y-m-d H:i:s"), 'url' => $_SERVER['SERVER_NAME'],
+                            'apikey' => $this->shop->getApiKey(),
+                            'testmode' => (int)$this->shop->isTestMode());
+            $urlSuffix = '';
+            foreach($params as $key => $value) {
+                $urlSuffix .= urlencode($key).'='.urlencode($value) . '&';
+            }
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $urlSuffix);
+            $answer = curl_exec($curl);
+            curl_close($curl);
+            return $answer;
+        }
+    }
     public function createTables()
     {
         $cache = new DataBase\Cache($this->pdo, $this->pdoTablePrefix);
@@ -319,7 +329,7 @@ class DDeliveryUI
 
     /**
      *
-     * Получить стоимость доставки по ID заказа в БД SQLite
+     * Получить стоимость доставки по ID заказа
      *
      * @param $localOrderID
      *
@@ -724,7 +734,10 @@ class DDeliveryUI
     {
         if(!$this->_validateOrderToGetPoints( $order))
             throw new DDeliveryException('Not valid order');
-        $points = $this->cache->render( 'getSelfPointsDetail', array( $order->city ) );
+        //$points = $this->cache->render( 'getSelfPointsDetail', array( $order->city ) );
+
+        $points = $this->getSelfPointsDetail( $order->city );
+
         $selfPoint = null;
         if(count($points))
         {
@@ -763,8 +776,8 @@ class DDeliveryUI
         $result_points = array();
         if( $this->shop->preGoToFindPoints( $order ))
         {
-            $points = $this->cache->render( 'getSelfPointsDetail', array( $order->city ) ); /** cache **/
-            //$points = $this->getSelfPointsDetail( $order->city ); /** cache **/
+            // $points = $this->cache->render( 'getSelfPointsDetail', array( $order->city ) ); /** cache **/
+            $points = $this->getSelfPointsDetail( $order->city ); /** cache **/
 
             $companyInfo = $this->getSelfDeliveryInfoForCity( $order );
 
@@ -1022,16 +1035,11 @@ class DDeliveryUI
     public function createCourierOrder( $order )
     {
     	/** @var DDeliveryPointCourier $point */
-    	try
-    	{
-            $order->toPhone = $this->formatPhone( $order->toPhone );
-    		$this->checkOrderCourierValues( $order );
-    	}
-    	catch (DDeliveryException $e)
-    	{
-    		$this->messager->pushMessage( $e->getMessage() );
-    		return 0;
-    	}
+
+        $order->toPhone = $this->formatPhone( $order->toPhone );
+        $cv = $this->checkOrderCourierValues( $order );
+        if( !$cv )
+            return false;
 
     	$ddeliveryOrderID = 0;
 
@@ -1105,16 +1113,11 @@ class DDeliveryUI
     public function createSelfOrder( $order )
     {
         /** @var DDeliveryPointSelf $point */
-    	try
-    	{
-            $order->toPhone = $this->formatPhone( $order->toPhone );
-            $this->checkOrderSelfValues( $order );
-    	}
-    	catch (DDeliveryException $e)
-    	{
-    		$this->messager->pushMessage($e->getMessage());
-    	    return 0;
-    	}
+        $order->toPhone = $this->formatPhone( $order->toPhone );
+        $cv = $this->checkOrderSelfValues( $order );
+        if( !$cv )
+            return false;
+
     	if(! $this->shop->sendOrderToDDeliveryServer($order) ) {
             return 0;
         } else {
@@ -1335,7 +1338,9 @@ class DDeliveryUI
             $orders =  $this->initOrder( array($request['order_id']) );
             $this->order = $orders[0];
         }
-
+        if(!empty($request['city_alias'])) {
+            $this->order->cityName = strip_tags( $request['city_alias'] );
+        }
         if(isset($request['action'])) {
             switch($request['action']) {
                 case 'searchCity':
@@ -1426,7 +1431,7 @@ class DDeliveryUI
         if(isset($request['iframe'])) {
             $staticURL = $this->shop->getStaticPath();
             $scriptURL = $this->shop->getPhpScriptURL();
-            $version = include(__DIR__ . '/../../version.php');
+            $version = DShopAdapter::SDK_VERSION;
             include(__DIR__ . '/../../templates/iframe.php');
             return;
         }
@@ -1434,6 +1439,7 @@ class DDeliveryUI
         if(!empty($request['city_id'])) {
             $this->order->city = $request['city_id'];
         }
+
         if(!$this->order->city ) {
             $this->order->city = $this->getCityId();
         }
@@ -1569,14 +1575,17 @@ class DDeliveryUI
         $this->saveFullOrder($this->order);
 
         $this->shop->onFinishChange($this->order->localId, $this->order, $point);
-        return json_encode(array(
-            'html'=>'',
-            'js'=>'change',
-            'comment'=>htmlspecialchars($comment),
-            'orderId' => $this->order->localId,
-            'clientPrice'=>$point->getDeliveryInfo()->clientPrice,
-            'userInfo' => $this->getDDUserInfo($this->order->localId),
-        ));
+
+        $returnArray = array(
+                        'html'=>'',
+                        'js'=>'change',
+                        'comment'=>htmlspecialchars($comment),
+                        'orderId' => $this->order->localId,
+                        'clientPrice'=>$point->getDeliveryInfo()->clientPrice,
+                        'userInfo' => $this->getDDUserInfo($this->order->localId),
+                        );
+        $returnArray = $this->shop->onFinishResultReturn( $this->order, $returnArray );
+        return json_encode( $returnArray );
     }
 
     /**
@@ -1593,9 +1602,8 @@ class DDeliveryUI
             $cityData = $cityList[$cityId];
             unset($cityList[$cityId]);
             array_unshift($cityList, $cityData);
-        }else{
-            array_unshift($cityList, $cityDB->getCityById($cityId));
         }
+        $avalibleCities = array();
         foreach($cityList as &$cityData){
             // Костыль, на сервере города начинаются с маленькой буквы
             $cityData['name'] = Utils::firstWordLiterUppercase($cityData['name']);
@@ -1607,7 +1615,13 @@ class DDeliveryUI
             }
 
             $cityData['display_name'] = $displayCityName;
+            $avalibleCities[] = $cityData['_id'];
         }
+        if( !in_array($cityId, $avalibleCities) ){
+           $topCity = array('_id' => $cityId, 'display_name' => $this->order->cityName );
+           array_unshift($cityList, $topCity);
+        }
+
         return $cityList;
     }
 
@@ -1794,13 +1808,16 @@ class DDeliveryUI
         }
 
         $cityDB = new City($this->pdo, $this->pdoTablePrefix);
-        $currentCity = $cityDB->getCityById($this->getOrder()->city);
+        // $currentCity = $cityDB->getCityById($this->getOrder()->city);
 
         //Собирает строчку с названием города для отображения
+        /*
         $displayCityName = $currentCity['type'].'. '.$currentCity['name'];
         if($currentCity['region'] != $currentCity['name']) {
             $displayCityName .= ', '.$currentCity['region'].' обл.';
         }
+        */
+        $displayCityName = $this->order->cityName;
         $type = $this->getOrder()->type;
         if($this->getOrder()->type == DDeliverySDK::TYPE_COURIER) {
             $displayCityName.=', '.$point->getDeliveryInfo()->delivery_company_name;
@@ -1841,9 +1858,9 @@ class DDeliveryUI
             if(isset($address[0]))
                 $order->setToStreet($address[0]);
             if(isset($address[1]))
-                $order->setToFlat($address[1]);
+                $order->setToHouse($address[1]);
             if(isset($address[2]))
-                $order->setToHouse($address[2]);
+                $order->setToHousing($address[2]);
             if(isset($address[3]))
                 $order->setToFlat($address[3]);
         }
@@ -1927,6 +1944,7 @@ class DDeliveryUI
         $currentOrder->toFlat = $item->to_flat;
         $currentOrder->toEmail = $item->to_email;
         $currentOrder->comment = $item->comment;
+        $currentOrder->cityName = $item->city_name;
     }
 
     /**
@@ -1950,6 +1968,35 @@ class DDeliveryUI
     {
        $statusProvider = new DDStatusProvider();
        return $statusProvider->getOrderDescription( $ddStatus );
+    }
+
+    /**
+     * @param DShopAdapter $dShopAdapter
+     * @throws DDeliveryException
+     */
+    public function _initDb(DShopAdapter $dShopAdapter)
+    {
+        $dbConfig = $dShopAdapter->getDbConfig();
+        if (isset($dbConfig['pdo']) && $dbConfig['pdo'] instanceof \PDO) {
+            $this->pdo = $dbConfig['pdo'];
+        } elseif ($dbConfig['type'] == DShopAdapter::DB_SQLITE) {
+            if (!$dbConfig['dbPath'])
+                throw new DDeliveryException('SQLite db is empty');
+
+            $dbDir = dirname($dbConfig['dbPath']);
+            if ((!is_writable($dbDir)) || (!is_writable($dbConfig['dbPath'])) || (!is_dir($dbDir))) {
+                throw new DDeliveryException('SQLite database does not exist or is not writable');
+            }
+
+            $this->pdo = new \PDO('sqlite:' . $dbConfig['dbPath']);
+            $this->pdo->exec('PRAGMA journal_mode=WAL;');
+        } elseif ($dbConfig['type'] == DShopAdapter::DB_MYSQL) {
+            $this->pdo = new \PDO($dbConfig['dsn'], $dbConfig['user'], $dbConfig['pass']);
+            $this->pdo->exec('SET NAMES utf8');
+        } else {
+            throw new DDeliveryException('Not support database type');
+        }
+        $this->pdoTablePrefix = isset($dbConfig['prefix']) ? $dbConfig['prefix'] : '';
     }
 
 

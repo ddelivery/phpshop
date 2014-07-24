@@ -23,11 +23,5 @@
             <podmenu_action>javascript:miniWin('../modules/ddelivery/admpanel/status.php?action=2',510,450);</podmenu_action>
         </podmenu>
 
-        <podmenu>
-            <podmenu_name>Создать базу городов</podmenu_name>
-            <podmenu_icon>icon.png</podmenu_icon>
-            <podmenu_action>javascript:miniWin('../modules/ddelivery/admpanel/status.php?action=3',510,450);</podmenu_action>
-        </podmenu>
-
     </adminmenu>
 </module>

@@ -84,7 +84,7 @@ abstract class PluginFilters extends DShopAdapter
     public function getPaymentPriceCourier($order, $orderPrice)
     {
         $filterByPayment = $this->filterPointByPaymentTypeCourier();
-        if($filterByPayment == $order->paymentVariant) {
+        if($filterByPayment == self::PAYMENT_POST_PAYMENT) {
             if($order->getPoint() && $order->getPoint()->getDeliveryInfo()) {
                 return $order->amount + $order->getPoint()->getDeliveryInfo()->clientPrice;
             }
@@ -92,6 +92,7 @@ abstract class PluginFilters extends DShopAdapter
         }
         return 0;
     }
+
 
     /**
      * Сумма к оплате на точке или курьеру

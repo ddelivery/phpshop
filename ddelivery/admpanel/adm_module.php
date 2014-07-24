@@ -160,10 +160,12 @@ function actionStart() {
 
     $Tab5 = $PHPShopGUI->setField('Оплата на месте',$PHPShopGUI->setSelect('payment_new',$payment_value,400));
     $Tab5 .= $PHPShopGUI->setField('Статус для отправки',$PHPShopGUI->setSelect('status_new',$status_value,400));
+    /*
     $Tab5 .= $PHPShopGUI->setField('Фамилия',
                 $PHPShopGUI->setInputText(false,'famile_new', $famile,300));
     $Tab5 .= $PHPShopGUI->setField('Имя',
         $PHPShopGUI->setInputText(false,'name_new', $name,300));
+    */
     $Tab5.= $PHPShopGUI->setText('<b>Габариты по умолчанию</b>', 'none');
 
     $Tab5 .= $PHPShopGUI->setField('Ширина, см',

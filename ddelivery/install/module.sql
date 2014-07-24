@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `ddelivery_module_system` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=cp1251 ;
 
 
-INSERT INTO `ddelivery_module_system` (`id`, `type`, `rezhim`, `declared`, `width`, `height`, `api`, `length`, `weight`, `payment`, `status`, `famile`, `name`, `def_width`, `def_lenght`, `def_height`, `def_weight`) VALUES(1, '0', '0', '100', 'option1', 'option3', 'ec928a345de9632dd75115d73d01f57c', 'option2', 'weight', '2', '23', 'famile', 'name', '10', '11', '10', '1');
+INSERT INTO `ddelivery_module_system` (`id`, `type`, `rezhim`, `declared`, `width`, `height`, `api`, `length`, `weight`, `payment`, `status`, `famile`, `name`, `def_width`, `def_lenght`, `def_height`, `def_weight`) VALUES(1, '0', '0', '100', 'option1', 'option3', '852af44bafef22e96d8277f3227f0998', 'option2', 'weight', '2', '23', 'famile', 'name', '10', '11', '10', '1');
 
 DROP TABLE IF EXISTS `ddelivery_module_cache`;
 
@@ -94,18 +94,6 @@ CREATE TABLE IF NOT EXISTS `ddelivery_module_orders` (
   `serilize` text DEFAULT NULL,
   `point` text DEFAULT NULL,
   `comment` varchar(255) DEFAULT NULL,
+  `city_name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=cp1251;
-
-DROP TABLE IF EXISTS `ddelivery_module_ps_dd_cities`;
-CREATE TABLE `ddelivery_module_ps_dd_cities` (
-  `_id` int(11) NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `area` varchar(255) DEFAULT NULL,
-  `region` varchar(255) DEFAULT NULL,
-  `kladr` varchar(30) DEFAULT NULL,
-  `type` varchar(5) DEFAULT NULL,
-  `dpd_id` int(11) DEFAULT NULL,
-  `priority` int(11) DEFAULT NULL,
-  PRIMARY KEY (`_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=cp1251;

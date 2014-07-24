@@ -46,6 +46,12 @@ try
 {
 
     $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop);
+    $order = $ddeliveryUI->getOrder();
+    echo '<pre>';
+    print_r($order);
+    $order->goodsDescription = '';
+    echo '</pre>';
+    echo $ddeliveryUI->saveFullOrder($order);
     /*
     $order = $ddeliveryUI->getOrder();
     $orders = $ddeliveryUI->initOrder(array(86));
@@ -54,8 +60,8 @@ try
     $this->shop->filterSelfInfo( $point->getDeliveryInfo() );
     echo $poi   nt->getDeliveryInfo()->clientPrice;
 */
-    $price = $ddeliveryUI->getDeliveryPrice(86);
-    echo $price;
+    //$price = $ddeliveryUI->getDeliveryPrice(86);
+    //echo $price;
     /*
    echo $price;
    8/

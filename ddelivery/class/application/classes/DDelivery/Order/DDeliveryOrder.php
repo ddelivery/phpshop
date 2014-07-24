@@ -169,6 +169,11 @@ class DDeliveryOrder
     public $comment;
 
     /**
+     * @var String - символическое представление города
+     */
+    public $cityName = null;
+
+    /**
      * @param DDeliveryProduct[] $productList
      * @throws DDeliveryOrderException
      */
@@ -186,7 +191,7 @@ class DDeliveryOrder
         
         // Получаем параметры для товаров в заказе
         $this->getProductParams();
-		
+
     }
 
     /**
