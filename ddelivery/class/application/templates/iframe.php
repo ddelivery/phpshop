@@ -54,7 +54,7 @@
     <div id="ddelivery_loader">
         <div class="map-popup">
             <div class="map-popup__head">
-                <p>DDelivery. Р”РѕСЃС‚Р°РІРєР° РІ СѓРґРѕР±РЅСѓСЋ Р’Р°Рј С‚РѕС‡РєСѓ.</p>
+                <p>DDelivery. Доставка в удобную Вам точку.</p>
 
                 <div class="map-popup__head__close">&nbsp;</div>
             </div>
@@ -63,19 +63,19 @@
                 <div class="map-popup__main__overlay">&nbsp;</div>
                 <div class="map-popup__main__delivery">
                     <div class="loader">
-                        <p>РџРѕРґРѕР¶РґРёС‚Рµ РїРѕР¶Р°Р»СѓР№СЃС‚Р°, РјС‹ РёС‰РµРј Р»СѓС‡С€РёРµ РїСЂРµРґР»РѕР¶РµРЅРёСЏ</p>
+                        <p>Подождите пожалуйста, мы ищем лучшие предложения</p>
                         <img src="<?=$staticURL?>/img/ajax_loader_horizont.gif"/>
                     </div>
                     <div>
                         <p class="load_error">
-                            РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР°, <a href="javascript:void(0)">РїРѕРІС‚РѕСЂРёС‚СЊ Р·Р°РїСЂРѕСЃ</a>
+                            Произошла ошибка, <a href="javascript:void(0)">повторить запрос</a>
                         </p>
                     </div>
                 </div>
 
             </div>
             <div class="map-popup__bott">
-                <a href="http://ddelivery.ru/" target="blank">РЎРµСЂРІРёСЃ РґРѕСЃС‚Р°РІРєРё DDelivery.ru</a>
+                <a href="http://ddelivery.ru/" target="blank">Сервис доставки DDelivery.ru</a>
             </div>
 
         </div>
@@ -85,5 +85,31 @@
             DDeliveryIframe.init(<?=json_encode($scriptURL)?>, <?=json_encode($staticURL)?>);
         });
     </script>
+
+    <script type="text/javascript">
+        (function (d, w, c) {
+            (w[c] = w[c] || []).push(function() {
+                try {
+                    w.yaCounter25661477 = new Ya.Metrika({id:25661477,
+                        webvisor:true,
+                        clickmap:true,
+                        trackLinks:true,
+                        accurateTrackBounce:true});
+                } catch(e) { }
+            });
+
+            var n = d.getElementsByTagName("script")[0],
+                s = d.createElement("script"),
+                f = function () { n.parentNode.insertBefore(s, n); };
+            s.type = "text/javascript";
+            s.async = true;
+            s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+            if (w.opera == "[object Opera]") {
+                d.addEventListener("DOMContentLoaded", f, false);
+            } else { f(); }
+        })(document, window, "yandex_metrika_callbacks");
+    </script>
+
     </body>
 </html>

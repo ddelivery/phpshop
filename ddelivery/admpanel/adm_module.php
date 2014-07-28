@@ -61,7 +61,7 @@ function actionStart() {
 
     $PHPShopGUI->dir=$_classPath."admpanel/";
     $PHPShopGUI->title="Настройки";
-    $PHPShopGUI->size="750,750";
+    $PHPShopGUI->size="1550,750";
 
     // Выборка
     $data = $PHPShopOrm->select();
@@ -98,7 +98,7 @@ function actionStart() {
     $Tab1 = $PHPShopGUI->setField('API ключ(из личного кабинета)',
                                   $PHPShopGUI->setInputText(false,'api_new', $api,300));
 
-    $Tab1 .= $PHPShopGUI->setField('ID способа доставки DDlivery',
+    $Tab1 .= $PHPShopGUI->setField('ID способа доставки DDelivery',
         $PHPShopGUI->setInputText(false,'delivery_id_new', $delivery_id,300));
 
     $Tab1.=$PHPShopGUI->setField('Режим работы',$PHPShopGUI->setSelect('rezhim_new',$rezhim_value,400));
@@ -179,22 +179,69 @@ function actionStart() {
         $PHPShopGUI->setInputText(false,'def_weight_new', $def_weight,300));
 
     $Tab2 =$PHPShopGUI->setField('Доступные способы',$PHPShopGUI->setSelect('type_new',$type_value,400));
-    $Tab2.= $PHPShopGUI->setText('<b>Доступные компании ПВЗ</b>', 'none');
+    $Tab2.= $PHPShopGUI->setText('<b>Выберите компании ПВЗ, которые вы бы хотели сделать НЕ доступными для для ваших клиентов</b>', 'none');
 
     $pvz_companies = unserialize( $pvz_companies );
     $cur_companies = unserialize( $cur_companies );
 
-    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',1,'DPD',(in_array(1,$pvz_companies)?'checked':''));
-    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',2,'IML',(in_array(2,$pvz_companies)?'checked':''));
-    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',3,'Hermes-dpd',(in_array(3,$pvz_companies)?'checked':''));
-    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',4,'Logibox',(in_array(4,$pvz_companies)?'checked':''));
-    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',5,'Pickpoint',(in_array(5,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',4,'Boxberry',(in_array(4,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',21,'Boxberry Express',(in_array(21,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',29,'DPD Classic',(in_array(29,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',23,'DPD Consumer',(in_array(23,$pvz_companies)?'checked':''));
+    $Tab2.= '<br />';
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',27,'DPD ECONOMY',(in_array(27,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',28,'DPD Express',(in_array(28,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',20,'DPD Parcel',(in_array(20,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',30,'EMS',(in_array(30,$pvz_companies)?'checked':''));
+    $Tab2.= '<br />';
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',31,'Grastin',(in_array(31,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',11,'Hermes',(in_array(11,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',16,'IM Logistics Пушкинская',(in_array(16,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',22,'IM Logistics Экспресс',(in_array(22,$pvz_companies)?'checked':''));
+    $Tab2.= '<br />';
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',17,'IMLogistics',(in_array(17,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',3,'Logibox',(in_array(3,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',14,'Maxima Express',(in_array(14,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',1,'PickPoint',(in_array(1,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',13,'КТС',(in_array(13,$pvz_companies)?'checked':''));
+    $Tab2.= '<br />';
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',18,'Сам Заберу',(in_array(18,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',6,'СДЭК забор',(in_array(6,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',26,'СДЭК Посылка',(in_array(26,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',25,' СДЭК Посылка Самовывоз',(in_array(25,$pvz_companies)?'checked':''));
+    $Tab2.= '<br />';
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',24,'Сити Курьер',(in_array(24,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',7,'QIWI Post',(in_array(7,$pvz_companies)?'checked':''));
 
-    $Tab2.= $PHPShopGUI->setText('<b>Доступные компании курьерская доставка</b>', 'none');
-    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',1,'DPD',(in_array(1,$cur_companies)?'checked':''));
-    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',2,'IML',(in_array(2,$cur_companies)?'checked':''));
-    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',3,'СДЭК',(in_array(3,$cur_companies)?'checked':''));
-
+    $Tab2.= $PHPShopGUI->setText('<b>Выберите компании курьерской доставки, которые вы бы хотели сделать НЕ доступными для для ваших клиентов</b>', 'none');
+     $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',4,'Boxberry',(in_array(4,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',21,'Boxberry Express',(in_array(21,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',29,'DPD Classic',(in_array(29,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',23,'DPD Consumer',(in_array(23,$cur_companies)?'checked':''));
+    $Tab2.= '<br />';
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',27,'DPD ECONOMY',(in_array(27,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',28,'DPD Express',(in_array(28,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',20,'DPD Parcel',(in_array(20,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',30,'EMS',(in_array(30,$cur_companies)?'checked':''));
+    $Tab2.= '<br />';
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',31,'Grastin',(in_array(31,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',11,'Hermes',(in_array(11,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',16,'IM Logistics Пушкинская',(in_array(16,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',22,'IM Logistics Экспресс',(in_array(22,$cur_companies)?'checked':''));
+    $Tab2.= '<br />';
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',17,'IMLogistics',(in_array(17,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',3,'Logibox',(in_array(3,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',14,'Maxima Express',(in_array(14,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',1,'PickPoint',(in_array(1,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',13,'КТС',(in_array(13,$cur_companies)?'checked':''));
+    $Tab2.= '<br />';
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',18,'Сам Заберу',(in_array(18,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',6,'СДЭК забор',(in_array(6,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',26,'СДЭК Посылка',(in_array(26,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',25,' СДЭК Посылка Самовывоз',(in_array(25,$cur_companies)?'checked':''));
+    $Tab2.= '<br />';
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',24,'Сити Курьер',(in_array(24,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',7,'QIWI Post',(in_array(7,$cur_companies)?'checked':''));
 
     $Tab3 = $PHPShopGUI->setField('от',
                         $PHPShopGUI->setInputText(false,'from1_new', $from1,100 ),'left');
@@ -209,8 +256,8 @@ function actionStart() {
 
 
     $method1_value = _prepareSelect($method1, $method1_value);
-    $Tab3 .=$PHPShopGUI->setField('стоимость',$PHPShopGUI->setSelect('method1_new',$method1_value,150),'left');
-    $Tab3 .= $PHPShopGUI->setField('Сума',
+    $Tab3 .=$PHPShopGUI->setField('Действие',$PHPShopGUI->setSelect('method1_new',$method1_value,150),'left');
+    $Tab3 .= $PHPShopGUI->setField('Сумма',
         $PHPShopGUI->setInputText(false,'methodval1_new', $methodval1, 100),'none');
 
     $Tab3 .= $PHPShopGUI->setField('от',
@@ -225,8 +272,8 @@ function actionStart() {
     $method2_value[] = array('Магазин оплачивает конкретную сумму от доставки. Если сумма больше, то всю доставку','4');
 
     $method2_value = _prepareSelect($method2, $method2_value);
-    $Tab3 .=$PHPShopGUI->setField('стоимость',$PHPShopGUI->setSelect('method2_new',$method2_value,150),'left');
-    $Tab3 .= $PHPShopGUI->setField('Сума',
+    $Tab3 .=$PHPShopGUI->setField('Действие',$PHPShopGUI->setSelect('method2_new',$method2_value,150),'left');
+    $Tab3 .= $PHPShopGUI->setField('Сумма',
         $PHPShopGUI->setInputText(false,'methodval2_new', $methodval2,100));
 
 
@@ -244,8 +291,8 @@ function actionStart() {
 
     $method3_value = _prepareSelect($method3, $method3_value);
 
-    $Tab3 .=$PHPShopGUI->setField('стоимость',$PHPShopGUI->setSelect('method3_new',$method3_value,250),'left');
-    $Tab3 .= $PHPShopGUI->setField('Сума',
+    $Tab3 .=$PHPShopGUI->setField('Действие',$PHPShopGUI->setSelect('method3_new',$method3_value,150),'left');
+    $Tab3 .= $PHPShopGUI->setField('Сумма',
         $PHPShopGUI->setInputText(false,'methodval3_new', $methodval3,100));
 
 
@@ -319,7 +366,7 @@ function actionStart() {
     //$Tab3=$PHPShopGUI->setPay($serial,false);
 
     // Вывод формы закладки
-    $PHPShopGUI->setTab(array("Основные",$Tab1,480),array("Основные",$Tab5,470),array("Настройки способов доставки",$Tab2,270),
+    $PHPShopGUI->setTab(array("Основные",$Tab1,480),array("Основные",$Tab5,470),array("Настройки способов доставки",$Tab2,370),
           array("Настройки цены доставки",$Tab3,270) /*, array("Добавление собственных служб доставки",$Tab4,320) */);
 
     // Вывод кнопок сохранить и выход в футер

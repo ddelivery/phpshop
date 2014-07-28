@@ -370,17 +370,20 @@ class IntegratorShop extends PluginFilters {
     public function getIntervalsByPoint()
     {
         $result = array();
-        if( !empty( $this->cmsSettings['from1'] ) )
+        if( !empty( $this->cmsSettings['from1'] ) &&  !empty( $this->cmsSettings['to1'] ) && !empty( $this->cmsSettings['method1'] ) &&
+            !empty( $this->cmsSettings['methodval1'] ) )
         {
             $result[] = array('min' => $this->cmsSettings['from1'], 'max'=>$this->cmsSettings['to1'],
                               'type'=>$this->cmsSettings['method1'], 'amount'=>$this->cmsSettings['methodval1']);
         }
-        if( !empty( $this->cmsSettings['from2'] ) )
+        if( !empty( $this->cmsSettings['from2'] ) &&  !empty( $this->cmsSettings['to2'] ) && !empty( $this->cmsSettings['method2'] ) &&
+            !empty( $this->cmsSettings['methodval2'] )  )
         {
             $result[] = array('min' => $this->cmsSettings['from2'], 'max'=>$this->cmsSettings['to2'],
                               'type'=>$this->cmsSettings['method2'], 'amount'=>$this->cmsSettings['methodval2']);
         }
-        if( !empty( $this->cmsSettings['from3'] ) )
+        if( !empty( $this->cmsSettings['from3'] ) &&  !empty( $this->cmsSettings['to3'] ) && !empty( $this->cmsSettings['method3'] ) &&
+            !empty( $this->cmsSettings['methodval3'] ) )
         {
             $result[] = array('min' => $this->cmsSettings['from3'], 'max'=>$this->cmsSettings['to3'],
                               'type'=>$this->cmsSettings['method3'], 'amount'=>$this->cmsSettings['methodval3']);
@@ -522,7 +525,7 @@ class IntegratorShop extends PluginFilters {
      */
     public function getSelfRequiredFields()
     {
-        // Имя, фамилия, мобилка
+        // �?мя, фамилия, мобилка
         return self::FIELD_EDIT_FIRST_NAME | self::FIELD_REQUIRED_FIRST_NAME
         | self::FIELD_EDIT_LAST_NAME | self::FIELD_REQUIRED_SECOND_NAME
         | self::FIELD_EDIT_PHONE | self::FIELD_REQUIRED_PHONE;

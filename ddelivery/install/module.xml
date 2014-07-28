@@ -10,7 +10,7 @@
         <podmenu>
             <podmenu_name>Настройка</podmenu_name>
             <podmenu_icon>icon.png</podmenu_icon>
-            <podmenu_action>javascript:miniWin('../modules/ddelivery/admpanel/adm_module.php',510,450);</podmenu_action>
+            <podmenu_action>javascript:miniWin('../modules/ddelivery/admpanel/adm_module.php',710,450);</podmenu_action>
         </podmenu>
         <!--
         <podmenu>
@@ -22,8 +22,12 @@
         <podmenu>
             <podmenu_name>Синхронизировать статусы</podmenu_name>
             <podmenu_icon>icon.png</podmenu_icon>
-            <podmenu_action>javascript:miniWin('../modules/ddelivery/admpanel/status.php?action=2',510,450);</podmenu_action>
+            <podmenu_action>javascript:miniWin('../modules/ddelivery/admpanel/status.php?action=2',710,450);</podmenu_action>
         </podmenu>
-
+        <podmenu>
+            <podmenu_name>Настройка дополнительных полей</podmenu_name>
+            <podmenu_icon>icon.png</podmenu_icon>
+            <podmenu_action>javascript:miniWin('../modules/ddelivery/admpanel/adm_module2.php',510,450);</podmenu_action>
+        </podmenu>
     </adminmenu>
 </module>

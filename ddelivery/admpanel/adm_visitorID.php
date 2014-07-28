@@ -15,10 +15,23 @@ function addDDeliveryPanel( $data ){
             $ddID = (empty($ddOrder->ddeliveryID)? 'Заявка на DDelivery.ru не создана': 'ID заявки на DDelivery.ru - ' . $ddOrder->ddeliveryID);
             $Tab1 = $PHPShopGUI->setField(__("DDelivery"), 'Стоимость доставки - ' . $ddeliveryPrice . '<br /> ' . $ddID, 'left');
             $PHPShopGUI->addTab(array("Доставка DDelivery",$Tab1,450));
+
+            if (file_exists( __DIR__ . '/gui/tab_cart.gui.php')) {
+                require_once(__DIR__ . '/gui/tab_cart.gui.php');
+            }else{
+                return 'file not exist';
+            }
+            $Tab2 = tab_cart_ddelivery($data);
+
+            // ????? ????? ????????
+            $PHPShopGUI->addTab(array(__("Корзина для DDelivery"), $Tab2, 350));
+
         }
     }catch ( \DDelivery\DDeliveryException $e){
         $ddeliveryUI->logMessage($e);
     }
+
+
 }
 
 function checkCreateDDelivery( $post ){
@@ -39,6 +52,8 @@ function checkCreateDDelivery( $post ){
     }catch ( \DDelivery\DDeliveryException $e){
         $ddeliveryUI->logMessage($e);
     }
+
+
 }
 
 

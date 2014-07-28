@@ -93,7 +93,7 @@ class DDeliveryUI
 
         $this->sdk = new Sdk\DDeliverySDK($dShopAdapter->getApiKey(), $this->shop->isTestMode());
 
-        // Инициализируем работу с БД
+        // �?нициализируем работу с БД
         $this->_initDb($dShopAdapter);
 
         // Формируем объект заказа
@@ -481,7 +481,7 @@ class DDeliveryUI
 
 
     /**
-     * Инициализирует массив заказов из массива id заказов локальной БД
+     * �?нициализирует массив заказов из массива id заказов локальной БД
      *
      * @param int[] $ids массив с id заказов
      *
@@ -898,7 +898,7 @@ class DDeliveryUI
         }
         if(!strlen( $order->getToName() ))
         {
-        	$errors[] = "Укажите пожалуйста ФИО";
+        	$errors[] = "Укажите пожалуйста Ф�?О";
         }
         if(!$this->isValidPhone( $order->toPhone ))
         {
@@ -975,7 +975,7 @@ class DDeliveryUI
         }
         if(!strlen( $order->getToName() ))
         {
-        	$errors[] = "Укажите пожалуйста ФИО";
+        	$errors[] = "Укажите пожалуйста Ф�?О";
         }
         if(!$this->isValidPhone( $order->toPhone ))
         {
@@ -1266,7 +1266,7 @@ class DDeliveryUI
     }
 
     /**
-     * Назначить ФИО доставки
+     * Назначить Ф�?О доставки
      *
      */
     public function setOrderToName( $name )
@@ -1409,7 +1409,7 @@ class DDeliveryUI
                                 return;
                             }
                         }
-
+                        $pointSelf->description_in = iconv('UTF-8','CP1251', $pointSelf->description_in);
                         echo json_encode(array(
                             'point'=>array(
                                 'description_in' => $pointSelf->description_in,
@@ -1567,7 +1567,7 @@ class DDeliveryUI
             $comment = 'Самовывоз, '.$point->address;
             $point = $this->getSelfPointByID($point->_id, $this->order);
             $this->shop->filterSelfInfo(array($point->getDeliveryInfo()));
-        } elseif($point instanceof DDeliveryPointCourier) {
+        } elseif($point instanceof DDeliveryPointCourier)    {
             $comment = 'Доставка курьером по адресу '.$this->order->getFullAddress();
             $this->getCourierPointByCompanyID($point->getDeliveryInfo()->delivery_company, $this->order);
         }
@@ -1909,7 +1909,7 @@ class DDeliveryUI
 
     /**
      *
-     * Инициализирует свойства объекта DDeliveryOrder из stdClass полученный из
+     * �?нициализирует свойства объекта DDeliveryOrder из stdClass полученный из
      * запроса БД SQLite
      *
      * @param DDeliveryOrder $currentOrder

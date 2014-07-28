@@ -24,11 +24,11 @@ abstract class DShopAdapter
 {
     const SDK_VERSION = '1.2';
     /**
-     * Имя редактируется
+     * �?мя редактируется
      */
     const FIELD_EDIT_FIRST_NAME = 1;
     /**
-     * Имя обязательное
+     * �?мя обязательное
      */
     const FIELD_REQUIRED_FIRST_NAME = 2;
     /**
@@ -36,7 +36,7 @@ abstract class DShopAdapter
      */
     const FIELD_EDIT_SECOND_NAME = 4;
     /**
-     * Используй FIELD_EDIT_SECOND_NAME
+     * �?спользуй FIELD_EDIT_SECOND_NAME
      * @deprecated
      */
     const FIELD_EDIT_LAST_NAME = 4;
@@ -107,14 +107,14 @@ abstract class DShopAdapter
 
     protected  $cmsOrderStatus = array( DDStatusProvider::ORDER_IN_PROGRESS => 'В обработке',
                                         DDStatusProvider::ORDER_CONFIRMED => 'Подтверждена',
-                                        DDStatusProvider::ORDER_IN_STOCK => 'На складе ИМ',
+                                        DDStatusProvider::ORDER_IN_STOCK => 'На складе �?М',
                                         DDStatusProvider::ORDER_IN_WAY => 'Заказ в пути',
                                         DDStatusProvider::ORDER_DELIVERED => 'Заказ доставлен',
                                         DDStatusProvider::ORDER_RECEIVED => 'Заказ получен',
                                         DDStatusProvider::ORDER_RETURN => 'Возврат заказа',
                                         DDStatusProvider::ORDER_CUSTOMER_RETURNED => 'Клиент вернул заказ',
                                         DDStatusProvider::ORDER_PARTIAL_REFUND => 'Частичный возврат заказа',
-                                        DDStatusProvider::ORDER_RETURNED_MI => 'Возвращен в ИМ',
+                                        DDStatusProvider::ORDER_RETURNED_MI => 'Возвращен в �?М',
                                         DDStatusProvider::ORDER_WAITING => 'Ожидание',
                                         DDStatusProvider::ORDER_CANCEL => 'Отмена' );
 
@@ -220,7 +220,7 @@ abstract class DShopAdapter
 
         /**
      *
-     * Используется при отправке заявки на сервер DD для указания стартового статуса
+     * �?спользуется при отправке заявки на сервер DD для указания стартового статуса
      *
      * Если true то заявка в сервисе DDelivery будет выставлена в статус "Подтверждена",
      * если false то то заявка в сервисе DDelivery будет выставлена в статус "В обработке"
@@ -555,7 +555,7 @@ abstract class DShopAdapter
      */
     public function getSelfRequiredFields()
     {
-        // Имя, фамилия, мобилка
+        // �?мя, фамилия, мобилка
         return self::FIELD_EDIT_FIRST_NAME | self::FIELD_REQUIRED_FIRST_NAME
             | self::FIELD_EDIT_SECOND_NAME | self::FIELD_REQUIRED_SECOND_NAME
             | self::FIELD_EDIT_PHONE | self::FIELD_REQUIRED_PHONE;
