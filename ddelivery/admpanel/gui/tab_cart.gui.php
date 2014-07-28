@@ -8,7 +8,7 @@
 function tab_cart_ddelivery($data, $option = false) {
 
     global $PHPShopGUI;
-    $PHPShopGUI->addJSFiles('tab_cart.gui.js');
+    //$PHPShopGUI->addJSFiles('tab_cart.gui.js');
 
     // Обновление данных при AJAX
     if ($option == 'ajax') {
@@ -84,7 +84,7 @@ function tab_cart_ddelivery($data, $option = false) {
 
    // $GetDeliveryPrice = $PHPShopOrder->getDeliverySumma();
     $disCart.="
-<tr class=row3 onclick=\"miniWin('adm_order_deliveryID.php?deliveryID=" . $order['Person']['dostavka_metod'] . "&orderID=" . $data['id'] . "',400,270,event)\" onmouseover=\"show_on('r" . $n . "')\" id=\"r" . $n . "\" onmouseout=\"show_out('r" . $n . "')\">
+<tr class=row3  onmouseover=\"show_on('r" . $n . "')\" id=\"r" . $n . "\" onmouseout=\"show_out('r" . $n . "')\">
   <td style=\"padding:3\">$n</td>
   <td style=\"padding:3\"></td>
   <td style=\"padding:3\">Доставка - " . $PHPShopDelivery->getCity() . "</td>
@@ -136,6 +136,7 @@ function tab_cart_ddelivery($data, $option = false) {
 </table>";
 
 // Форма добавления товара и скидок
+    /*
     if (empty($option))
         $disp.="
     <table width=\"100%\" cellpadding=0 cellspacing=0>
@@ -160,7 +161,7 @@ function tab_cart_ddelivery($data, $option = false) {
 </tr>
 </table>
 ";
-
+*/
     return $disp;
 
 }
