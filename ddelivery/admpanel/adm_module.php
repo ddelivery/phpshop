@@ -58,7 +58,7 @@ function _prepareSelect( $val, $arrVals )
 
 function actionStart() {
     global $PHPShopGUI,$PHPShopSystem,$SysValue,$_classPath,$PHPShopOrm;
-
+    print_r($PHPShopOrm);
     $PHPShopGUI->dir=$_classPath."admpanel/";
     $PHPShopGUI->title="Настройки";
     $PHPShopGUI->size="1550,750";

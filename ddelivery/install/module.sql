@@ -43,6 +43,8 @@ CREATE TABLE IF NOT EXISTS `ddelivery_module_system` (
   `methodval2` varchar(64) NOT NULL,
   `methodval3` varchar(64) NOT NULL,
   `delivery_id` varchar(64) NOT NULL,
+  `ros_price` varchar(64) NOT NULL,
+  `ros_duiring` varchar(64) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=cp1251 ;
 
