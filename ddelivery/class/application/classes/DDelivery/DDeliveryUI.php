@@ -970,6 +970,7 @@ class DDeliveryUI
         {
             throw new DDeliveryException(implode(', ', $errors));
         }
+        return true;
     }
 
     /**

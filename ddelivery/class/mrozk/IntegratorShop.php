@@ -162,12 +162,11 @@ class IntegratorShop extends PluginFilters {
 
                 $products[] = new \DDelivery\Order\DDeliveryProduct( $item['id'],
                     $width, $height, $lenght, $weight,
-                    $item['price'], $item['num'], $item['name']);
+                    $item['price'], $item['num'], iconv('windows-1251', 'UTF-8',$item['name']));
 
 
             }
         }
-        
 
         return $products;
     }
