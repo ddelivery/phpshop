@@ -105,7 +105,26 @@ class DDeliveryUI
         }
         $this->cache = new DCache( $this, $this->shop->getCacheExpired(), $this->shop->isCacheEnabled(), $this->pdo, $this->pdoTablePrefix );
     }
+    function record_sort($records, $field, $reverse=false)
+    {
+        $hash = array();
 
+        foreach($records as $record)
+        {
+            $hash[$record[$field]] = $record;
+        }
+
+        ($reverse)? krsort($hash) : ksort($hash);
+
+        $records = array();
+
+        foreach($hash as $record)
+        {
+            $records []= $record;
+        }
+
+        return $records;
+    }
     /**
      *
      * Залоггировать ошибку
@@ -583,7 +602,7 @@ class DDeliveryUI
     	if( $this->shop->preGoToFindPoints( $this->order ))
     	{
             $response = $this->getCourierDeliveryInfoForCity($order);
-
+            $this->record_sort($response, 'total_price');
             if( count( $response ) )
             {
                 foreach ($response as $p)
@@ -1644,6 +1663,8 @@ class DDeliveryUI
         }
         $staticURL = $this->shop->getStaticPath();
         $selfCompanyList = $this->getSelfDeliveryInfoForCity( $this->order );
+        $selfCompanyList = $this->record_sort($selfCompanyList, "total_price");
+
         $selfCompanyList = $this->_getOrderedDeliveryInfo( $selfCompanyList );
         $selfCompanyList = $this->shop->filterSelfInfo($selfCompanyList);
 

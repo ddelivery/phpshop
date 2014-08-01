@@ -123,7 +123,7 @@
                  jQuery_1_11('#test-modal').modal().close();
 
                  UpdateDelivery2( DDid, data.orderId );
-                 console.log(data.comment);
+
                  jQuery_1_11('#adr_name').val(data.comment);
                  //console.log(data);
                  orderCallBack(data);
@@ -131,8 +131,10 @@
                  //alert(data.comment+ ' интернет магазину нужно взять с пользователя за доставку '+data.clientPrice+' руб. OrderId: '+data.orderId);
              }
          };
+         order_form = $('#forma_order').serializeArray();
+         order_form = $.param(order_form);
 
-         DDelivery.delivery('ddelivery', '@bidloOrder@', params, callback);
+         DDelivery.delivery('ddelivery', '@bidloOrder@' + order_form, params, callback);
 
     }
 
@@ -140,6 +142,13 @@
 <script type="text/javascript">
 
     jQuery_1_11(document).ready(function() {
+        /*
+        alert(screen.width);
+        alert(screen.height);
+        */
+        var marginCoof = ( screen.height - 650 )/3  - 10;
+
+        jQuery_1_11('#test-modal').css('margin-top', marginCoof + 'px');
 
         jQuery_1_11(document).on('click', '.trigger',function(){
             jQuery_1_11('#test-modal').modal().open();

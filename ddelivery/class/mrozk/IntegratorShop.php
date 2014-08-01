@@ -16,6 +16,8 @@ class IntegratorShop extends PluginFilters {
 
     public $cmsSettings;
 
+    public $fields;
+
     protected  $cmsOrderStatus = array( DDStatusProvider::ORDER_IN_PROGRESS => 0,
                                         DDStatusProvider::ORDER_CONFIRMED => 2,
                                         DDStatusProvider::ORDER_IN_STOCK => 14,
@@ -29,16 +31,9 @@ class IntegratorShop extends PluginFilters {
                                         DDStatusProvider::ORDER_WAITING => 25,
                                         DDStatusProvider::ORDER_CANCEL => 26 );
 
-    public function __construct()
+    public function __construct( $fields = array() )
     {
-        /*
-        $_classPath="../../../../";
-        $PHPShopModules = new PHPShopModules($_classPath."modules/");
-        $PHPShopOrm = new PHPShopOrm($PHPShopModules->getParam("base.ddelivery.ddelivery_system"));
-        print_r($PHPShopModules->getParam("base.ddelivery.ddelivery_system"));
-        $this->cmsSettings = $PHPShopOrm->select();
-        */
-
+        $this->fields = $fields;
         $query = 'SELECT * FROM ddelivery_module_system WHERE id = 1';
         $cur = mysql_query($query);
         $this->cmsSettings = mysql_fetch_assoc($cur);
@@ -348,6 +343,12 @@ class IntegratorShop extends PluginFilters {
         */
     }
     public function getClientLastName() {
+        if( isset( $_SESSION['dd_name_person'])  ){
+            $data = explode(' ', trim($_SESSION['dd_name_person']));
+            if(isset($data[0])){
+                return $data[0];
+            }
+        }
         return '';
     }
     /**
@@ -440,6 +441,12 @@ class IntegratorShop extends PluginFilters {
      * @return string|null
      */
     public function getClientFirstName() {
+        if( isset( $_SESSION['dd_name_person'])  ){
+            $data = explode(' ', trim($_SESSION['dd_name_person']));
+            if(isset($data[1])){
+                return $data[1];
+            }
+        }
         return '';
     }
 
@@ -452,9 +459,24 @@ class IntegratorShop extends PluginFilters {
      *@return string|null
      */
     public function getClientPhone() {
+        if( isset( $_SESSION['dd_tel_name'])  ){
+            $tel_name = $this->formatPhone( $_SESSION['dd_tel_name'] );
+            $tel_name  = substr( $tel_name, -10);
+            return '+7' . $tel_name;
+        }
         return '';
     }
-
+    /**
+     * �������� �� ������ �������� �������� �������
+     *
+     * @param string $phone
+     *
+     * @return string
+     */
+    public function formatPhone( $phone )
+    {
+        return preg_replace( array('/-/', '/\(/', '/\)/', '/\+7/', '/\s\s+/'), '', $phone );
+    }
     /**
      * Верни массив Адрес, Дом, Корпус, Квартира. Если не можешь можно вернуть все в одном поле и настроить через get*RequiredFields
      * @return string[]
