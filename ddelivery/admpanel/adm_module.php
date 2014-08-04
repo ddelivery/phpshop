@@ -94,19 +94,26 @@ function actionStart() {
     // Графический заголовок окна
     $PHPShopGUI->setHeader("Настройки модуля 'DD'","настройки поключения",$PHPShopGUI->dir."img/i_display_settings_med[1].gif");
 
-
-    $Tab1 = $PHPShopGUI->setField('API ключ(из личного кабинета)',
+    $Tab1 = $PHPShopGUI->setText('<b>Ключ можно получить в личном кабинете
+                                  DDelivery.ru, зарегистрировавшись на сайте ( для новых клиентов )</b>', 'none');
+    $Tab1 .= $PHPShopGUI->setField('API ключ(из личного кабинета)',
                                   $PHPShopGUI->setInputText(false,'api_new', $api,300));
 
+    $Tab1 .= $PHPShopGUI->setText('<b>ID способа доставки который соответсвует
+                                  ddelivery( способ создается автоматически ). Если нужно добавить еще, то ID добаавляете через кому. Например(5746,5747)</b>', 'none');
     $Tab1 .= $PHPShopGUI->setField('ID способа доставки DDelivery',
         $PHPShopGUI->setInputText(false,'delivery_id_new', $delivery_id,300));
 
+    $Tab1 .= $PHPShopGUI->setText('<b>Для отладки модуля используйте пожалуйста режим тестирования.</b>', 'none');
     $Tab1.=$PHPShopGUI->setField('Режим работы',$PHPShopGUI->setSelect('rezhim_new',$rezhim_value,400));
 
+    $Tab1 .= $PHPShopGUI->setText('<b>Вы можете снизить оценочную стоимость для уменьшения стоимости
+                                   доставки за счет снижения размеров страховки</b>', 'none');
     $Tab1.=$PHPShopGUI->setField('Какой % от стоимости товара страхуется',
                                 $PHPShopGUI->setInputText(false,'declared_new', $declared,300));
     $Tab1.= $PHPShopGUI->setText('<b>Соответствие полей</b>', 'none');
 
+    /*
     $Tab1.=$PHPShopGUI->setField('Ширина',
                                 $PHPShopGUI->setInputText(false,'width_new', $width,300));
 
@@ -115,7 +122,7 @@ function actionStart() {
 
     $Tab1.=$PHPShopGUI->setField('Высота',
         $PHPShopGUI->setInputText(false,'height_new', $height,300));
-
+    */
     $Tab1.=$PHPShopGUI->setField('Вес',
         $PHPShopGUI->setInputText(false,'weight_new', $weight,300));
 
@@ -158,7 +165,13 @@ function actionStart() {
         }
     }
 
-    $Tab5 = $PHPShopGUI->setField('Оплата на месте',$PHPShopGUI->setSelect('payment_new',$payment_value,400));
+
+    $Tab5  = $PHPShopGUI->setText('<b>Выберите поле соответствующее способу оплаты "оплата на месте".
+                                      Например "оплата курьеру". У вас в системе может быть только 1 такой способ</b>', 'none');
+    $Tab5 .= $PHPShopGUI->setField('Оплата на месте',$PHPShopGUI->setSelect('payment_new',$payment_value,400));
+
+    $Tab5 .= $PHPShopGUI->setText('<b>Выберите статус при котором заявки из вашей системы будут уходить в DDelivery.
+                                      Помните что отправка означает готовность отгрузить заказ на следующий рабочий день</b>', 'none');
     $Tab5 .= $PHPShopGUI->setField('Статус для отправки',$PHPShopGUI->setSelect('status_new',$status_value,400));
     /*
     $Tab5 .= $PHPShopGUI->setField('Фамилия',
@@ -167,7 +180,8 @@ function actionStart() {
         $PHPShopGUI->setInputText(false,'name_new', $name,300));
     */
     $Tab5.= $PHPShopGUI->setText('<b>Габариты по умолчанию</b>', 'none');
-
+    $Tab5 .= $PHPShopGUI->setText('<b>Данные габариты используются для определения цены доставки в случае, если у
+                                      товара не прописаны размеры. Просим внимательней отнестись к ввод данных полей</b>', 'none');
     $Tab5 .= $PHPShopGUI->setField('Ширина, см',
         $PHPShopGUI->setInputText(false,'def_width_new', $def_width,300));
 
@@ -178,8 +192,9 @@ function actionStart() {
     $Tab5 .= $PHPShopGUI->setField('Вес, кг',
         $PHPShopGUI->setInputText(false,'def_weight_new', $def_weight,300));
 
-    $Tab2 =$PHPShopGUI->setField('Доступные способы',$PHPShopGUI->setSelect('type_new',$type_value,400));
-    $Tab2.= $PHPShopGUI->setText('<b>Выберите компании ПВЗ, которые вы бы хотели сделать НЕ доступными для для ваших клиентов</b>', 'none');
+    $Tab2 =  $PHPShopGUI->setText('<b>Настройка влияет на то, какие методы будут отображатся</b>', 'none');
+    $Tab2 .= $PHPShopGUI->setField('Доступные способы',$PHPShopGUI->setSelect('type_new',$type_value,400));
+    $Tab2 .= $PHPShopGUI->setText('<b>Выберите компании ПВЗ, которые вы бы хотели сделать НЕ доступными для для ваших клиентов</b>', 'none');
 
     $pvz_companies = unserialize( $pvz_companies );
     $cur_companies = unserialize( $cur_companies );
@@ -243,7 +258,12 @@ function actionStart() {
     $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',24,'Сити Курьер',(in_array(24,$cur_companies)?'checked':''));
     $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',7,'QIWI Post',(in_array(7,$cur_companies)?'checked':''));
 
-    $Tab3 = $PHPShopGUI->setField('от',
+
+
+    $Tab3  =  $PHPShopGUI->setText('<b>Как меняется стоимость доставки в зависимости от размера заказа в руб.
+                                       Вы можете гибко настроить условия доставки,чтобы учесть вашу
+                                       маркетинговую политику.</b>', 'none');
+    $Tab3 .= $PHPShopGUI->setField('от',
                         $PHPShopGUI->setInputText(false,'from1_new', $from1,100 ),'left');
 
     $Tab3 .= $PHPShopGUI->setField('до',
@@ -307,7 +327,8 @@ function actionStart() {
     $Tab3 .= $PHPShopGUI->setField('руб',
         $PHPShopGUI->setInputText(false,'shag_new', $shag,100));
 
-    $Tab3.= $PHPShopGUI->setCheckbox('zabor_new',1,'Выводить стоимость забора в цене доставки',(($zabor == '1')?'checked':''));
+    $Tab3 .=  $PHPShopGUI->setText('<b>В некоторых случаях есть необходимость включить цену забора</b>', 'none');
+    $Tab3 .= $PHPShopGUI->setCheckbox('zabor_new',1,'Выводить стоимость забора в цене доставки',(($zabor == '1')?'checked':''));
 
     /*
 
@@ -345,29 +366,22 @@ function actionStart() {
     $Tab4.= $PHPShopGUI->setText('<b>ПВЗ</b>', 'none');
     $Tab4.=$PHPShopGUI->setField('',
         $PHPShopGUI->setTextarea('custom_point_new',$custom_point));
-    // $_POST['pvz_companies'] = serialize('pvz_companies');
-   // $_POST['cur_companies'] = serialize('cur_companies');
-    //$Tab1=$PHPShopGUI->setField('Первое поле DD',$PHPShopGUI->setInputText(false,'city_new', $city,300,'<br>* Somme comment'));
-
-    /*
-    $Tab1=$PHPShopGUI->setField('Третье поле',$PHPShopGUI->setSelect('type_new', $type_value, 150));
-
-    $Tab1.=$PHPShopGUI->setField('Второе поле',$PHPShopGUI->setInputText(false,'name_new', $name,300));
 
 
-    $Tab1.=$PHPShopGUI->setField('Четвертое поле',$PHPShopGUI->setSelect('type_reception_new',$type_reception_value,400));
 
-    */
-    $info='some info about module';
+    $info='Уважаемые пользователи! Мы постарались сделать настройки наиболее гибкими,
+           но от вас требуется внимательность при выборе параметров. Если Вам непонятно
+           значение каких-то настроек, просим связатся с менеджерами DD. В случае, если
+           Вам потребуется больше настроек, так же просим связатся с клиентским отделом info@ddelivery.ru, Skype - ddelivery .
+           ';
 
-    //$Tab2=$PHPShopGUI->setInfo($info, 200, '96%');
+    $Tab7 = $PHPShopGUI->setInfo($info, 200, '96%');
 
-    // Форма регистрации
-    //$Tab3=$PHPShopGUI->setPay($serial,false);
+
 
     // Вывод формы закладки
     $PHPShopGUI->setTab(array("Основные",$Tab1,480),array("Основные",$Tab5,470),array("Настройки способов доставки",$Tab2,370),
-          array("Настройки цены доставки",$Tab3,270) /*, array("Добавление собственных служб доставки",$Tab4,320) */);
+          array("Настройки цены доставки",$Tab3,300), array("Описание",$Tab7, 320) /*, array("Добавление собственных служб доставки",$Tab4,320) */);
 
     // Вывод кнопок сохранить и выход в футер
     $ContentFooter=
