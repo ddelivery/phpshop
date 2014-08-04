@@ -14,6 +14,10 @@ function addDDeliveryPanel( $data ){
             $ddeliveryPrice =  $ddeliveryUI->getDeliveryPrice( $ddOrder->localId );
             $ddID = (empty($ddOrder->ddeliveryID)? 'Заявка на DDelivery.ru не создана': 'ID заявки на DDelivery.ru - ' . $ddOrder->ddeliveryID);
             $Tab1 = $PHPShopGUI->setField(__("DDelivery"), 'Стоимость доставки - ' . $ddeliveryPrice . '<br /> ' . $ddID, 'left');
+            $Tab1 .= $PHPShopGUI->setField(__("Информация о заказе"), 'Тип доставки - ' . (($ddOrder->type == 1)?'Самовывоз':'Курьером') . '<br /> ' .
+                                              'Срок - ' . $ddOrder->getPoint()->getDeliveryInfo()->get('delivery_time_avg') . ' дня' . '<br /> ' .
+                                              'Компания - ' . iconv('UTF-8', 'windows-1251',(($ddOrder->type == 1)?$ddOrder->getPoint()->company:$ddOrder->getPoint()->delivery_company_name)) );
+
             $PHPShopGUI->addTab(array("Доставка DDelivery",$Tab1,450));
 
             if (file_exists( __DIR__ . '/gui/tab_cart.gui.php')) {
