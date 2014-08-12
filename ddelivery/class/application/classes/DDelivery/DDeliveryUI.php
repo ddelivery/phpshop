@@ -93,7 +93,7 @@ class DDeliveryUI
 
         $this->sdk = new Sdk\DDeliverySDK($dShopAdapter->getApiKey(), $this->shop->isTestMode());
 
-        // �?нициализируем работу с БД
+        // Инициализируем работу с БД
         $this->_initDb($dShopAdapter);
 
         // Формируем объект заказа
@@ -104,27 +104,9 @@ class DDeliveryUI
             $this->order->amount = $this->shop->getAmount();
         }
         $this->cache = new DCache( $this, $this->shop->getCacheExpired(), $this->shop->isCacheEnabled(), $this->pdo, $this->pdoTablePrefix );
+
     }
-    function record_sort($records, $field, $reverse=false)
-    {
-        $hash = array();
 
-        foreach($records as $record)
-        {
-            $hash[$record[$field]] = $record;
-        }
-
-        ($reverse)? krsort($hash) : ksort($hash);
-
-        $records = array();
-
-        foreach($hash as $record)
-        {
-            $records []= $record;
-        }
-
-        return $records;
-    }
     /**
      *
      * Залоггировать ошибку
@@ -500,7 +482,7 @@ class DDeliveryUI
 
 
     /**
-     * �?нициализирует массив заказов из массива id заказов локальной БД
+     * Инициализирует массив заказов из массива id заказов локальной БД
      *
      * @param int[] $ids массив с id заказов
      *
@@ -815,6 +797,7 @@ class DDeliveryUI
                     }
                 }
             }
+
         }
         $points = $this->shop->filterPointsSelf( $result_points , $order, $order->city );
 
@@ -917,7 +900,7 @@ class DDeliveryUI
         }
         if(!strlen( $order->getToName() ))
         {
-        	$errors[] = "Укажите пожалуйста Ф�?О";
+        	$errors[] = "Укажите пожалуйста ФИО";
         }
         if(!$this->isValidPhone( $order->toPhone ))
         {
@@ -995,7 +978,7 @@ class DDeliveryUI
         }
         if(!strlen( $order->getToName() ))
         {
-        	$errors[] = "Укажите пожалуйста Ф�?О";
+        	$errors[] = "Укажите пожалуйста ФИО";
         }
         if(!$this->isValidPhone( $order->toPhone ))
         {
@@ -1286,7 +1269,7 @@ class DDeliveryUI
     }
 
     /**
-     * Назначить Ф�?О доставки
+     * Назначить ФИО доставки
      *
      */
     public function setOrderToName( $name )
@@ -1429,7 +1412,7 @@ class DDeliveryUI
                                 return;
                             }
                         }
-                        $pointSelf->description_in = iconv('UTF-8','CP1251', $pointSelf->description_in);
+
                         echo json_encode(array(
                             'point'=>array(
                                 'description_in' => $pointSelf->description_in,
@@ -1587,7 +1570,7 @@ class DDeliveryUI
             $comment = 'Самовывоз, '.$point->address;
             $point = $this->getSelfPointByID($point->_id, $this->order);
             $this->shop->filterSelfInfo(array($point->getDeliveryInfo()));
-        } elseif($point instanceof DDeliveryPointCourier)    {
+        } elseif($point instanceof DDeliveryPointCourier) {
             $comment = 'Доставка курьером по адресу '.$this->order->getFullAddress();
             $this->getCourierPointByCompanyID($point->getDeliveryInfo()->delivery_company, $this->order);
         }
@@ -1644,6 +1627,17 @@ class DDeliveryUI
         return $cityList;
     }
 
+
+    function record_sort( $records )
+    {
+        usort($records,function($a, $b){
+            if ($a['delivery_price'] == $b['delivery_price']) {
+                return 0;
+            }
+            return ($a['delivery_price'] < $b['delivery_price']) ? -1 : 1;
+        });
+        return $records;
+    }
     /**
      * Страница с картой
      *
@@ -1657,17 +1651,67 @@ class DDeliveryUI
 
         $points = $this->getSelfPoints($this->order);
         $this->saveFullOrder($this->getOrder());
-        $pointsJs = array();
 
-        foreach($points as $point) {
-            $pointsJs[] = $point->toJson();
-        }
+
         $staticURL = $this->shop->getStaticPath();
+
         $selfCompanyList = $this->getSelfDeliveryInfoForCity( $this->order );
         $selfCompanyList = $this->record_sort($selfCompanyList, "delivery_price");
 
         $selfCompanyList = $this->_getOrderedDeliveryInfo( $selfCompanyList );
         $selfCompanyList = $this->shop->filterSelfInfo($selfCompanyList);
+
+        $pointsJs = array();
+
+        foreach($points as $point) {
+            $pointsJs[] = $point->toJson();
+        }
+        /*
+        $selfCompanyList = $this->getSelfDeliveryInfoForCity( $this->order );
+        //print_r($selfCompanyList);
+        //$selfCompanyList = $this->record_sort($selfCompanyList, "total_price");
+        $deliveryInfo = $this->_getOrderedDeliveryInfo( $selfCompanyList );
+
+        if( count( $points ) )
+        {
+            foreach ( $points as $item )
+            {
+                $companyID = $item->get('company_id');
+
+                if( array_key_exists( $companyID, $deliveryInfo ) )
+                {
+                    $item->setDeliveryInfo( $deliveryInfo[$companyID] );
+                    $item->pointID = $item->get('_id');
+                    $result_points[] = $item;
+                }
+            }
+        }
+        */
+        //print_r($selfCompanyList);
+        /*
+        $companyInfo = $this->getSelfDeliveryInfoForCity( $this->order );
+
+        $deliveryInfo = $this->_getOrderedDeliveryInfo( $companyInfo );
+        */
+        /*
+        if( count( $points ) )
+        {
+            foreach ( $points as $item )
+            {
+                $companyID = $item->get('company_id');
+
+                if( array_key_exists( $companyID, $deliveryInfo ) )
+                {
+                    $item->setDeliveryInfo( $deliveryInfo[$companyID] );
+                    $item->pointID = $item->get('_id');
+                    $result_points[] = $item;
+                }
+            }
+        }
+        */
+        //$selfCompanyList = $this->_getOrderedDeliveryInfo( $selfCompanyList );
+
+        //$selfCompanyList = $this->shop->filterSelfInfo($selfCompanyList);
 
         if($dataOnly) {
             ob_start();
@@ -1925,17 +1969,17 @@ class DDeliveryUI
             28 => array('name' => 'DPD Express', 'ico' => 'dpd'),
             29 => array('name' => 'DPD Classic', 'ico' => 'dpd'),
             30 => array('name' => 'EMS', 'ico' => 'ems'),
-            31 => array('name' => 'Grastin', 'ico' => 'pack'),
+            31 => array('name' => 'Grastin', 'ico' => 'grastin'),
             33 => array('name' => 'Aplix', 'ico' => 'aplix'),
             42 => array('name' => 'Imlogistics', 'ico' => 'imlogistics'),
             43 => array('name' => 'Imlogistics', 'ico' => 'imlogistics'),
-            41 => array('name' => '���', 'ico' => 'kit'),
+            41 => array('name' => 'Кит', 'ico' => 'kit'),
         );
     }
 
     /**
      *
-     * �?нициализирует свойства объекта DDeliveryOrder из stdClass полученный из
+     * Инициализирует свойства объекта DDeliveryOrder из stdClass полученный из
      * запроса БД SQLite
      *
      * @param DDeliveryOrder $currentOrder
@@ -1970,6 +2014,7 @@ class DDeliveryUI
         $currentOrder->toEmail = $item->to_email;
         $currentOrder->comment = $item->comment;
         $currentOrder->cityName = $item->city_name;
+        $currentOrder->toHousing = $item->to_housing;
     }
 
     /**
