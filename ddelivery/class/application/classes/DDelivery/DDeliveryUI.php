@@ -602,7 +602,7 @@ class DDeliveryUI
     	if( $this->shop->preGoToFindPoints( $this->order ))
     	{
             $response = $this->getCourierDeliveryInfoForCity($order);
-            $this->record_sort($response, 'total_price');
+            $this->record_sort($response, 'delivery_price');
             if( count( $response ) )
             {
                 foreach ($response as $p)
@@ -1664,7 +1664,7 @@ class DDeliveryUI
         }
         $staticURL = $this->shop->getStaticPath();
         $selfCompanyList = $this->getSelfDeliveryInfoForCity( $this->order );
-        $selfCompanyList = $this->record_sort($selfCompanyList, "total_price");
+        $selfCompanyList = $this->record_sort($selfCompanyList, "delivery_price");
 
         $selfCompanyList = $this->_getOrderedDeliveryInfo( $selfCompanyList );
         $selfCompanyList = $this->shop->filterSelfInfo($selfCompanyList);
@@ -1926,6 +1926,10 @@ class DDeliveryUI
             29 => array('name' => 'DPD Classic', 'ico' => 'dpd'),
             30 => array('name' => 'EMS', 'ico' => 'ems'),
             31 => array('name' => 'Grastin', 'ico' => 'pack'),
+            33 => array('name' => 'Aplix', 'ico' => 'aplix'),
+            42 => array('name' => 'Imlogistics', 'ico' => 'imlogistics'),
+            43 => array('name' => 'Imlogistics', 'ico' => 'imlogistics'),
+            41 => array('name' => 'Êèò', 'ico' => 'kit'),
         );
     }
 
