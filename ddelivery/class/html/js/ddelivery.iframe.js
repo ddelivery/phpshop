@@ -49,6 +49,7 @@ var DDeliveryIframe = (function () {
 
             }, 'json').fail(function(responce, errorType) {
                 if(typeof(console.log) != 'undefined')
+
                 $('#ddelivery_loader .loader').hide();
                 $('#ddelivery_loader .load_error').show();
             });

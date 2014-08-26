@@ -228,6 +228,20 @@ function actionStart() {
     $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',24,'Сити Курьер',(in_array(24,$pvz_companies)?'checked':''));
     $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',7,'QIWI Post',(in_array(7,$pvz_companies)?'checked':''));
 
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',35,'Aplix DPD Consumer',(in_array(35,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',36,'Aplix DPD parcel',(in_array(36,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',37,'Aplix IML самовывоз',(in_array(37,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',39,'Aplix Qiwi',(in_array(39,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',40,'Aplix СДЭК',(in_array(40,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',42,'IML самовывоз',(in_array(42,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',43,'IML курьерская доставка',(in_array(43,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',44,'Почта России',(in_array(44,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',45,'Aplix курьерская доставка',(in_array(45,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',46,'LENOD курьерская служба',(in_array(46,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',47,'TelePost',(in_array(47,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',48,'Aplix IML курьерская доставка',(in_array(48,$pvz_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',49,'IML Забор',(in_array(49,$pvz_companies)?'checked':''));
+
     $Tab2.= $PHPShopGUI->setText('<b>Выберите компании курьерской доставки, которые вы бы хотели сделать НЕ доступными для для ваших клиентов</b>', 'none');
      $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',4,'Boxberry',(in_array(4,$cur_companies)?'checked':''));
     $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',21,'Boxberry Express',(in_array(21,$cur_companies)?'checked':''));
@@ -258,7 +272,19 @@ function actionStart() {
     $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',24,'Сити Курьер',(in_array(24,$cur_companies)?'checked':''));
     $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',7,'QIWI Post',(in_array(7,$cur_companies)?'checked':''));
 
-
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',35,'Aplix DPD Consumer',(in_array(35,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',36,'Aplix DPD parcel',(in_array(36,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',37,'Aplix IML самовывоз',(in_array(37,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',39,'Aplix Qiwi',(in_array(39,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',40,'Aplix СДЭК',(in_array(40,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',42,'IML самовывоз',(in_array(42,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',43,'IML курьерская доставка',(in_array(43,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',44,'Почта России',(in_array(44,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',45,'Aplix курьерская доставка',(in_array(45,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',46,'LENOD курьерская служба',(in_array(46,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',47,'TelePost',(in_array(47,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',48,'Aplix IML курьерская доставка',(in_array(48,$cur_companies)?'checked':''));
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',49,'IML Забор',(in_array(49,$cur_companies)?'checked':''));
 
     $Tab3  =  $PHPShopGUI->setText('<b>Как меняется стоимость доставки в зависимости от размера заказа в руб.
                                        Вы можете гибко настроить условия доставки,чтобы учесть вашу
@@ -380,7 +406,7 @@ function actionStart() {
 
 
     // Вывод формы закладки
-    $PHPShopGUI->setTab(array("Основные",$Tab1,480),array("Основные",$Tab5,470),array("Настройки способов доставки",$Tab2,370),
+    $PHPShopGUI->setTab(array("Основные",$Tab1,480),array("Основные",$Tab5,470),array("Настройки способов доставки",$Tab2,520),
           array("Настройки цены доставки",$Tab3,300), array("Описание",$Tab7, 320) /*, array("Добавление собственных служб доставки",$Tab4,320) */);
 
     // Вывод кнопок сохранить и выход в футер

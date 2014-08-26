@@ -38,16 +38,21 @@ function delivery_hook($obj, $data)
     {
         $ddID = (int)$_POST['order_id'];
         if( $ddID )
-        {
-            $IntegratorShop = new IntegratorShop();
-            $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
-            $deliveryPrice = $ddeliveryUI->getDeliveryPrice($ddID);
-            $hook['delivery'] = $deliveryPrice;
-            $hook['total']= $_RESULT['total'] + $deliveryPrice;
+        {   try{
+                $IntegratorShop = new IntegratorShop();
+                $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
+                $order = $ddeliveryUI->getOrder();
+                $deliveryPrice = $ddeliveryUI->getClientPrice( $order->getPoint() );
+                $hook['delivery'] = $deliveryPrice;
+                $hook['total']= $_RESULT['total'] + $deliveryPrice;
+            }catch (\DDeliveryException $e){
+                $ddeliveryUI->logMessage($e);
+            }
         }
         $hook['dellist'] = '<table collspan="0" rowspan="0"><tr><td>' . $_RESULT['dellist'] . '</td><td >' . '<a href="javascript::void(0)" style="" class="trigger ddbutton">Выбрать способ доставки</a>' . '</td></tr></table>';
         return  $hook;
     }
+
     //$title_id = search_ddelivery_delivery($option['city'], $xid);
     /*
     $hook['dellist'] = '<table collspan="0" rowspan="0"><tr><td>' . $_RESULT['dellist'] . '</td><td style=" padding-left: 20px; padding-top: 36px;">' . 'putin hyjlo' . '</td></tr></table>';

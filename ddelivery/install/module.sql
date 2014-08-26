@@ -53,52 +53,39 @@ INSERT INTO `ddelivery_module_system` (`id`, `type`, `rezhim`, `declared`, `widt
 
 DROP TABLE IF EXISTS `ddelivery_module_cache`;
 
-CREATE TABLE IF NOT EXISTS `ddelivery_module_cache` (
-  `id`  int NOT NULL AUTO_INCREMENT ,
-  `sig`  varchar(255) NULL ,
-  `data_container`  text NULL ,
-  `expired`  datetime NULL ,
-  PRIMARY KEY (`id`)
-);
+
+CREATE TABLE `ddelivery_module_cache` (
+  `id`  int NOT NULL,
+  `data_container`  MEDIUMTEXT NULL ,
+  `expired`  datetime NULL,
+  `filter_company` TEXT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `dd_cache` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=cp1251;
 
 DROP TABLE IF EXISTS `ddelivery_module_orders`;
 
-CREATE TABLE IF NOT EXISTS `ddelivery_module_orders` (
+CREATE TABLE `ddelivery_module_orders` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `payment_variant` varchar(255) DEFAULT NULL,
-  `shop_refnum` varchar (64) DEFAULT NULL,
-  `local_status` int(11) DEFAULT NULL,
+  `shop_refnum` int(11) DEFAULT NULL,
+  `local_status` varchar(255) DEFAULT NULL,
   `dd_status` int(11) DEFAULT NULL,
   `type` int(11) DEFAULT NULL,
-  `amount` float(11,2) DEFAULT NULL,
-  `products` text DEFAULT NULL,
   `to_city` int(11) DEFAULT NULL,
+  `point_id` int(11) DEFAULT NULL,
   `date` datetime DEFAULT NULL,
   `ddeliveryorder_id` int(11) DEFAULT NULL,
-  `point_id` int(11) DEFAULT NULL,
   `delivery_company` int(11) DEFAULT NULL,
-  `dimension_side1` int(11) DEFAULT NULL,
-  `dimension_side2` int(11) DEFAULT NULL,
-  `dimension_side3` int(11) DEFAULT NULL,
-  `confirmed` int(11) DEFAULT NULL,
-  `weight` int(11) DEFAULT NULL,
-  `declared_price` int(11) DEFAULT NULL,
-  `payment_price` int(11) DEFAULT NULL,
-  `to_name` varchar(255) DEFAULT NULL,
-  `to_phone` varchar(255) DEFAULT NULL,
-  `goods_description` text DEFAULT NULL,
-  `to_street` varchar(255) DEFAULT NULL,
-  `to_house` varchar(255) DEFAULT NULL,
-  `to_flat` varchar(255) DEFAULT NULL,
-  `to_email` varchar(255) DEFAULT NULL,
-  `first_name` varchar(255) DEFAULT NULL,
-  `second_name` varchar(255) DEFAULT NULL,
-  `serilize` text DEFAULT NULL,
+  `order_info` text DEFAULT NULL,
+  `cache` text DEFAULT NULL,
   `point` text DEFAULT NULL,
-  `comment` varchar(255) DEFAULT NULL,
-  `city_name` varchar(255) DEFAULT NULL,
+  `add_field1` varchar(255) DEFAULT NULL,
+  `add_field2` varchar(255) DEFAULT NULL,
+  `add_field3` varchar(255) DEFAULT NULL,
+  `cart` text DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=cp1251;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 

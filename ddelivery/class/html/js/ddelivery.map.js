@@ -58,7 +58,7 @@ Map = (function () {
                     });
             });
 
-            // Р?РЅРїСѓС‚ РїРѕРёСЃРєР°
+            // РРЅРїСѓС‚ РїРѕРёСЃРєР°
             $('.map__search input[type=text]').keyup(this.citySearch);
             $('.map__search input[type=submit]').click(function () {
                 th.citySearch();
@@ -411,19 +411,19 @@ Map = (function () {
                 point.name = point.company + ' #' + point._id;
             }
             $('.map-popup__info__title h2').html(point.name);
-            $('.map-popup__info__table .rub').html('<img src="' + DDeliveryIframe.staticUrl + '/img/ajax_loader_min.gif"/> ');
+            $('.map-popup__info__table .rub').html('<img src="' + DDeliveryIframe.staticUrl + 'img/ajax_loader_min.gif"/> ');
             var payType = [];
             if (point.is_cash) {
-                payType.push('Наличными');
+                payType.push('РќР°Р»РёС‡РЅС‹РјРё');
             }
             if (point.is_card) {
-                payType.push('Банковскими картами');
+                payType.push('Р‘Р°РЅРєРѕРІСЃРєРёРјРё РєР°СЂС‚Р°РјРё');
             }
             if (payType.length == 0) {
-                payType.push('Предоплата');
+                payType.push('РџСЂРµРґРѕРїР»Р°С‚Р°');
             }
             $('.map-popup__info__table .payType').html(payType.join('<br>'));
-            $('.map-popup__info__table .type').html(point.type == 1 ? 'Ячейка' : 'Живой пункт');
+            $('.map-popup__info__table .type').html(point.type == 1 ? 'РЇС‡РµР№РєР°' : 'Р–РёРІРѕР№ РїСѓРЅРєС‚');
 
             $('.map-popup__info__table .day').hide();
 

@@ -1,10 +1,10 @@
 @ComStartReg@
 <script src="phpshop/modules/ddelivery/class/html/js/ddelivery.js"></script>
-<script src="phpshop/modules/ddelivery/class/example/assets/jquery.min.js"></script>
+<script src="phpshop/modules/ddelivery/class/mrozk/assets/jquery.min.js"></script>
 <script type="text/javascript">var jQuery_1_11 = jQuery.noConflict();</script>
-<link rel="stylesheet" type="text/css" href="phpshop/modules/ddelivery/class/example/assets/the-modal.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="phpshop/modules/ddelivery/class/example/assets/demo-modals.css" media="screen" />
-<script src="phpshop/modules/ddelivery/class/example/assets/jquery.the-modal.js"></script>
+<link rel="stylesheet" type="text/css" href="phpshop/modules/ddelivery/class/mrozk/assets/the-modal.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="phpshop/modules/ddelivery/class/mrozk/assets/demo-modals.css" media="screen" />
+<script src="phpshop/modules/ddelivery/class/mrozk/assets/jquery.the-modal.js"></script>
 <style type="text/css">
     .ddbutton {
         background-image: none;
@@ -95,7 +95,6 @@
     }
     function DDeliveryStart()
     {
-
          //var DDid = @DDid@;
 
          //document.getElementById('parent_popup').style.display='block'
@@ -152,7 +151,6 @@
 
         jQuery_1_11(document).on('click', '.trigger',function(){
             jQuery_1_11('#test-modal').modal().open();
-
             DDeliveryStart();
         });
 

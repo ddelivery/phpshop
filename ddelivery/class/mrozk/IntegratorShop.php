@@ -247,13 +247,8 @@ class IntegratorShop extends PluginFilters {
      * @param bool $customPoint Если true, то заказ обрабатывается магазином
      * @return void
      */
-    public function onFinishChange($orderId, \DDelivery\Order\DDeliveryOrder $order, $customPoint)
+    public function onFinishChange(\DDelivery\Order\DDeliveryOrder $order)
     {
-        if($customPoint){
-            // Это условие говорит о том что нужно обрабатывать заказ средствами CMS
-        }else{
-            // Запомни id заказа
-        }
 
     }
 
@@ -266,13 +261,13 @@ class IntegratorShop extends PluginFilters {
         return $this->cmsSettings['declared'];
     }
 
+
     /**
-     * Должен вернуть те компании которые НЕ показываются в курьерке
-     * см. список компаний в DDeliveryUI::getCompanySubInfo()
+     * Должен вернуть те компании которые  показываются в курьерке
+     *
      * @return int[]
      */
-    public function filterCompanyPointCourier()
-    {
+    public function filterCompanyPointCourier(){
         $cur_companies = unserialize( $this->cmsSettings['cur_companies'] );
         if( empty( $cur_companies ) )
         {
@@ -281,19 +276,17 @@ class IntegratorShop extends PluginFilters {
         else
         {
             $res = array_values($cur_companies) ;
-
         }
         return $res;
         // TODO: Implement filterCompanyPointCourier() method.
     }
 
     /**
-     * Должен вернуть те компании которые НЕ показываются в самовывозе
-     * см. список компаний в DDeliveryUI::getCompanySubInfo()
+     * Должен вернуть те компании которые  показываются в самовывозе
+     *
      * @return int[]
      */
-    public function filterCompanyPointSelf()
-    {
+    public function filterCompanyPointSelf(){
         $cur_companies = unserialize( $this->cmsSettings['pvz_companies'] );
         if( empty( $cur_companies ) )
         {
@@ -302,11 +295,12 @@ class IntegratorShop extends PluginFilters {
         else
         {
             $res = array_values($cur_companies) ;
-
         }
         return $res;
         // TODO: Implement filterCompanyPointSelf() method.
     }
+
+
 
     /**
      * Возвращаем способ оплаты константой PluginFilters::PAYMENT_, предоплата или оплата на месте. Курьер
