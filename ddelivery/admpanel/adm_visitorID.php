@@ -11,7 +11,7 @@ function addDDeliveryPanel( $data ){
         $ddOrder = $ddeliveryUI->getOrderByCmsID($data['uid']) ;   // ( $_REQUEST['visitorID'] ) ;
         if( $ddOrder !== null )
         {
-            $ddeliveryPrice =  $ddeliveryUI->getDeliveryPrice( $ddOrder->localId );
+            $ddeliveryPrice =  $ddeliveryUI->getOrderClientDeliveryPrice( $ddOrder);
             $ddID = (empty($ddOrder->ddeliveryID)? 'Заявка на DDelivery.ru не создана': 'ID заявки на DDelivery.ru - ' . $ddOrder->ddeliveryID);
             $Tab1 = $PHPShopGUI->setField(__("DDelivery"), 'Стоимость доставки - ' . $ddeliveryPrice . '<br /> ' . $ddID, 'left');
             $Tab1 .= $PHPShopGUI->setField(__("Информация о заказе"), 'Тип доставки - ' . (($ddOrder->type == 1)?'Самовывоз':'Курьером') . '<br /> ' .

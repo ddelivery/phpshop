@@ -85,7 +85,7 @@ use DDelivery\Sdk\Messager;
 
             $this->sdk = new Sdk\DDeliverySDK($dShopAdapter->getApiKey(), $this->shop->isTestMode());
 
-            // Инициализируем работу с БД
+            // �?нициализируем работу с БД
             $this->_initDb($dShopAdapter);
 
             // Формируем объект заказа
@@ -137,6 +137,19 @@ use DDelivery\Sdk\Messager;
             $cache->createTable();
             $order = new DataBase\Order($this->pdo, $this->pdoTablePrefix);
             $order->createTable();
+        }
+
+
+        public function getNotFinishedOrders(){
+            $orderDB = new DataBase\Order($this->pdo, $this->pdoTablePrefix);
+            $orders = $orderDB->getNotFinishedOrders();
+            $ddOrders = array();
+            if( count( $orders ) > 0 ){
+                foreach( $orders as $item ){
+                    $ddOrders[] = $this->initOrder($item->id);
+                }
+            }
+            return $ddOrders;
         }
 
         /**
@@ -327,7 +340,7 @@ use DDelivery\Sdk\Messager;
 
 
         /**
-         * Инициализирует массив заказов из массива id заказов локальной БД
+         * �?нициализирует массив заказов из массива id заказов локальной БД
          *
          * @param int $id идентификатор заказа
          *
@@ -418,7 +431,7 @@ use DDelivery\Sdk\Messager;
             }
             if(!strlen( $order->getToName() ))
             {
-                $errors[] = "Укажите пожалуйста ФИО";
+                $errors[] = "Укажите пожалуйста Ф�?О";
             }
             if(!$this->isValidPhone( $order->toPhone ))
             {
@@ -499,7 +512,7 @@ use DDelivery\Sdk\Messager;
             }
             if(!strlen( $order->getToName() ))
             {
-                $errors[] = "Укажите пожалуйста ФИО";
+                $errors[] = "Укажите пожалуйста Ф�?О";
             }
             if(!$this->isValidPhone( $order->toPhone ))
             {
@@ -744,7 +757,7 @@ use DDelivery\Sdk\Messager;
         }
 
         /**
-         * Назначить ФИО доставки
+         * Назначить Ф�?О доставки
          *
          */
         public function setOrderToName( $name )
@@ -1749,7 +1762,7 @@ use DDelivery\Sdk\Messager;
 
         /**
          *
-         * Инициализирует свойства объекта DDeliveryOrder из stdClass полученный из
+         * �?нициализирует свойства объекта DDeliveryOrder из stdClass полученный из
          * запроса БД SQLite
          *
          * @param DDeliveryOrder $currentOrder

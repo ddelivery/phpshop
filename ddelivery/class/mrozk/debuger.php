@@ -46,12 +46,20 @@ try
 {
 
     $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop);
+    $order = $ddeliveryUI->initOrder(36);
+    echo '<pre>';
+    //print_r($order);
+    echo '</pre>';
+    echo $ddeliveryUI->getOrderClientDeliveryPrice($order);
+    /*
     $order = $ddeliveryUI->getOrder();
+
     echo '<pre>';
     print_r($order);
     $order->goodsDescription = '';
     echo '</pre>';
     echo $ddeliveryUI->saveFullOrder($order);
+    */
     /*
     $order = $ddeliveryUI->getOrder();
     $orders = $ddeliveryUI->initOrder(array(86));

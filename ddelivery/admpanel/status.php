@@ -78,19 +78,21 @@ try
 
         print_r($result);
         */
-        $pull = $ddeliveryUI->getPullOrdersStatus();
+        $pull = $ddeliveryUI->getNotFinishedOrders();
         if(count($pull))
         {
             foreach($pull as $p)
             {
-                echo ' cms order ID ' . $p['cms_order_id'] . '<br />';
-                echo ' DDelivery status - ' .  $p['ddStatus'] . ' ' .
-                     ' (' . $ddeliveryUI->getDDStatusDescription($p['ddStatus']) . ')<br />';
-                echo ' CMS status  - ' . $p['localStatus'] . ' (' . $result[$p['localStatus']]   . ')<hr />';
+                $result = $ddeliveryUI->changeOrderStatus( $p );
+                if( count($result) ){
+                    echo ' cms order ID ' . $result['cms_order_id'] . '<br />';
+                    echo ' DDelivery status - ' .  $result['ddStatus'] . ' ' .
+                        ' (' . $ddeliveryUI->getDDStatusDescription($result['ddStatus']) . ')<br />';
+                    echo ' CMS status  - ' . $p['localStatus'] . '<hr />';
+                }
+
             }
-        }
-        else
-        {
+        }else{
             echo 'NO ORDERS';
         }
     }
@@ -98,5 +100,5 @@ try
 }
 catch (\DDelivery\DDeliveryException $e)
 {
-    echo $e->getMessage();
+    $ddeliveryUI->logMessage($e);
 }

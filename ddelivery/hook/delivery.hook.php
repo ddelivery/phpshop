@@ -39,9 +39,10 @@ function delivery_hook($obj, $data)
         $ddID = (int)$_POST['order_id'];
         if( $ddID )
         {   try{
+
                 $IntegratorShop = new IntegratorShop();
                 $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
-                $order = $ddeliveryUI->getOrder();
+                $order = $ddeliveryUI->initOrder($ddID);
                 $deliveryPrice = $ddeliveryUI->getOrderClientDeliveryPrice( $order );
                 $hook['delivery'] = $deliveryPrice;
                 $hook['total']= $_RESULT['total'] + $deliveryPrice;
@@ -52,24 +53,6 @@ function delivery_hook($obj, $data)
         $hook['dellist'] = '<table collspan="0" rowspan="0"><tr><td>' . $_RESULT['dellist'] . '</td><td >' . '<a href="javascript::void(0)" style="" class="trigger ddbutton">Выбрать способ доставки</a>' . '</td></tr></table>';
         return  $hook;
     }
-
-    //$title_id = search_ddelivery_delivery($option['city'], $xid);
-    /*
-    $hook['dellist'] = '<table collspan="0" rowspan="0"><tr><td>' . $_RESULT['dellist'] . '</td><td style=" padding-left: 20px; padding-top: 36px;">' . 'putin hyjlo' . '</td></tr></table>';
-    $hook['delivery']= 'moses';
-
-    if (is_numeric($title_id))
-        if ($xid == $title_id) {
-            
-
-            $button = '<a onclick="PickPoint.open(pickpoint_phpshop); return false" href="#">' . $option['name'] . '</a>';
-            $hook['dellist'] = '<table collspan="0" rowspan="0"><tr><td>' . $_RESULT['dellist'] . '</td><td style=" padding-left: 20px; padding-top: 36px;">' . $button . '</td></tr></table>';
-            $hook['delivery']=$_RESULT['delivery'];
-            $hook['total']=$_RESULT['total'];
-
-            return  $hook;
-        }
-    */
 }
 
 $addHandler = array

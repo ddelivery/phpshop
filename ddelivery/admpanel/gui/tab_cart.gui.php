@@ -69,17 +69,20 @@ function tab_cart_ddelivery($data, $option = false) {
         $weight = 0;
     }
     //DDelivery
-    $IntegratorShop = new IntegratorShop();
-    $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
+    try{
+        $IntegratorShop = new IntegratorShop();
+        $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
 
-    $ddOrder = $ddeliveryUI->getOrderByCmsID($data['uid']) ;
+        $ddOrder = $ddeliveryUI->getOrderByCmsID($data['uid']) ;
 
 
-    $ddeliveryPrice =  $ddeliveryUI->getDeliveryPrice( $ddOrder->localId );
+        $ddeliveryPrice =  $ddeliveryUI->getOrderClientDeliveryPrice( $ddOrder );
 
-    $ddID = (empty($ddOrder->ddeliveryID)? 'Заявка на ddelivery.ru не создана': 'ID заявки на ddelivery.ru - ' . $ddOrder->ddeliveryID);
-    $GetDeliveryPrice = $ddeliveryPrice;
-
+        $ddID = (empty($ddOrder->ddeliveryID)? 'Заявка на ddelivery.ru не создана': 'ID заявки на ddelivery.ru - ' . $ddOrder->ddeliveryID);
+        $GetDeliveryPrice = $ddeliveryPrice;
+    }catch (\DDelivery\DDeliveryException $e){
+        $ddeliveryUI->logMessage($e);
+    }
     //DDelivery
 
    // $GetDeliveryPrice = $PHPShopOrder->getDeliverySumma();
