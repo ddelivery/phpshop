@@ -231,6 +231,10 @@ function actionStart() {
     $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',35,'Aplix DPD Consumer',(in_array(35,$pvz_companies)?'checked':''));
     $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',36,'Aplix DPD parcel',(in_array(36,$pvz_companies)?'checked':''));
     $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',37,'Aplix IML самовывоз',(in_array(37,$pvz_companies)?'checked':''));
+
+    $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',38,'Aplix PickPoint',(in_array(38,$pvz_companies)?'checked':''));
+
+
     $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',39,'Aplix Qiwi',(in_array(39,$pvz_companies)?'checked':''));
     $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',40,'Aplix СДЭК',(in_array(40,$pvz_companies)?'checked':''));
     $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',42,'IML самовывоз',(in_array(42,$pvz_companies)?'checked':''));
@@ -274,6 +278,10 @@ function actionStart() {
 
     $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',35,'Aplix DPD Consumer',(in_array(35,$cur_companies)?'checked':''));
     $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',36,'Aplix DPD parcel',(in_array(36,$cur_companies)?'checked':''));
+
+
+    $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',38,'Aplix PickPoint',(in_array(38,$cur_companies)?'checked':''));
+
     $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',37,'Aplix IML самовывоз',(in_array(37,$cur_companies)?'checked':''));
     $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',39,'Aplix Qiwi',(in_array(39,$cur_companies)?'checked':''));
     $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',40,'Aplix СДЭК',(in_array(40,$cur_companies)?'checked':''));
