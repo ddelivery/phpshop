@@ -42,7 +42,7 @@ function delivery_hook($obj, $data)
                 $IntegratorShop = new IntegratorShop();
                 $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
                 $order = $ddeliveryUI->getOrder();
-                $deliveryPrice = $ddeliveryUI->getClientPrice( $order->getPoint() );
+                $deliveryPrice = $ddeliveryUI->getOrderClientDeliveryPrice( $order );
                 $hook['delivery'] = $deliveryPrice;
                 $hook['total']= $_RESULT['total'] + $deliveryPrice;
             }catch (\DDeliveryException $e){

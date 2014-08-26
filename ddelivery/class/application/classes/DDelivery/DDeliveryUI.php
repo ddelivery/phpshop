@@ -840,7 +840,7 @@ use DDelivery\Sdk\Messager;
             // интервалы
             $this->shop->preDisplayPointCalc($price);
             // Ручное редактирование
-            $price = $this->shop->processClientPrice( $price, $order );
+            $price = $this->shop->processClientPrice( $order, $price );
             // Округление
             $price =  $this->shop->aroundPrice( $price );
             return $price;

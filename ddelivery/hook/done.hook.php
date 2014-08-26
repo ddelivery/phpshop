@@ -19,14 +19,12 @@ function mail_ddelivery_hook($obj,$row,$rout) {
 
             $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
 
-            $order = $ddeliveryUI->initOrder(array($id));
-            $clientPrice = $ddeliveryUI->getDeliveryPrice($id);
+            $order = $ddeliveryUI->initOrder($id);
+            $clientPrice = $ddeliveryUI->getOrderClientDeliveryPrice( $order );
             //echo $clientPrice;
             //echo $obj->delivery;
-        }
-        catch(\DDelivery\DDeliveryException $e)
-        {
-            echo $e->getMessage();
+        }catch(\DDelivery\DDeliveryException $e){
+            $ddeliveryUI->logMessage($e);
         }
         $obj->set('cart', $obj->PHPShopCart->display('mailcartforma', array('currency' => $obj->currency)));
         $obj->set('sum', $obj->sum);
@@ -147,7 +145,7 @@ function write_ddelivery_hook($obj, $row, $rout)
             }
             catch(\DDelivery\DDeliveryException $e)
             {
-                exit( 'asdasdasdasdassadasd' );
+                $ddeliveryUI->logMessage($e);
             }
 
         }
@@ -158,36 +156,7 @@ function write_ddelivery_hook($obj, $row, $rout)
         // Принудительная очистка корзины
         $obj->PHPShopCart->clean();
         return true;
-       // exit("ads");
-    /*
-        // Данные для записи
-        $insert = $_POST;
-        $insert['datas_new'] = time();
-        $insert['uid_new'] = $obj->ouid;
-        $insert['orders_new'] = $obj->order;
-        $insert['status_new'] = serialize($obj->status);
-        $insert['user_new'] = $_SESSION['UsersId'];
 
-        // Запись заказа в БД
-        $result = $obj->PHPShopOrm->insert($insert);
-        if(!empty($_POST['ddelivery_order_id']))
-        {
-            $id =  (int) $_POST['ddelivery_order_id'];
-            $IntegratorShop = new IntegratorShop();
-            $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
-            $cmsID =  mysql_insert_id();
-            print_r($_POST);
-            $ddeliveryUI->onCmsOrderFinish($id, $cmsID, 0, 3);
-        }
-
-
-        // Проверка ошибок при записи заказа
-       // $obj->error_report($result, array("Cart" => $cart, "Person" => $person, 'insert' => $insert));
-
-        // Принудительная очистка корзины
-        $obj->PHPShopCart->clean();
-        return true;
-   */
     }
 }
 function send_to_order_ddelivery_hook($obj,$row,$rout)
@@ -218,19 +187,17 @@ function send_to_order_ddelivery_hook($obj,$row,$rout)
 
 
                 $id =  (int) $_POST['ddelivery_order_id'];
-                $IntegratorShop = new IntegratorShop();
-                $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
-                $obj->delivery = $ddeliveryUI->getDeliveryPrice($id);
-                $obj->total = $obj->PHPShopOrder->returnSumma($obj->sum, $obj->discount) + $obj->delivery;
 
+                try{
+                    $IntegratorShop = new IntegratorShop();
+                    $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
+                    $order = $ddeliveryUI->initOrder($id);
+                    $obj->delivery = $ddeliveryUI->getOrderClientDeliveryPrice( $order );
+                    $obj->total = $obj->PHPShopOrder->returnSumma($obj->sum, $obj->discount) + $obj->delivery;
+                }catch(\DDeliveryException $e){
+                    $ddeliveryUI->logMessage($e);
+                }
                 // Стоимость доставки
-                //$obj->delivery = $ddeliveryUI->getDeliveryPrice($id);//$obj->PHPShopDelivery->getPrice($obj->PHPShopCart->getSum(false), $obj->PHPShopCart->getWeight());
-
-                // Скидка
-                //$obj->discount = $obj->PHPShopOrder->ChekDiscount($obj->PHPShopCart->getSum());
-
-                // Итого
-                //$obj->total = $obj->PHPShopOrder->returnSumma($obj->sum, $obj->discount) + $obj->delivery;
 
                 // Сообщения на e-mail
                 $obj->mail();
@@ -275,30 +242,7 @@ function send_to_order_ddelivery_hook($obj,$row,$rout)
         // Подключаем шаблон
         $obj->parseTemplate($obj->getValue('templates.order_forma_mesage_main'));
         return true;
-        /*
-        $id =  (int) $_POST['ddelivery_order_id'];
-        $IntegratorShop = new IntegratorShop();
-        $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
-        $obj->delivery = $ddeliveryUI->getDeliveryPrice($id);
-        $obj->total = $obj->PHPShopOrder->returnSumma($obj->sum, $obj->discount) + $obj->delivery;
-        */
-        //print_r( $obj->PHPShopOrder );
-        //$ddeliveryUI->onCmsOrderFinish( $id,  )
-        //print_r($obj->PHPShopOrder);
-        //echo $obj->total;
-        //$ddeliveryUI->onCmsOrderFinish((int)$_POST['ddelivery_order_id'], )
-        //echo $_POST['ddelivery_order_id'];
-        //print_r($IntegratorShop->getProductsFromCart());
 
-        /*
-
-        echo 'hello';
-        $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
-        //$ddeliveryUI->onCmsOrderFinish();
-        //print_r($obj);
-
-        */
-        // exit('asd');
     }
 
 }
