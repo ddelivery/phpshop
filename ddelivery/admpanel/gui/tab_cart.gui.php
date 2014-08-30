@@ -70,6 +70,7 @@ function tab_cart_ddelivery($data, $option = false) {
     }
     //DDelivery
     try{
+
         $IntegratorShop = new IntegratorShop();
         $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
 

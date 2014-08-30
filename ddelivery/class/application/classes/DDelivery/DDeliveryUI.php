@@ -85,7 +85,7 @@ use DDelivery\Sdk\Messager;
 
             $this->sdk = new Sdk\DDeliverySDK($dShopAdapter->getApiKey(), $this->shop->isTestMode());
 
-            // �?нициализируем работу с БД
+            // �?нициализируем работу с БД
             $this->_initDb($dShopAdapter);
 
             // Формируем объект заказа
@@ -205,6 +205,7 @@ use DDelivery\Sdk\Messager;
             if( $order ){
                 $order->localStatus = $cmsStatus;
                 if( $this->shop->isStatusToSendOrder($cmsStatus) && $order->ddeliveryID == 0 ){
+
                     if($order->type == DDeliverySDK::TYPE_SELF){
                         return $this->createSelfOrder($order);
                     }elseif( $order->type == DDeliverySDK::TYPE_COURIER ){
@@ -340,7 +341,7 @@ use DDelivery\Sdk\Messager;
 
 
         /**
-         * �?нициализирует массив заказов из массива id заказов локальной БД
+         * �?нициализирует массив заказов из массива id заказов локальной БД
          *
          * @param int $id идентификатор заказа
          *
@@ -431,7 +432,7 @@ use DDelivery\Sdk\Messager;
             }
             if(!strlen( $order->getToName() ))
             {
-                $errors[] = "Укажите пожалуйста Ф�?О";
+                $errors[] = "Укажите пожалуйста Ф�?О";
             }
             if(!$this->isValidPhone( $order->toPhone ))
             {
@@ -512,7 +513,7 @@ use DDelivery\Sdk\Messager;
             }
             if(!strlen( $order->getToName() ))
             {
-                $errors[] = "Укажите пожалуйста Ф�?О";
+                $errors[] = "Укажите пожалуйста Ф�?О";
             }
             if(!$this->isValidPhone( $order->toPhone ))
             {
@@ -757,7 +758,7 @@ use DDelivery\Sdk\Messager;
         }
 
         /**
-         * Назначить Ф�?О доставки
+         * Назначить Ф�?О доставки
          *
          */
         public function setOrderToName( $name )
@@ -1094,7 +1095,7 @@ use DDelivery\Sdk\Messager;
          * @return array
          * @throws DDeliveryException
          */
-        public  function getAvailablePaymentVariants( DDeliveryOrder $order ){
+        public  function getAvailablePaymentVariants( $order ){
             if( $order->type == DDeliverySDK::TYPE_SELF ){
                 return $this->shop->getSelfPaymentVariants( $order );
             }else if( $order->type == DDeliverySDK::TYPE_COURIER ){
@@ -1762,7 +1763,7 @@ use DDelivery\Sdk\Messager;
 
         /**
          *
-         * �?нициализирует свойства объекта DDeliveryOrder из stdClass полученный из
+         * �?нициализирует свойства объекта DDeliveryOrder из stdClass полученный из
          * запроса БД SQLite
          *
          * @param DDeliveryOrder $currentOrder

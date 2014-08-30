@@ -31,12 +31,26 @@ function actionUpdate() {
     $PHPShopOrm->debug=false;
     $_POST['pvz_companies_new'] = serialize($_POST['pvz_companies_new']);
     $_POST['cur_companies_new'] = serialize($_POST['cur_companies_new']);
-    if( $_POST['zabor_new'] != '1' )
-    {
+    $_POST['courier_list_new'] = serialize($_POST['courier_list_new']);
+    $_POST['self_list_new'] = serialize($_POST['self_list_new']);
+
+    if( $_POST['zabor_new'] != '1' ){
         $_POST['zabor_new'] = 0;
     }
     $action = $PHPShopOrm->update($_POST);
     return $action;
+}
+
+/**
+ * Экшен сохранения
+ */
+function actionSave() {
+    global $PHPShopGUI;
+
+    // Сохранение данных
+    actionUpdate();
+
+    $PHPShopGUI->setAction(1, 'actionStart', 'none');
 }
 
 function _prepareSelect( $val, $arrVals )
@@ -100,7 +114,7 @@ function actionStart() {
                                   $PHPShopGUI->setInputText(false,'api_new', $api,300));
 
     $Tab1 .= $PHPShopGUI->setText('<b>ID способа доставки который соответсвует
-                                  ddelivery( способ создается автоматически ). Если нужно добавить еще, то ID добаавляете через кому. Например(5746,5747)</b>', 'none');
+                                  ddelivery( способ создается автоматически ). Если нужно добавить еще, то ID добаавляете через запятую. Например(5746,5747)</b>', 'none');
     $Tab1 .= $PHPShopGUI->setField('ID способа доставки DDelivery',
         $PHPShopGUI->setInputText(false,'delivery_id_new', $delivery_id,300));
 
@@ -169,6 +183,32 @@ function actionStart() {
     $Tab5  = $PHPShopGUI->setText('<b>Выберите поле соответствующее способу оплаты "оплата на месте".
                                       Например "оплата курьеру". У вас в системе может быть только 1 такой способ</b>', 'none');
     $Tab5 .= $PHPShopGUI->setField('Оплата на месте',$PHPShopGUI->setSelect('payment_new',$payment_value,400));
+    //print_r($pvz_companies);
+    $self_list = unserialize( $self_list );
+    $courier_list = unserialize( $courier_list );
+        $payment_courier = '<select name="courier_list_new[]" size="8" multiple>';
+        $payment_self =    '<select name="self_list_new[]" size="8" multiple>';
+                            foreach( $payment_value as $item ){
+                                if( in_array($item[1], $courier_list) ){
+                                    $selected_c = 'selected="selected"';
+                                }else{
+                                    $selected_c = '';
+                                }
+                                if( in_array($item[1], $self_list) ){
+                                    $selected_s = 'selected="selected"';
+                                }else{
+                                    $selected_s = '';
+                                }
+                                $payment_courier .= '<option ' . $selected_c . ' value="' . $item[1] . '">' . $item[0] . '</option>';
+                                $payment_self .= '<option ' . $selected_s . ' value="' . $item[1] . '">' . $item[0] . '</option>';
+                            }
+        $payment_courier .= '</select>';
+        $payment_self .= '</select>';
+
+    $Tab5 .= $PHPShopGUI->setField('Доступные способы оплаты для курьерской доставки', $payment_courier);
+    $Tab5 .= $PHPShopGUI->setField('Доступные способы оплаты для самовывоза', $payment_self);
+
+
 
     $Tab5 .= $PHPShopGUI->setText('<b>Выберите статус при котором заявки из вашей системы будут уходить в DDelivery.
                                       Помните что отправка означает готовность отгрузить заказ на следующий рабочий день</b>', 'none');
@@ -194,10 +234,11 @@ function actionStart() {
 
     $Tab2 =  $PHPShopGUI->setText('<b>Настройка влияет на то, какие методы будут отображатся</b>', 'none');
     $Tab2 .= $PHPShopGUI->setField('Доступные способы',$PHPShopGUI->setSelect('type_new',$type_value,400));
-    $Tab2 .= $PHPShopGUI->setText('<b>Выберите компании ПВЗ, которые вы бы хотели сделать НЕ доступными для для ваших клиентов</b>', 'none');
+    $Tab2 .= $PHPShopGUI->setText('<b>Выберите компании ПВЗ, которые вы бы хотели сделать доступными для ваших клиентов</b>', 'none');
 
     $pvz_companies = unserialize( $pvz_companies );
     $cur_companies = unserialize( $cur_companies );
+
 
     $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',4,'Boxberry',(in_array(4,$pvz_companies)?'checked':''));
     $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',21,'Boxberry Express',(in_array(21,$pvz_companies)?'checked':''));
@@ -246,7 +287,7 @@ function actionStart() {
     $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',48,'Aplix IML курьерская доставка',(in_array(48,$pvz_companies)?'checked':''));
     $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]',49,'IML Забор',(in_array(49,$pvz_companies)?'checked':''));
 
-    $Tab2.= $PHPShopGUI->setText('<b>Выберите компании курьерской доставки, которые вы бы хотели сделать НЕ доступными для для ваших клиентов</b>', 'none');
+    $Tab2.= $PHPShopGUI->setText('<b>Выберите компании курьерской доставки, которые вы бы хотели сделать доступными для ваших клиентов</b>', 'none');
      $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',4,'Boxberry',(in_array(4,$cur_companies)?'checked':''));
     $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',21,'Boxberry Express',(in_array(21,$cur_companies)?'checked':''));
     $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]',29,'DPD Classic',(in_array(29,$cur_companies)?'checked':''));
@@ -323,7 +364,7 @@ function actionStart() {
     $method2_value[] = array('Клиент оплачивает все','1');
     $method2_value[] = array('Магазин оплачивает все','2');
     $method2_value[] = array('Магазин оплачивает процент от стоимости доставки','3');
-    $method2_value[] = array('Магазин оплачивает конкретную сумму от доставки. Если сумма больше, то всю доставку','4');
+    $method2_value[] = array('Магазин оплачивает доставку в рамках указанной суммы','4');
 
     $method2_value = _prepareSelect($method2, $method2_value);
     $Tab3 .=$PHPShopGUI->setField('Действие',$PHPShopGUI->setSelect('method2_new',$method2_value,150),'left');
@@ -340,7 +381,7 @@ function actionStart() {
     $method3_value[] = array('Клиент оплачивает все','1');
     $method3_value[] = array('Магазин оплачивает все','2');
     $method3_value[] = array('Магазин оплачивает процент от стоимости доставки','3');
-    $method3_value[] = array('Магазин оплачивает конкретную сумму от доставки. Если сумма больше, то всю доставку','4');
+    $method3_value[] = array('Магазин оплачивает доставку в рамках указанной суммы','4');
 
 
     $method3_value = _prepareSelect($method3, $method3_value);
@@ -352,7 +393,7 @@ function actionStart() {
 
     $okrugl_value[] = array('Округлять в меньшую сторону','0');
     $okrugl_value[] = array('Округлять в большую сторону','1');
-    $okrugl_value[] = array('Округлять цену в математически','2');
+    $okrugl_value[] = array('Округлять цену  математически','2');
 
     $okrugl_value = _prepareSelect($okrugl, $okrugl_value);
 
@@ -414,7 +455,7 @@ function actionStart() {
 
 
     // Вывод формы закладки
-    $PHPShopGUI->setTab(array("Основные",$Tab1,480),array("Основные",$Tab5,470),array("Настройки способов доставки",$Tab2,520),
+    $PHPShopGUI->setTab(array("Основные",$Tab1,480),array("Дополнительные",$Tab5,740),array("Настройки способов доставки",$Tab2,520),
           array("Настройки цены доставки",$Tab3,300), array("Описание",$Tab7, 320) /*, array("Добавление собственных служб доставки",$Tab4,320) */);
 
     // Вывод кнопок сохранить и выход в футер
@@ -422,7 +463,7 @@ function actionStart() {
         $PHPShopGUI->setInput("hidden","newsID",$id,"right",70,"","but").
         $PHPShopGUI->setInput("button","","Cancel","right",70,"return onCancel();","but").
         $PHPShopGUI->setInput("submit","editID","OK","right",70,"","but","actionUpdate");
-
+    //$PHPShopGUI->setInput("submit", "saveID", "Применить", "right", 80, "", "but", "actionUpdate");
     $PHPShopGUI->setFooter($ContentFooter);
     return true;
 }

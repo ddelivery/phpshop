@@ -1,12 +1,14 @@
 @ComStartReg@
 <script src="phpshop/modules/ddelivery/class/html/js/ddelivery.js"></script>
+<!--
 <script src="phpshop/modules/ddelivery/class/mrozk/assets/jquery.min.js"></script>
 <script type="text/javascript">var jQuery_1_11 = jQuery.noConflict();</script>
 <link rel="stylesheet" type="text/css" href="phpshop/modules/ddelivery/class/mrozk/assets/the-modal.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="phpshop/modules/ddelivery/class/mrozk/assets/demo-modals.css" media="screen" />
 <script src="phpshop/modules/ddelivery/class/mrozk/assets/jquery.the-modal.js"></script>
+-->
 <style type="text/css">
-    .ddbutton {
+    #ddbutton {
         background-image: none;
         background-color: #33BC33;
         background-repeat: repeat-x;
@@ -38,6 +40,32 @@
 
 
 <script type="text/javascript">
+    window.onload  = function(){
+        var dostavka_metod = document.getElementById("seldelivery");
+
+        dostavka_metod.onclick = function(){
+            if( !DDeliveryIntegration.isDDeliveryWay()){
+                enableAllPayments();
+            }
+        }
+    }
+    function enableAllPayments(){
+        var order_metod =  document.getElementById("order_metod");
+        for (var i = 0; i < order_metod.length; i++){
+            order_metod.options[i].disabled = "";
+        }
+    }
+
+    // Просчет доставки
+    function findInArray( array, value ){
+        var length = array.length;
+        for ( var i = 0; i< length; i++ ){
+            if( parseInt( array[i] ) == parseInt( value ) ){
+                return true;
+            }
+        }
+        return false;
+    }
 
     function UpdateDelivery2(xid, order_id) {
 
@@ -58,9 +86,6 @@
         }
 
         req.caching = false;
-        // Подготваливаем объект.
-        // Реальное размещение
-        //var dir=dirPath();
 
         req.open('POST', 'phpshop/ajax/delivery.php', true);
         req.send({
@@ -69,12 +94,12 @@
             wsum: wsum,
             order_id: order_id
         });
-
     }
-    function orderCallBack( data )
-    {
+
+
+    function orderCallBack( data ){
         //document.getElementById('DosSumma').innerHTML = (data.clientPrice);
-        if( data.userInfo.toStreet!= null )
+        if( data.userInfo.toStreet != null )
         {
             document.getElementById('adr_name').value = data.userInfo.toStreet + ' ' + data.userInfo.toHouse + ' ' + data.userInfo.toFlat + ' ' ;
         }
@@ -84,81 +109,133 @@
             mail[0].value = data.userInfo.toEmail;
         }
 
-        //total = document.getElementById('TotalSumma').value;
-        //document.getElementById('TotalSumma').innerHTML = (parseInt( total ) + data.clientPrice);
         ddelivery_order_id = document.getElementById('ddelivery_order_id');
         ddelivery_order_id.value = data.orderId;
         name_person = document.getElementsByName('name_person');
-        name_person[0].value = data.userInfo.firstName + ' ' + data.userInfo.secondName;
+        name_person[0].value = data.userInfo.firstName ;
         tel_name = document.getElementsByName('tel_name');
         tel_name[0].value = data.userInfo.toPhone;
     }
-    function DDeliveryStart()
-    {
-         //var DDid = @DDid@;
-
-         //document.getElementById('parent_popup').style.display='block'
-         ddelivery_order_id = document.getElementById('ddelivery_order_id');
-         if( ddelivery_order_id.value != '' )
-         {
-            orderID = ddelivery_order_id.value;
-         }
-         else
-         {
-            orderID = 0;
-         }
 
 
-         var params = {
-            orderId: orderID // Если у вас есть id заказа который изменяется, то укажите его в этом параметре
-         };
-         var callback = {
-             close: function(){
-                jQuery_1_11('#test-modal').modal().close();
-             //alert('Окно закрыто');
-             },
-             change: function(data) {
-                 DDid = jQuery_1_11('#dostavka_metod').val();
-                 jQuery_1_11('#test-modal').modal().close();
 
-                 UpdateDelivery2( DDid, data.orderId );
+    var topWindow = parent;
 
-                 jQuery_1_11('#adr_name').val(data.comment);
-                 //console.log(data);
-                 orderCallBack(data);
-                 //UpdateDelivery2(5736, data.orderId);
-                 //alert(data.comment+ ' интернет магазину нужно взять с пользователя за доставку '+data.clientPrice+' руб. OrderId: '+data.orderId);
-             }
-         };
-         order_form = $('#forma_order').serializeArray();
-         order_form = $.param(order_form);
-
-         DDelivery.delivery('ddelivery', '@bidloOrder@' + order_form, params, callback);
-
+    while(topWindow != topWindow.parent) {
+        topWindow = topWindow.parent;
     }
 
-</script>
-<script type="text/javascript">
+    if(typeof(topWindow.DDeliveryIntegration) == 'undefined')
+        topWindow.DDeliveryIntegration = (function(){
+            var th = {};
 
-    jQuery_1_11(document).ready(function() {
-        /*
-        alert(screen.width);
-        alert(screen.height);
-        */
-        var marginCoof = ( screen.height - 650 )/3  - 10;
+           var ddid = @DDid@;
 
-        jQuery_1_11('#test-modal').css('margin-top', marginCoof + 'px');
+            var goodPaymentVariants = '';
+            var status = 'XXX';
+            th.getStatus = function(){
+                return status;
+            };
+            function hideCover() {
 
-        jQuery_1_11(document).on('click', '.trigger',function(){
-            jQuery_1_11('#test-modal').modal().open();
-            DDeliveryStart();
-        });
+                document.body.removeChild(document.getElementById('ddelivery_cover'));
+            }
 
-        jQuery_1_11(document).on('submit', '#forma_order',function(){
+            function showPrompt() {
+                var cover = document.createElement('div');
+                cover.id = 'ddelivery_cover';
+                document.body.appendChild(cover);
+                document.getElementById('ddelivery_container').style.display = 'block';
+            }
+            function disablePayment(){
+                var json = goodPaymentVariants;
+                var order_metod =  document.getElementById("order_metod");
+                for (var i = 0; i < order_metod.length; i++){
+                    if( !findInArray(json, order_metod.options[i].value) ){
+                        order_metod.options[i].disabled = "disabled";
+                        console.log('in ' + order_metod.options[i].value);
+                    }else{
+                        order_metod.options[i].disabled = "";
+                    }
+                }
+            }
+            th.isDDeliveryWay = function( ){
+                dostavka_metod = document.getElementById("dostavka_metod").value;
+                if( findInArray(ddid, dostavka_metod) ){
+                    return true;
+                }
                 return false;
-        });
-    });
+            }
+            th.isValidPaymentWay = function(way){
+                if( goodPaymentVariants != '' ){
+                    console.log(goodPaymentVariants);
+                    if( findInArray(goodPaymentVariants, way) ){
+                        return true;
+                    }
+                }
+                return false;
+            }
+            th.getDDeliveryIds = function(){
+                return ddid;
+            }
+            th.openPopup = function(){
+                //console.log(ddid);
+                showPrompt();
+                document.getElementById('ddelivery_popup').innerHTML = '';
+                var callback = {
+                    close: function(){
+                        hideCover();
+                        document.getElementById('ddelivery_container').style.display = 'none';
+                    },
+                    change: function(data) {
+                        goodPaymentVariants = JSON.parse(data.payment);
+                        disablePayment();
+                        DDid = document.getElementById("dostavka_metod").value;
+                        document.getElementById("DosSumma2").innerHTML = data.clientPrice;// data.clientPrice
+                        document.getElementById("ddelivery_comment").innerHTML = data.comment;
+
+                        UpdateDelivery2( DDid, data.orderId );
+                        orderCallBack(data);
+                        console.log(data);
+                        hideCover();
+                        document.getElementById('ddelivery_container').style.display = 'none';
+                    }
+                };
+                var forma_order = document.getElementById("forma_order");
+                var paramsString = '';
+                for(var i = 0; i < forma_order.elements.length; i++){
+                    el = forma_order.elements[i];
+
+                    if( el.value != '' && el.name != '' ){
+                        if( i == 0 ){ devider = '?' }else{ devider = '&' }
+                        paramsString += ( devider + el.name + '=' + encodeURIComponent( el.value ));
+                    }
+
+                }
+                DDelivery.delivery('ddelivery_popup', '@DDorderUrl@' + paramsString, { }, callback);
+
+                return void(0);
+            };
+            var style = document.createElement('STYLE');
+            style.innerHTML = // РЎРєСЂС‹РІР°РµРј РЅРµРЅСѓР¶РЅСѓСЋ РєРЅРѕРїРєСѓ
+                    " #delivery_info_ddelivery_all a{display: none;} " +
+                            " #ddelivery_popup { display: inline-block; vertical-align: middle; margin: 10px auto; width: 1000px; height: 650px;} " +
+                            " #ddelivery_container { position: fixed; top: 0; left: 0; z-index: 9999;display: none; width: 100%; height: 100%; text-align: center;  } " +
+                            " #ddelivery_container:before { display: inline-block; height: 100%; content: ''; vertical-align: middle;} " +
+                            " #ddelivery_cover {  position: fixed; top: 0; left: 0; z-index: 9000; width: 100%; height: 100%; background-color: #000; background: rgba(0, 0, 0, 0.5); filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = #7F000000, endColorstr = #7F000000); } ";
+            var body = document.getElementsByTagName('body')[0];
+            body.appendChild(style);
+            var div = document.createElement('div');
+            div.innerHTML = '<div id="ddelivery_popup"></div>';
+            div.id = 'ddelivery_container';
+            body.appendChild(div);
+            return th;
+        })();
+    var DDeliveryIntegration = topWindow.DDeliveryIntegration;
+
+
 </script>
+
 
 <div class="modal" id="test-modal" style="display: none">
     <div id="ddelivery"></div>
@@ -172,20 +249,25 @@
 @ComEndReg@
 
 <script type="text/javascript">
-    // Просчет доставки
+
     function OrderChekDDelivery()
     {
 
-       var DDid = new Array(@DDid@);
-
-        dostavka_metod = document.getElementById("dostavka_metod").value;
         ddelivery_order_id = document.getElementById('ddelivery_order_id').value;
+        order_metod = document.getElementById('order_metod').value;
 
-        if( ( jQuery_1_11.inArray(parseInt( dostavka_metod ) , DDid) >= 0 ) && !ddelivery_order_id )
-        {
+
+        if( ( DDeliveryIntegration.isDDeliveryWay()) && !( parseInt(ddelivery_order_id) > 0) ){
             alert("Выберите способ доставки DDelivery");
             return false;
         }
+
+        if( ( DDeliveryIntegration.isDDeliveryWay()) && !( DDeliveryIntegration.isValidPaymentWay(order_metod)) ){
+            alert("Выберите доступный" +
+                    " способ оплаты");
+            return false;
+        }
+
         var s1=window.document.forms.forma_order.mail.value;
         var s2=window.document.forms.forma_order.name_person.value;
         var s3=window.document.forms.forma_order.tel_name.value;
@@ -207,152 +289,187 @@
 
     }
 
-
-
-
-
-    function sendCheck()
+    if (!Array.prototype.indexOf)
     {
-        dostavka_metod = document.getElementById('dostavka_metod').value;
-        ddelivery_order_id = document.getElementById('ddelivery_order_id');
-        alert(ddelivery_order_id.value);
-        /*
-        if( dostavka_metod == 5736 && (!ddelivery_order_id.value))
+        Array.prototype.indexOf = function(elt /*, from*/)
         {
-            alert("Уточните список доставки DDelivery");
-            return false;
-        }
-        return true;
-        */
+            var len = this.length >>> 0;
 
+            var from = Number(arguments[1]) || 0;
+            from = (from < 0)
+                    ? Math.ceil(from)
+                    : Math.floor(from);
+            if (from < 0)
+                from += len;
+
+            for (; from < len; from++)
+            {
+                if (from in this &&
+                        this[from] === elt)
+                    return from;
+            }
+            return -1;
+        };
     }
 
 </script>
 
 <form onsubmit="return false;" method="post" name="forma_order" id="forma_order" action="/done/" >
-<table  cellpadding="5" cellspacing="0" width=100% >
-<tr>
-	<td align="right">
-	<b>Заказ №</b>
-	</td>
-	<td>
-	<input type="text" name=ouid style="width:50px; height:18px; font-family:tahoma; font-size:11px ; color:#9e0b0e; background-color:#f2f2f2;" value="@orderNum@"  readonly="1"> <b>/</b>
-    <input type="text" style="width:50px; height:18px; font-family:tahoma; font-size:11px ; color:#9e0b0e; background-color:#f2f2f2;" value="@orderDate@"  readonly="1">
-	</td>	
-</tr>
-<tr>
-   <td align="right" valign="top">Доставка</td>
-   <td>
-   @orderDelivery@
-   </td>
-</tr>
-<tr valign="top">
-    <td align="right">
-	E-mail:
-	</td>
-	<td>
-	<input type="text" name="mail" style="width:300px; height:18px; font-family:tahoma; font-size:11px ; color:#4F4F4F " maxlength="30" value="@UserMail@" @formaLock@><img src="images/shop/flag_green.gif" alt="" width="16" height="16" border="0" hspace="5" align="absmiddle">
-	</td>
-</tr>
-<tr>
-	<td align="right" class=tah12>
-    Контактное лицо:
-	</td>
-	<td>
-	<input type="text" name="name_person" style="width:300px; height:18px; font-family:tahoma; font-size:11px ; color:#4F4F4F " maxlength="30" value="@UserName@" @formaLock@><img src="images/shop/flag_green.gif" alt="" width="16" height="16" border="0" hspace="5" align="absmiddle">
-	</td>
-</tr>
+    <table  cellpadding="5" cellspacing="0" width=100% >
 
-<!--
-<tr>
-	<td align="right" >
-	ИНН:
-	</td>
-	<td>
-	<input type="text" name="org_inn" style="width:150px; height:18px; font-family:tahoma; font-size:11px ; color:#4F4F4F " maxlength="50" value="@UserInn@" @formaLock@>
-	</td>
-</tr> 
-<tr>
-	<td align="right" >
-	КПП:
-	</td>
-	<td>
-	<input type="text" name="org_kpp" style="width:150px; height:18px; font-family:tahoma; font-size:11px ; color:#4F4F4F " maxlength="50" value="@UserKpp@" @formaLock@>
-	</td>
-</tr> 
 
--->
 
-<tr>
-	<td align="right">
-	Телефон:
-	</td>
-	<td>
-	<input type="text" name="tel_code" style="width:50px; height:18px; font-family:tahoma; font-size:11px ; color:#4F4F4F " maxlength="5" value="@UserTelCode@"> -
-	<input type="text" name="tel_name" style="width:150px; height:18px; font-family:tahoma; font-size:11px ; color:#4F4F4F " maxlength="30" value="@UserTel@"><img src="images/shop/flag_green.gif" alt="" width="16" height="16" border="0" hspace="5" align="absmiddle">
-	</td>
-</tr>
-<tr>
-	<td align="right">
-	Время доставки:
-	</td>
-	<td>
-	от <input type="text" name="dos_ot" style="width:50px; height:18px; font-family:tahoma; font-size:11px ; color:#4F4F4F " maxlength="5">ч.&nbsp;&nbsp;&nbsp;
-    до
-<input type="text" name="dos_do" style="width:50px; height:18px; font-family:tahoma; font-size:11px ; color:#4F4F4F " maxlength="5">ч. 
-	</td>
-</tr>
-<tr>
-	<td align="right" class=tah12>
-	Адрес и <br>
-	дополнительная<br>
-	информация:
-	</td>
-	<td>
-	<textarea style="width:300px; height:100px; font-family:tahoma; font-size:11px ; color:#4F4F4F " name="adr_name" id="adr_name">@UserAdres@</textarea><img src="images/shop/flag_green.gif" alt="" width="16" height="16" border="0" hspace="5" align="absmiddle">
-        <span id="pickpoint_phpshop">1</span>
-        </td>
-</tr>
-<tr>
-	<td align="right" >
-	КОД ДЛЯ СКИДКИ:
-	</td>
-	<td>
-	<input type="text" name="org_name" style="width:300px; height:18px; font-family:tahoma; font-size:11px ; color:#4F4F4F " maxlength="100" value="@UserComp@" @formaLock@>
-	</td>
-</tr>
-<tr>
-   <td align="right">Тип оплаты <br>покупки</td>
-   <td>
-   @orderOplata@
-   </td>
-</tr>
-<tr>
-  <td></td>
-  <td>
-  <div  id=allspecwhite><img src="images/shop/comment.gif" alt="" width="16" height="16" border="0" hspace="5" align="absmiddle">Данные, отмеченные <b>флажками</b> обязательны для заполнения.<br>
-</div>
+        <!--начало формы -->
 
-  </td>
-</tr>
-<tr>
-    <td colspan="2" align="center">
-	<p><br></p>
-	<table align="center">
-<tr>
-<td>
-	<img src="images/shop/brick_error.gif" border="0" align="absmiddle">
-	<a href="javascript:forma_order.reset();" class=link>Очистить форму</a></td>
-	<td width="20"></td>
-	<td id="order_butt3"><a href="javascript::void(0);" onclick="OrderChekDDelivery();" class=link>ОФОРМИТЬ ЗАКАЗ</a></td>
 
-</tr>
-</table>
-    <input type="hidden" name="ddelivery_order_id" id="ddelivery_order_id" value="">
-	<input type="hidden" name="send_to_order" value="ok" >
-	<input type="hidden" name="d" id="d" value="@deliveryId@">
-	<input type="hidden" name="nav" value="done">
-    </td>
-</tr>
-</table>
+        <tr>
+            <td align="right">
+                <b>Заказ №</b>
+            </td>
+            <td>
+                <input type="text" name=ouid style="width:80px; height:24px; font-family:tahoma; font-size:14px ; color:#9e0b0e; background-color:#f2f2f2;" value="@orderNum@"  readonly="1"> <b>/</b>
+                <input type="text" style="width:80px; height:24px; font-family:tahoma; font-size:14px ; color:#9e0b0e; background-color:#f2f2f2;" value="@orderDate@"  readonly="1">
+            </td>
+        </tr>
+
+
+        <tr>
+            <td align="right" class=tah12>
+
+            </td>
+            <td><B>КОНТАКТНАЯ ИНФОРМАЦИЯ</B>:
+
+            </td>
+
+        </tr>
+
+        <tr>
+            <td align="right" class=tah12>
+                Контактное лицо:
+            </td>
+            <td>
+                <input type="text" name="name_person" placeholder="пример: Петров Петр Петрович" style="width:400px; height:24px; font-family:tahoma; font-size:14px ; color:#000000 " maxlength="30" value="@UserName@" @formaLock@><img src="images/shop/flag_green.gif" alt="" width="16" height="16" border="0" hspace="5" align="absmiddle">
+            </td>
+        </tr>
+        <tr>
+            <td align="right">
+                Телефон:
+            </td>
+            <td>
+                <!--	<input type="text" name="tel_code" style="width:50px; height:18px; font-family:tahoma; font-size:11px ; color:#4F4F4F " maxlength="5" value="@UserTelCode@"> -->
+                <input type="text" name="tel_name" placeholder="пример: +7 921 211 21 21" style="width:400px; height:24px; font-family:tahoma; font-size:14px ; color:#000000 " maxlength="30" value="@UserTel@"><img src="images/shop/flag_green.gif" alt="" width="16" height="16" border="0" hspace="5" align="absmiddle">
+            </td>
+        </tr>
+        <tr valign="top">
+            <td align="right">
+                E-mail:
+            </td>
+            <td>
+                <input type="text" name="mail" placeholder="пример: user@adress.ru" style="width:400px; height:24px; font-family:tahoma; font-size:14px ; color:#000000" maxlength="30" value="@UserMail@" @formaLock@><img src="images/shop/flag_green.gif" alt="" width="16" height="16" border="0" hspace="5" align="absmiddle">
+            </td>
+        </tr>
+
+
+
+
+        <tr><td></td>
+            <td><B>ВЫБЕРИТЕ СПОСОБ ДОСТАВКИ</B>:
+
+            </td>
+
+        </tr>
+        <tr>
+            <td align="right" valign="top">Доставка</td>
+            <td>
+                @orderDelivery@
+                <div id="ddelivery_comment" style="color:#9e0b0e;margin-top:10px;font-size:14px;"></div>
+                <div style="margin-top:10px;font-size:14px;">Доставка: <span id="DosSumma2">0</span> @currency@</div>
+            </td>
+        </tr>
+
+
+
+
+        <tr>
+            <td align="right" class=tah12>
+                Адрес и <br>
+                дополнительная<br>
+                информация:
+            </td>
+            <td>
+                <textarea style="width:400px; height:100px; font-family:tahoma; font-size:14px ; color:#000000 " name="adr_name" id="adr_name">@UserAdres@</textarea><img src="images/shop/flag_green.gif" alt="" width="16" height="16" border="0" hspace="5" align="absmiddle">
+                <span id="pickpoint_phpshop"></span>
+            </td>
+        </tr>
+
+
+
+        <tr>
+            <td align="right" class=tah12>
+
+            </td>
+
+        <tr>
+            <td align="right" class=tah12>
+
+            </td>
+            <td><B>ВЫБЕРИТЕ СПОСОБ ОПЛАТЫ</B>:
+
+            </td>
+
+        </tr>
+
+        <tr>
+            <td align="right">Тип оплаты <br>покупки</td>
+            <td>
+                @orderOplata@
+            </td>
+        </tr>
+
+        <tr>
+            <td align="right" valign="middle">
+                КОД ДЛЯ СКИДКИ:
+            </td>
+            <td>
+                <input type="text" name="org_name" style="width:400px; height:24px; font-family:tahoma; font-size:14px ; color:#000000 " maxlength="100" value="@UserComp@" @formaLock@><br>
+                <!--<div style="margin-top:10px;font-size:14px;">Итого к оплате: <span id="TotalSumma2">@total@</span> @currency@</div>-->
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center">
+                <p><br></p>
+                <table align="center">
+
+                    <!-- конец формы старой -->
+
+
+
+                    <tr>
+                        <td>
+                            &nbsp;</td>
+                        <td width="20"></td>
+                        <td id="order_butt3"><span id="b_order_crt" >
+<img src="images/shop/brick_go.gif"  border="0" align="absmiddle">
+<a href="javascript::void(0);" onclick="OrderChekDDelivery();" class=link>ОФОРМИТЬ ЗАЯВКУ</a></span></td>
+
+
+
+                    </tr>
+                </table>
+                <input type="hidden" name="ddelivery_order_id" id="ddelivery_order_id" value="">
+                <input type="hidden" name="send_to_order" value="ok" >
+                <input type="hidden" name="d" id="d" value="@deliveryId@">
+                <input type="hidden" name="nav" value="done">
+            </td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td>
+                <div  id=allspecwhite><img src="images/shop/comment.gif" alt="" width="16" height="16" border="0" hspace="5" align="absmiddle">После того, как вы подтвердите заказ на сайте, Вам позвонит менеджер, чтобы подвердить его и сообщит всю необходимую информацию.<br>
+                </div>
+
+            </td>
+        </tr>
+    </table>
 </form>

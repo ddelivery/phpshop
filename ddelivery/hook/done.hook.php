@@ -109,6 +109,7 @@ function write_ddelivery_hook($obj, $row, $rout)
         $insert['orders_new'] = $obj->order;
         $insert['status_new'] = serialize($obj->status);
         $insert['user_new'] = $_SESSION['UsersId'];
+        //exit($obj->ouid);
         // Запись заказа в БД
         $result = $obj->PHPShopOrm->insert($insert);
         $cmsID =   $obj->ouid;
@@ -136,15 +137,12 @@ function write_ddelivery_hook($obj, $row, $rout)
 
 
             $IntegratorShop = new IntegratorShop();
-
-            try
-            {
+            try{
 
                 $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
-                $ddeliveryUI->onCmsOrderFinish($id, $cmsID, 0, 3);
+                $ddeliveryUI->onCmsOrderFinish($id, $cmsID, 0, @$row['order_metod']);
             }
-            catch(\DDelivery\DDeliveryException $e)
-            {
+            catch(\DDelivery\DDeliveryException $e){
                 $ddeliveryUI->logMessage($e);
             }
 

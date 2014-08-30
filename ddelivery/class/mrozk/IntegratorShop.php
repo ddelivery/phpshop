@@ -38,7 +38,6 @@ class IntegratorShop extends PluginFilters {
         $cur = mysql_query($query);
         $this->cmsSettings = mysql_fetch_assoc($cur);
 
-
     }
 
 
@@ -116,41 +115,13 @@ class IntegratorShop extends PluginFilters {
             foreach($productsCart as $item)
             {
 
-                $PHPShopProduct = new PHPShopProduct($item[id]);
+                $PHPShopProduct = new PHPShopProduct($item['id']);
 
 
                 $cartWidth = $PHPShopProduct->getParam("option1");
                 $cartLenght = $PHPShopProduct->getParam("option2");
                 $cartHeight = $PHPShopProduct->getParam("option3");
-                /*
-                $vendor_array =  unserialize( $PHPShopProduct->objRow['vendor_array'] ) ;
-                //$params = $this->cmsSettings['width'];
-                if( is_array( $vendor_array ) )
-                {
-                    if( array_key_exists($this->cmsSettings['width'], $vendor_array) )
-                    {
-                        $param = (int)$vendor_array[$this->cmsSettings['width']][0];
-                        $cur = mysql_query('SELECT name FROM phpshop_sort WHERE id = ' . $param);
-                        $cartWidth = (int)mysql_fetch_array($cur)[0];
-                        //print_r($cartWidth);
-                    }
 
-                    if( array_key_exists($this->cmsSettings['length'], $vendor_array) )
-                    {
-                        $param = (int)$vendor_array[$this->cmsSettings['length']][0];
-                        $cur = mysql_query('SELECT name FROM phpshop_sort WHERE id = ' . $param);
-                        $cartLenght = (int)mysql_fetch_array($cur)[0];
-                    }
-
-                    if( array_key_exists($this->cmsSettings['height'], $vendor_array) )
-                    {
-                        $param = (int)$vendor_array[$this->cmsSettings['height']][0];
-                        $cur = mysql_query('SELECT name FROM phpshop_sort WHERE id = ' . $param);
-                        $cartHeight = (int)mysql_fetch_array($cur)[0];
-                    }
-                }
-               // mysql_query('SELECT name FROM phpshop_sort WHERE id IN()');
-                */
 
                 $cartWeight = $item['weight'] / 1000;
 
@@ -227,7 +198,8 @@ class IntegratorShop extends PluginFilters {
     public function getPhpScriptURL()
     {
         // Тоесть до этого файла
-        return 'ajax.php';
+        unset( $this->fields['iframe'] );
+        return 'ajax.php?' . http_build_query($this->fields);
     }
 
     /**
@@ -336,12 +308,6 @@ class IntegratorShop extends PluginFilters {
         */
     }
     public function getClientLastName() {
-        if( isset( $_SESSION['dd_name_person'])  ){
-            $data = explode(' ', trim($_SESSION['dd_name_person']));
-            if(isset($data[0])){
-                return $data[0];
-            }
-        }
         return '';
     }
     /**
@@ -434,11 +400,8 @@ class IntegratorShop extends PluginFilters {
      * @return string|null
      */
     public function getClientFirstName() {
-        if( isset( $_SESSION['dd_name_person'])  ){
-            $data = explode(' ', trim($_SESSION['dd_name_person']));
-            if(isset($data[1])){
-                return $data[1];
-            }
+        if( isset( $this->fields['name_person'])  ){
+            return trim($this->fields['name_person']);
         }
         return '';
     }
@@ -452,8 +415,8 @@ class IntegratorShop extends PluginFilters {
      *@return string|null
      */
     public function getClientPhone() {
-        if( isset( $_SESSION['dd_tel_name'])  ){
-            $tel_name = $this->formatPhone( $_SESSION['dd_tel_name'] );
+        if( isset( $this->fields['tel_name'])  ){
+            $tel_name = $this->formatPhone( $this->fields['tel_name'] );
             $tel_name  = substr( $tel_name, -10);
             return '+7' . $tel_name;
         }
@@ -475,6 +438,10 @@ class IntegratorShop extends PluginFilters {
      * @return string[]
      */
     public function getClientAddress() {
+        if( isset( $this->fields['adr_name'])  ){
+            return array($this->fields['adr_name']);
+        }
+
         return array(/*'Адресx','Домx', 'Корпусx','Квартираx'*/);
     }
 
@@ -524,7 +491,7 @@ class IntegratorShop extends PluginFilters {
     public function getCourierRequiredFields()
     {
         // ВВести все обязательно, кроме корпуса
-        return self::FIELD_EDIT_FIRST_NAME | self::FIELD_REQUIRED_FIRST_NAME | self::FIELD_EDIT_LAST_NAME | self::FIELD_REQUIRED_SECOND_NAME
+        return self::FIELD_EDIT_FIRST_NAME | self::FIELD_REQUIRED_FIRST_NAME
         | self::FIELD_EDIT_PHONE | self::FIELD_REQUIRED_PHONE
         | self::FIELD_EDIT_ADDRESS | self::FIELD_REQUIRED_ADDRESS
         | self::FIELD_EDIT_ADDRESS_HOUSE | self::FIELD_REQUIRED_ADDRESS_HOUSE
@@ -542,7 +509,43 @@ class IntegratorShop extends PluginFilters {
     {
         // �?мя, фамилия, мобилка
         return self::FIELD_EDIT_FIRST_NAME | self::FIELD_REQUIRED_FIRST_NAME
-        | self::FIELD_EDIT_LAST_NAME | self::FIELD_REQUIRED_SECOND_NAME
         | self::FIELD_EDIT_PHONE | self::FIELD_REQUIRED_PHONE;
+    }
+
+
+    /**
+     * Получить доступные способы оплаты для Самовывоза ( можно анализировать содержимое order )
+     * @param $order DDeliveryOrder
+     * @return array
+     */
+    public function getSelfPaymentVariants( $order ){
+
+        $self_list = unserialize( $this->cmsSettings['self_list'] );
+        if( !is_array($self_list)){
+            $self_list = array();
+        }
+        return $self_list;
+    }
+
+    /**
+     * Получить доступные способы оплаты для курьера ( можно анализировать содержимое order )
+     * @param $order DDeliveryOrder
+     * @return array
+     */
+    public function getCourierPaymentVariants( $order ){
+
+        $courier_list = unserialize( $this->cmsSettings['courier_list'] );
+        if( !is_array($courier_list)){
+            $courier_list = array();
+        }
+        return $courier_list;
+    }
+    public function onFinishResultReturn(  $order, $resultArray  ){
+        if($order->type == \DDelivery\Sdk\DDeliverySDK::TYPE_SELF){
+            $resultArray['payment'] = json_encode($this->getSelfPaymentVariants( $order ));
+        }else{
+            $resultArray['payment'] = json_encode($this->getCourierPaymentVariants( $order ));
+        }
+        return $resultArray;
     }
 } 

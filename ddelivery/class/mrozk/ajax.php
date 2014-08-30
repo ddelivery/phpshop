@@ -38,14 +38,8 @@ include_once(implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'application', 'b
 include_once('IntegratorShop.php');
 // Turn off all error reporting
 try{
-    if(isset($_REQUEST['dostavka_metod'])){
 
-        $_SESSION['dd_name_person'] = $_REQUEST['name_person'];
-        $_SESSION['dd_tel_name'] = $_REQUEST['tel_name'];
-        $_SESSION['dd_mail'] = $_REQUEST['mail'];
-    }
-
-    $IntegratorShop = new IntegratorShop();
+    $IntegratorShop = new IntegratorShop( $_GET );
     $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop);
     // В зависимости от параметров может выводить полноценный html или json
     $ddeliveryUI->render(isset($_REQUEST) ? $_REQUEST : array());

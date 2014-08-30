@@ -33,7 +33,6 @@ function delivery_hook($obj, $data)
     $res = mysql_fetch_array($cur);
 
     $dd = explode( ',', $res[0] );
-
     if( is_array($dd) && in_array($xid, $dd) )
     {
         $ddID = (int)$_POST['order_id'];
@@ -50,7 +49,10 @@ function delivery_hook($obj, $data)
                 $ddeliveryUI->logMessage($e);
             }
         }
-        $hook['dellist'] = '<table collspan="0" rowspan="0"><tr><td>' . $_RESULT['dellist'] . '</td><td >' . '<a href="javascript::void(0)" style="" class="trigger ddbutton">Выбрать способ доставки</a>' . '</td></tr></table>';
+        $hook['dellist'] = '<table collspan="0" rowspan="0"><tr><td>' . $_RESULT['dellist'] . '</td><td >' .
+                           '<a href="javascript::void(0)" onclick="DDeliveryIntegration.openPopup();" id="ddbutton" >Выбрать способ доставки</a>' .
+                           '</td></tr>
+                           </table>';
         return  $hook;
     }
 }

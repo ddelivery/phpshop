@@ -295,6 +295,7 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
      *
      * @param DDeliveryOrder $order
      */
+    /*
     public function filterPointsSelf($selfPoints, DDeliveryOrder $order){
 
         $selfPoints = parent::filterPointsSelf($selfPoints, $order);
@@ -305,9 +306,9 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
             '', ''
         );
         $selfPoints[] = $myCourier;
-        /*/
         return $selfPoints;
     }
+    */
 
     /**
      * При отправке заказа на сервер дделивери идет
@@ -319,8 +320,6 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
     public function isStatusToSendOrder( $cmsStatus ){
         return;
     }
-
-
     /**
      *
      * Перед возвратом точек самовывоза фильтровать их по определенным правилам
@@ -332,7 +331,6 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
     public function finalFilterSelfCompanies( $companyArray, DDeliveryOrder $order ){
         return $companyArray;
     }
-
     /**
      *
      *  Перед возвратом компаний курьерок фильтровать их по определенным правилам
@@ -344,14 +342,13 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
     public function finalFilterCourierCompanies( $companyArray, DDeliveryOrder $order ){
         return $companyArray;
     }
-
     /**
      * Получить доступные способы оплаты для Самовывоза ( можно анализировать содержимое order )
      * @param $order DDeliveryOrder
      * @return array
      */
     public function getSelfPaymentVariants( DDeliveryOrder $order ){
-        return array();
+        return array(1,2);
     }
 
     /**
@@ -365,7 +362,7 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
 
     /**
      *
-     * Используется при отправке заявки на сервер DD для указания стартового статуса
+     * �?спользуется при отправке заявки на сервер DD для указания стартового статуса
      *
      * Если true то заявка в сервисе DDelivery будет выставлена в статус "Подтверждена",
      * если false то то заявка в сервисе DDelivery будет выставлена в статус "В обработке"
@@ -377,7 +374,4 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
     public function isConfirmedStatus( $localStatus ){
         return true;
     }
-
-
-
 }
