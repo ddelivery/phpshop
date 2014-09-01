@@ -56,7 +56,7 @@
                           'delivery_company_name' => $courierCompany['delivery_company_name'],
                           'delivery_time_min' => $courierCompany['delivery_time_min'],
                           'delivery_time_max' => $courierCompany['delivery_time_max'],
-                          'total_price' => $this->getCompanyPrice($courierCompany));
+                          'total_price' => $this->getClientPrice($courierCompany, $this->order));
                 ?>
                 <tr>
                     <td class="col1">
@@ -73,7 +73,7 @@
                         </p>
                     </td>
                     <td class="col4">
-                        <strong><?=$this->getCompanyPrice($courierCompany)?> <i class="icon-rub">&nbsp;</i></strong>
+                        <strong><?=$this->getClientPrice($courierCompany, $this->order)?> <i class="icon-rub">&nbsp;</i></strong>
                     </td>
                     <td class="col5">
                         <strong><?=$courierCompany['delivery_time_min']?></strong> <?=\DDelivery\Utils::plural($courierCompany['delivery_time_min'], 'день', 'дня', 'дней', 'дней', false);?>
