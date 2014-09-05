@@ -79,10 +79,9 @@ try
         print_r($result);
         */
         $pull = $ddeliveryUI->getNotFinishedOrders();
-        if(count($pull))
-        {
-            foreach($pull as $p)
-            {
+
+        if(count($pull)){
+            foreach($pull as $p){
                 $result = $ddeliveryUI->changeOrderStatus( $p );
                 if( count($result) ){
                     echo ' cms order ID ' . $result['cms_order_id'] . '<br />';

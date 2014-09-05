@@ -482,15 +482,14 @@ class IntegratorShop extends PluginFilters {
      * Если редактируемых полей не будет то пропустим шаг
      * @return int
      */
-    public function getCourierRequiredFields()
-    {
+    public function getCourierRequiredFields(){
         // ВВести все обязательно, кроме корпуса
         return self::FIELD_EDIT_FIRST_NAME | self::FIELD_REQUIRED_FIRST_NAME
         | self::FIELD_EDIT_PHONE | self::FIELD_REQUIRED_PHONE
         | self::FIELD_EDIT_ADDRESS | self::FIELD_REQUIRED_ADDRESS
         | self::FIELD_EDIT_ADDRESS_HOUSE | self::FIELD_REQUIRED_ADDRESS_HOUSE
         | self::FIELD_EDIT_ADDRESS_HOUSING
-        | self::FIELD_EDIT_ADDRESS_FLAT;
+        | self::FIELD_EDIT_ADDRESS_FLAT | self::FIELD_REQUIRED_ADDRESS_FLAT | self::FIELD_EDIT_EMAIL;
     }
 
     /**
@@ -499,11 +498,10 @@ class IntegratorShop extends PluginFilters {
      * Если редактируемых полей не будет то пропустим шаг
      * @return int
      */
-    public function getSelfRequiredFields()
-    {
-        // �?мя, фамилия, мобилка
+    public function getSelfRequiredFields(){
+        // �мя, фамилия, мобилка
         return self::FIELD_EDIT_FIRST_NAME | self::FIELD_REQUIRED_FIRST_NAME
-        | self::FIELD_EDIT_PHONE | self::FIELD_REQUIRED_PHONE;
+        | self::FIELD_EDIT_PHONE | self::FIELD_REQUIRED_PHONE | self::FIELD_EDIT_EMAIL;
     }
 
 
