@@ -18,6 +18,7 @@
                                     <img src="<?=$staticURL?>img/logo/<?=$ico?>_1.png" alt="<?=$selfCompany['delivery_company_name']?>"/>
                                     <img class="big" src="<?=$staticURL?>img/logo/<?=$ico?>.png" alt="<?=$selfCompany['delivery_company_name']?>"/>
                                 </span>
+
                 <span class="price"><?=$this->getClientPrice($selfCompany, $this->order)?> <i class="icon-rub">&nbsp;</i></span>
 
                 <span class="date">

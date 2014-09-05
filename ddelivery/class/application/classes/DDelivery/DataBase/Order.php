@@ -60,7 +60,7 @@ class Order {
 	 * weight вес
 	 * declared_price свойство заказа dd
 	 * payment_price  свойство заказа dd
-	 * to_name    Ф�?О клиента
+	 * to_name    ФИО клиента
 	 * to_phone телефон клиента
 	 * goods_description описание товаров
 	 * to_street  улица

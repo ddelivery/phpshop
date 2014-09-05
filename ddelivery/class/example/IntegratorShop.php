@@ -52,10 +52,11 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
             25,	//	float $length ширина
             0.5,	//	float $weight вес кг
             1000,	//	float $price стоимостьв рублях
-            1,	//	int $quantity количество товара
-            'Веселый клоун'	//	string $name Название вещи
+            1,
+            'Веселый клоун',	//	string $name Название вещи
+            'artikul222'
         );
-        $products[] = new DDeliveryProduct(2, 10, 13, 15, 0.3, 1500, 2, 'Грустный клоун');
+        $products[] = new DDeliveryProduct(2, 10, 13, 15, 0.3, 1500, 2, 'Грустный клоун', 'artikul222');
         return $products;
     }
 
@@ -64,6 +65,7 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
      * @return array
      */
     public function getDbConfig(){
+
 
         return array(
             'pdo' => new \PDO('mysql:host=localhost;dbname=ddelivery', 'root', 'root', array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")),
@@ -138,7 +140,7 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
      * @param \DDelivery\Order\DDeliveryOrder $order
      * @return void
      */
-    public function onFinishChange(\DDelivery\Order\DDeliveryOrder $order){
+    public function onFinishChange($order){
 
     }
 
@@ -157,7 +159,8 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
      */
     public function filterCompanyPointCourier(){
         //return array();
-        return array(23,27,29,35, 36, 40, 45, 48 );
+        return array	(4,21,29,23,27,28,20,30,31,11,16,22,17,3,14,1,13,18,6,
+                         26,25,24,7,35,36,37,39,40,42,43,44,45,46,47,48,49);
         // TODO: Implement filterCompanyPointCourier() method.
     }
 
@@ -168,7 +171,8 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
      */
     public function filterCompanyPointSelf(){
         //return array();
-        return array(38,39,40);
+        return array	(4,21,29,23,27,28,20,30,31,11,16,22,17,3,14,1,13,18,6,
+                         26,25,24,7,35,36,37,39,40,42,43,44,45,46,47,48,49);
         // TODO: Implement filterCompanyPointSelf() method.
     }
 
@@ -243,7 +247,7 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
      * @return string|null
      */
     public function getClientFirstName() {
-        return null;
+        return 'xxx xxx xxx';
     }
 
     /**
@@ -251,7 +255,7 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
      * @return string|null
      */
     public function getClientLastName() {
-        return null;
+        return 'cccccc ccccccc ccccc';
     }
 
     /**
@@ -259,7 +263,7 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
      * @return string|null
      */
     public function getClientPhone() {
-        return null;
+        return '79211234567'; ///null;
     }
 
     /**
@@ -290,25 +294,6 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
         );
     }
 
-    /**
-     * Если необходимо фильтрует пункты самовывоза и добавляет новые
-     *
-     * @param DDeliveryOrder $order
-     */
-    /*
-    public function filterPointsSelf($selfPoints, DDeliveryOrder $order){
-
-        $selfPoints = parent::filterPointsSelf($selfPoints, $order);
-        /* пример установки собственного магазина на карту
-        $myCourier = new \DDelivery\Point\PointSelfCustom(
-            1, 'Моя компания', 'Петропавловская крепость, 8',
-            59.950236, 30.31537, 100, 0, 'Ежедневно с 10 до 22',
-            '', ''
-        );
-        $selfPoints[] = $myCourier;
-        return $selfPoints;
-    }
-    */
 
     /**
      * При отправке заказа на сервер дделивери идет
@@ -320,6 +305,8 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
     public function isStatusToSendOrder( $cmsStatus ){
         return;
     }
+
+
     /**
      *
      * Перед возвратом точек самовывоза фильтровать их по определенным правилам
@@ -331,6 +318,7 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
     public function finalFilterSelfCompanies( $companyArray, DDeliveryOrder $order ){
         return $companyArray;
     }
+
     /**
      *
      *  Перед возвратом компаний курьерок фильтровать их по определенным правилам
@@ -342,13 +330,14 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
     public function finalFilterCourierCompanies( $companyArray, DDeliveryOrder $order ){
         return $companyArray;
     }
+
     /**
      * Получить доступные способы оплаты для Самовывоза ( можно анализировать содержимое order )
      * @param $order DDeliveryOrder
      * @return array
      */
-    public function getSelfPaymentVariants( DDeliveryOrder $order ){
-        return array(1,2);
+    public function getSelfPaymentVariants( $order ){
+        return array(10, 2);
     }
 
     /**
@@ -356,13 +345,13 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
      * @param $order DDeliveryOrder
      * @return array
      */
-    public function getCourierPaymentVariants( DDeliveryOrder $order ){
-        return array();
+    public function getCourierPaymentVariants( $order ){
+        return array(2);
     }
 
     /**
      *
-     * �?спользуется при отправке заявки на сервер DD для указания стартового статуса
+     * Используется при отправке заявки на сервер DD для указания стартового статуса
      *
      * Если true то заявка в сервисе DDelivery будет выставлена в статус "Подтверждена",
      * если false то то заявка в сервисе DDelivery будет выставлена в статус "В обработке"
@@ -374,4 +363,35 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
     public function isConfirmedStatus( $localStatus ){
         return true;
     }
+
+
+    /**
+     * Возвращает бинарную маску обязательных полей для курьера
+     * Если редактирование не включено, но есть обязательность то поле появится
+     * Если редактируемых полей не будет то пропустим шаг
+     * @return int
+     */
+    public function getCourierRequiredFields(){
+        // ВВести все обязательно, кроме корпуса
+        return self::FIELD_EDIT_FIRST_NAME | self::FIELD_REQUIRED_FIRST_NAME
+        | self::FIELD_EDIT_PHONE | self::FIELD_REQUIRED_PHONE
+        | self::FIELD_EDIT_ADDRESS | self::FIELD_REQUIRED_ADDRESS
+        | self::FIELD_EDIT_ADDRESS_HOUSE | self::FIELD_REQUIRED_ADDRESS_HOUSE
+        | self::FIELD_EDIT_ADDRESS_HOUSING
+        | self::FIELD_EDIT_ADDRESS_FLAT | self::FIELD_REQUIRED_ADDRESS_FLAT | self::FIELD_EDIT_EMAIL;
+    }
+
+    /**
+     * Возвращает бинарную маску обязательных полей для пунктов самовывоза
+     * Если редактирование не включено, но есть обязательность то поле появится
+     * Если редактируемых полей не будет то пропустим шаг
+     * @return int
+     */
+    public function getSelfRequiredFields(){
+        // Имя, фамилия, мобилка
+        return self::FIELD_EDIT_FIRST_NAME | self::FIELD_REQUIRED_FIRST_NAME
+        | self::FIELD_EDIT_PHONE | self::FIELD_REQUIRED_PHONE | self::FIELD_EDIT_EMAIL;
+    }
+
+
 }

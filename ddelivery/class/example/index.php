@@ -10,6 +10,9 @@
 
         <script>
 
+            /**
+             * Created by DnAp on 08.05.14.
+             */
             var topWindow = parent;
 
             while(topWindow != topWindow.parent) {

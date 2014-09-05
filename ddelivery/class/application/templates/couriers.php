@@ -1,6 +1,5 @@
 <?
 /**
- * @var DDelivery\Point\DDeliveryPointCourier[] $courierCompanyList
  * @var string $staticPath
  */
 
@@ -56,7 +55,7 @@
                           'delivery_company_name' => $courierCompany['delivery_company_name'],
                           'delivery_time_min' => $courierCompany['delivery_time_min'],
                           'delivery_time_max' => $courierCompany['delivery_time_max'],
-                          'total_price' => $this->getClientPrice($courierCompany, $this->order));
+                          'total_price' => $this->getCompanyPrice($courierCompany));
                 ?>
                 <tr>
                     <td class="col1">

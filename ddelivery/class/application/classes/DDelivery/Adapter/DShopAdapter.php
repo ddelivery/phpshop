@@ -30,13 +30,13 @@ abstract class DShopAdapter
      */
     const CACHING_TYPE_INDIVIDUAL = 'individual';
 
-    const SDK_VERSION = '2.0';
+    const SDK_VERSION = '2.1';
     /**
-     * �?мя редактируется
+     * Имя редактируется
      */
     const FIELD_EDIT_FIRST_NAME = 1;
     /**
-     * �?мя обязательное
+     * Имя обязательное
      */
     const FIELD_REQUIRED_FIRST_NAME = 2;
     /**
@@ -44,7 +44,7 @@ abstract class DShopAdapter
      */
     const FIELD_EDIT_SECOND_NAME = 4;
     /**
-     * �?спользуй FIELD_EDIT_SECOND_NAME
+     * Используй FIELD_EDIT_SECOND_NAME
      * @deprecated
      */
     const FIELD_EDIT_LAST_NAME = 4;
@@ -94,6 +94,16 @@ abstract class DShopAdapter
     const FIELD_REQUIRED_ADDRESS_FLAT = 8192;
 
     /**
+     * Адресс, квартира редактируется
+     */
+    const FIELD_EDIT_EMAIL = 16384;
+    /**
+     * Адресс, квартира обязательное
+     */
+    const FIELD_REQUIRED_EMAIL = 32768;
+
+
+    /**
      * Кеш объекта
      * @var DDeliveryProduct[]
      */
@@ -115,14 +125,14 @@ abstract class DShopAdapter
 
     protected  $cmsOrderStatus = array( DDStatusProvider::ORDER_IN_PROGRESS => 'В обработке',
                                         DDStatusProvider::ORDER_CONFIRMED => 'Подтверждена',
-                                        DDStatusProvider::ORDER_IN_STOCK => 'На складе �?М',
+                                        DDStatusProvider::ORDER_IN_STOCK => 'На складе ИМ',
                                         DDStatusProvider::ORDER_IN_WAY => 'Заказ в пути',
                                         DDStatusProvider::ORDER_DELIVERED => 'Заказ доставлен',
                                         DDStatusProvider::ORDER_RECEIVED => 'Заказ получен',
                                         DDStatusProvider::ORDER_RETURN => 'Возврат заказа',
                                         DDStatusProvider::ORDER_CUSTOMER_RETURNED => 'Клиент вернул заказ',
                                         DDStatusProvider::ORDER_PARTIAL_REFUND => 'Частичный возврат заказа',
-                                        DDStatusProvider::ORDER_RETURNED_MI => 'Возвращен в �?М',
+                                        DDStatusProvider::ORDER_RETURNED_MI => 'Возвращен в ИМ',
                                         DDStatusProvider::ORDER_WAITING => 'Ожидание',
                                         DDStatusProvider::ORDER_CANCEL => 'Отмена' );
 
@@ -215,7 +225,7 @@ abstract class DShopAdapter
      * @param $order DDeliveryOrder
      * @return array
      */
-    public function getCourierPaymentVariants($order){
+    public function getCourierPaymentVariants( $order ){
         return array();
     }
     /**
@@ -286,7 +296,7 @@ abstract class DShopAdapter
 
     /**
      *
-     * �?спользуется при отправке заявки на сервер DD для указания стартового статуса
+     * Используется при отправке заявки на сервер DD для указания стартового статуса
      *
      * Если true то заявка в сервисе DDelivery будет выставлена в статус "Подтверждена",
      * если false то то заявка в сервисе DDelivery будет выставлена в статус "В обработке"
@@ -331,9 +341,10 @@ abstract class DShopAdapter
             0.5,	//	float $weight вес кг
             1000,	//	float $price стоимостьв рублях
             1,	//	int $quantity количество товара
+            'articule 222',
             'Веселый клоун'	//	string $name Название вещи
         );
-        $products[] = new DDeliveryProduct(2, 10, 13, 15, 0.3, 1500, 2, 'Грустный клоун');
+        $products[] = new DDeliveryProduct(2, 10, 13, 15, 0.3, 1500, 2, 'articule 222', 'Грустный клоун');
         return $products;
     }
     /**
@@ -399,7 +410,7 @@ abstract class DShopAdapter
      * @return string|null
      */
     public function getClientPhone() {
-        return null;
+        return '79211234567'; //null;
     }
 
     /**
@@ -547,15 +558,15 @@ abstract class DShopAdapter
      * Если редактируемых полей не будет то пропустим шаг
      * @return int
      */
-    public function getCourierRequiredFields()
-    {
+    public function getCourierRequiredFields(){
+        return 0;
         // ВВести все обязательно, кроме корпуса
-        return self::FIELD_EDIT_FIRST_NAME | self::FIELD_REQUIRED_FIRST_NAME | self::FIELD_EDIT_SECOND_NAME | self::FIELD_REQUIRED_SECOND_NAME
+        return self::FIELD_EDIT_FIRST_NAME | self::FIELD_REQUIRED_FIRST_NAME
             | self::FIELD_EDIT_PHONE | self::FIELD_REQUIRED_PHONE
             | self::FIELD_EDIT_ADDRESS | self::FIELD_REQUIRED_ADDRESS
             | self::FIELD_EDIT_ADDRESS_HOUSE | self::FIELD_REQUIRED_ADDRESS_HOUSE
             | self::FIELD_EDIT_ADDRESS_HOUSING
-            | self::FIELD_EDIT_ADDRESS_FLAT | self::FIELD_REQUIRED_ADDRESS_FLAT;
+            | self::FIELD_EDIT_ADDRESS_FLAT | self::FIELD_REQUIRED_ADDRESS_FLAT | self::FIELD_EDIT_EMAIL;
     }
 
     /**
@@ -564,12 +575,11 @@ abstract class DShopAdapter
      * Если редактируемых полей не будет то пропустим шаг
      * @return int
      */
-    public function getSelfRequiredFields()
-    {
-        // �?мя, фамилия, мобилка
+    public function getSelfRequiredFields(){
+        return 0;
+        // Имя, фамилия, мобилка
         return self::FIELD_EDIT_FIRST_NAME | self::FIELD_REQUIRED_FIRST_NAME
-            | self::FIELD_EDIT_SECOND_NAME | self::FIELD_REQUIRED_SECOND_NAME
-            | self::FIELD_EDIT_PHONE | self::FIELD_REQUIRED_PHONE;
+             | self::FIELD_EDIT_PHONE | self::FIELD_REQUIRED_PHONE | self::FIELD_EDIT_EMAIL;
     }
 
 
@@ -579,7 +589,7 @@ abstract class DShopAdapter
      * @param DDeliveryOrder $order
      * @return bool
      */
-    abstract public function onFinishChange( DDeliveryOrder $order);
+    abstract public function onFinishChange( $order );
 
     /**
      * Обработка цены перед отдачей в методе getClientPrice
@@ -588,7 +598,9 @@ abstract class DShopAdapter
      * @param $price
      * @return mixed
      */
-    public function  processClientPrice( DDeliveryOrder $order, $price ){
+    public function  processClientPrice(  $order, $price ){
+        // Округление
+        $price =  $this->aroundPrice( $price );
         return $price;
     }
 
@@ -601,5 +613,15 @@ abstract class DShopAdapter
      */
     public function onFinishResultReturn( $order, $resultArray ){
         return $resultArray;
+    }
+
+    /**
+     * Нужна ли контактная информация
+     * в конце оформления заказа
+     *
+     * @return bool
+     */
+    public function needContactForm(){
+        return true;
     }
 }
