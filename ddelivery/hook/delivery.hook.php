@@ -36,9 +36,8 @@ function delivery_hook($obj, $data)
     if( is_array($dd) && in_array($xid, $dd) )
     {
         $ddID = (int)$_POST['order_id'];
-        if( $ddID )
-        {   try{
-
+        if( $ddID ){
+            try{
                 $IntegratorShop = new IntegratorShop();
                 $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
                 $order = $ddeliveryUI->initOrder($ddID);

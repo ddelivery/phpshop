@@ -213,16 +213,10 @@ class IntegratorShop extends PluginFilters {
 
     /**
      * Метод будет вызван когда пользователь закончит выбор способа доставки
-     *
      * @param int $orderId
-     * @param \DDelivery\Order\DDeliveryOrder $order
-     * @param bool $customPoint Если true, то заказ обрабатывается магазином
-     * @return void
+     * @return bool
      */
-    public function onFinishChange(\DDelivery\Order\DDeliveryOrder $order)
-    {
-
-    }
+    public function onFinishChange( $order ){}
 
     /**
      * Какой процент от стоимости страхуется
