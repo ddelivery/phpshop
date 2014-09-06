@@ -1,12 +1,6 @@
 @ComStartReg@
 <script src="phpshop/modules/ddelivery/class/html/js/ddelivery.js"></script>
-<!--
-<script src="phpshop/modules/ddelivery/class/mrozk/assets/jquery.min.js"></script>
-<script type="text/javascript">var jQuery_1_11 = jQuery.noConflict();</script>
-<link rel="stylesheet" type="text/css" href="phpshop/modules/ddelivery/class/mrozk/assets/the-modal.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="phpshop/modules/ddelivery/class/mrozk/assets/demo-modals.css" media="screen" />
-<script src="phpshop/modules/ddelivery/class/mrozk/assets/jquery.the-modal.js"></script>
--->
+
 <style type="text/css">
     #ddbutton {
         background-image: none;
@@ -101,7 +95,20 @@
         //document.getElementById('DosSumma').innerHTML = (data.clientPrice);
         if( data.userInfo.toStreet != null )
         {
-            document.getElementById('adr_name').value = data.userInfo.toStreet + ' ' + data.userInfo.toHouse + ' ' + data.userInfo.toFlat + ' ' ;
+            var address = data.userInfo.toStreet;
+
+            if( data.userInfo.toHouse != null ){
+                address += ( ' ' + data.userInfo.toHouse);
+            }
+
+            if( data.userInfo.toHousing != null ){
+                address += ( ' ' + data.userInfo.toHouse);
+            }
+
+            if( data.userInfo.toFlat != null ){
+                address += ( ' ' + data.userInfo.toFlat);
+            }
+            document.getElementById('adr_name').value = address;
         }
         mail = document.getElementsByName('mail');
         if(data.userInfo.toEmail!=null)
