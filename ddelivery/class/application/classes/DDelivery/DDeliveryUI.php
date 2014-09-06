@@ -1440,11 +1440,7 @@ use DDelivery\Sdk\Messager;
                     echo $this->renderDeliveryTypeForm(true);
                     break;
                 case 'contactForm':
-                    if( $this->shop->needContactForm() ){
-                        echo $this->renderContactForm();
-                    }else{
-                        echo $this->renderChange();
-                    }
+                    echo $this->renderContactForm();
                     break;
                 case 'change':
                     echo $this->renderChange();
@@ -1766,6 +1762,11 @@ use DDelivery\Sdk\Messager;
                     $order->setToHousing($address[2]);
                 if(isset($address[3]))
                     $order->setToFlat($address[3]);
+            }
+
+            $fieldValue = $order->toEmail;
+            if(!$fieldValue){
+                $order->toEmail = $this->shop->getClientEmail();
             }
 
             if($requiredFieldMask == 0){

@@ -44,8 +44,7 @@ $IntegratorShop = new IntegratorShop();
 try
 {
     $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
-    if( $_GET['action'] == '1' )
-    {
+    if( $_GET['action'] == '1' ){
         $pull = $ddeliveryUI->createPullOrders();
         if(count($pull))
         {
@@ -62,8 +61,7 @@ try
         }
 
     }
-    else if($_GET['action'] == '2')
-    {
+    else if($_GET['action'] == '2'){
         $orders = $GLOBALS['SysValue']['base']['order_status'];
 
         $query = 'SELECT id,name FROM ' . $orders ;

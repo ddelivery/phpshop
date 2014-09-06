@@ -421,6 +421,9 @@ abstract class DShopAdapter
         return array();
     }
 
+    public function getClientEmail() {
+        return null;
+    }
 
     /**
      * Вызывается перед отображением цены точки самовывоза, можно что-то изменить
@@ -613,15 +616,5 @@ abstract class DShopAdapter
      */
     public function onFinishResultReturn( $order, $resultArray ){
         return $resultArray;
-    }
-
-    /**
-     * Нужна ли контактная информация
-     * в конце оформления заказа
-     *
-     * @return bool
-     */
-    public function needContactForm(){
-        return true;
     }
 }

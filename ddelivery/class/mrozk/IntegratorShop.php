@@ -109,7 +109,6 @@ class IntegratorShop extends PluginFilters {
         $PHPShopCart = new PHPShopCart();
         $productsCart = $PHPShopCart->getArray();
 
-
         if( count( $productsCart ) )
         {
             foreach($productsCart as $item)
@@ -133,7 +132,7 @@ class IntegratorShop extends PluginFilters {
 
                 $products[] = new \DDelivery\Order\DDeliveryProduct( $item['id'],
                     $width, $height, $lenght, $weight,
-                    $item['price'], $item['num'], iconv('windows-1251', 'UTF-8',$item['name']));
+                    $item['price'], $item['num'], iconv('windows-1251', 'UTF-8',$item['name']), $item['uid']);
 
 
             }
@@ -357,10 +356,8 @@ class IntegratorShop extends PluginFilters {
      * Тип округления
      * @return int
      */
-    public function aroundPriceType()
-    {
-        switch ($this->cmsSettings['okrugl'])
-        {
+    public function aroundPriceType(){
+        switch ($this->cmsSettings['okrugl']){
             case '0': return self::AROUND_FLOOR;
             case '1': return self::AROUND_CEIL;
             case '2': return self::AROUND_ROUND;
@@ -439,6 +436,9 @@ class IntegratorShop extends PluginFilters {
         return array(/*'Адресx','Домx', 'Корпусx','Квартираx'*/);
     }
 
+    public function getClientEmail(){
+        return $this->fields['mail'];
+    }
     /**
      * Верните id города в системе DDelivery
      * @return int
@@ -453,8 +453,7 @@ class IntegratorShop extends PluginFilters {
      * Возвращает поддерживаемые магазином способы доставки
      * @return array
      */
-    public function getSupportedType()
-    {
+    public function getSupportedType(){
         if( $this->cmsSettings['type'] == '0' )
         {
             return array(
