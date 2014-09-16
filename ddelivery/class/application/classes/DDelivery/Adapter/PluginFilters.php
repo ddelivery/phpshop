@@ -83,7 +83,7 @@ abstract class PluginFilters extends DShopAdapter
     public function getPaymentPriceCourier($order, $orderPrice)
     {
         $filterByPayment = $this->filterPointByPaymentTypeCourier();
-        if($filterByPayment == $order->paymentVariant) {
+        if($filterByPayment == PluginFilters::PAYMENT_POST_PAYMENT) {
             if( $orderPrice && $order->amount ) {
                 return $order->amount + $orderPrice;
             }
@@ -108,7 +108,7 @@ abstract class PluginFilters extends DShopAdapter
     public function getPaymentPriceSelf( $order, $orderPrice )
     {
         $filterByPayment = $this->filterPointByPaymentTypeSelf();
-        if($filterByPayment == $order->paymentVariant){
+        if($filterByPayment == PluginFilters::PAYMENT_POST_PAYMENT){
             if( $orderPrice && $order->amount ){
                 return $order->amount + $orderPrice;
             }
@@ -184,19 +184,19 @@ abstract class PluginFilters extends DShopAdapter
 
     /**
      * @param $price
+     * @param $orderSum
      * @return bool|int
      */
-    public function preDisplayPointCalc($price)
-    {
+    public function preDisplayPointCalc($price, $orderSum){
         $intervals = $this->getIntervalsByPoint();
 
         $priceReturn = $price;
 
         foreach($intervals as $interval){
-            if (!isset($interval['min']) || $price < $interval['min'])
+            if (!isset($interval['min']) || $orderSum < $interval['min'])
                 continue;
 
-            if(!empty($interval['max']) && $price >= $interval['max'])
+            if(!empty($interval['max']) && $orderSum >= $interval['max'])
                 continue;
 
 

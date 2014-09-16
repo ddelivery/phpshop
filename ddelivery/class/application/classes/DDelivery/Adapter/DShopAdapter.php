@@ -30,7 +30,7 @@ abstract class DShopAdapter
      */
     const CACHING_TYPE_INDIVIDUAL = 'individual';
 
-    const SDK_VERSION = '2.1';
+    const SDK_VERSION = '2.1.3';
     /**
      * Имя редактируется
      */
@@ -617,4 +617,23 @@ abstract class DShopAdapter
     public function onFinishResultReturn( $order, $resultArray ){
         return $resultArray;
     }
+
+    /**
+     * Ширина модуля
+     * @return string
+     */
+    public function getModuleWidth(){
+        return '1000';
+    }
+
+    /**
+     * Высота модуля
+     * @return string
+     */
+    public function getModuleHeight(){
+        return '650';
+    }
+
+
+
 }
