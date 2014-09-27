@@ -109,28 +109,9 @@ use DDelivery\Sdk\Messager;
          * @return mixed
          */
         public function logMessage( \Exception $e ){
-            $logginUrl = $this->shop->getLogginServer();
-            if( !is_null( $logginUrl ) ){
-                $curl = curl_init();
-                curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-                curl_setopt($curl, CURLOPT_HEADER, 0);
-                curl_setopt($curl, CURLOPT_URL, $logginUrl);
-                curl_setopt($curl, CURLOPT_POST, true);
-                $params = array('message' => $e->getMessage() . ', версия SDK -' . DShopAdapter::SDK_VERSION . ', '
-                                . $e->getFile() . ', '
-                                . $e->getLine() . ', ' . date("Y-m-d H:i:s"), 'url' => $_SERVER['SERVER_NAME'],
-                                'apikey' => $this->shop->getApiKey(),
-                                'testmode' => (int)$this->shop->isTestMode());
-                $urlSuffix = '';
-                foreach($params as $key => $value) {
-                    $urlSuffix .= urlencode($key).'='.urlencode($value) . '&';
-                }
-                curl_setopt($curl, CURLOPT_POSTFIELDS, $urlSuffix);
-                $answer = curl_exec($curl);
-                curl_close($curl);
-                return $answer;
-            }
+            $this->shop->logMessage($e);
         }
+
         public function createTables()
         {
             $cache = new DataBase\Cache($this->pdo, $this->pdoTablePrefix);
@@ -611,7 +592,7 @@ use DDelivery\Sdk\Messager;
                 //$orderPrice = $point->getDeliveryInfo()->clientPrice;
 
                 $declaredPrice = $this->shop->getDeclaredPrice( $order );
-                $paymentPrice = $this->shop->getPaymentPriceCourier( $order, $this->getClientPrice($point, $order) );
+                $paymentPrice = $this->shop->getPaymentPriceCourier( $order, $this->getClientPrice($point, $order, DDeliverySDK::TYPE_COURIER) );
 
                 $to_street = $order->toStreet;
                 $to_house = $order->toHouse;
@@ -671,7 +652,7 @@ use DDelivery\Sdk\Messager;
                 $to_name = $order->getToName();
                 $to_phone = $order->getToPhone();
                 $declaredPrice = $this->shop->getDeclaredPrice( $order );
-                $paymentPrice = $this->shop->getPaymentPriceSelf( $order, $this->getClientPrice($point, $order ) );
+                $paymentPrice = $this->shop->getPaymentPriceSelf( $order, $this->getClientPrice($point, $order, DDeliverySDK::TYPE_SELF ) );
                 $shop_refnum = $order->shopRefnum;
 
                 $to_email = $order->toEmail;
@@ -811,8 +792,7 @@ use DDelivery\Sdk\Messager;
          * Возвращает id текущего города или пытается определить его
          * @return int
          */
-        protected function getCityId()
-        {
+        protected function getCityId(){
             if($this->order->city) {
                 return $this->order->city;
             }
@@ -823,6 +803,10 @@ use DDelivery\Sdk\Messager;
                 $cityRaw = $this->getCityByIp($_SERVER['REMOTE_ADDR']);
                 if($cityRaw && $cityRaw['city_id']) {
                     $cityId = (int)$cityRaw['city_id'];
+                    if( $cityRaw['city'] != $cityRaw['region']) {
+                        $cityRaw['city'] .= ', '.$cityRaw['region'].' обл.';
+                    }
+                    $this->order->cityName = Utils::firstWordLiterUppercase($cityRaw['city']);
                 }
                 if(!$cityId) {
                     $topCityId = $this->sdk->getTopCityId();
@@ -856,9 +840,11 @@ use DDelivery\Sdk\Messager;
          *
          * @param $companyArray
          * @param $order DDeliveryOrder
+         * @param $orderType int
+         *
          * @return mixed
          */
-        public function getClientPrice( $companyArray, $order ){
+        public function getClientPrice( $companyArray, $order, $orderType = DDeliverySDK::TYPE_SELF ){
             $pickup = $this->shop->isPayPickup();
             if( $pickup ){
                 $price = $companyArray['total_price'];
@@ -868,7 +854,7 @@ use DDelivery\Sdk\Messager;
             // интервалы
             $price = $this->shop->preDisplayPointCalc($price, $order->getAmount());
             // Ручное редактирование
-            $price = $this->shop->processClientPrice( $order, $price );
+            $price = $this->shop->processClientPrice( $order, $price, $orderType, $companyArray );
 
             return $price;
         }
@@ -1170,7 +1156,7 @@ use DDelivery\Sdk\Messager;
         public function getOrderClientDeliveryPrice( DDeliveryOrder $order ){
             $point = $order->getPoint();
             if( is_array($point) ){
-                return $this->getClientPrice( $point, $order );
+                return $this->getClientPrice( $point, $order, $order->type );
             }else{
                 return false;
             }
@@ -1474,23 +1460,38 @@ use DDelivery\Sdk\Messager;
                         if(isset($request['name']) && mb_strlen($request['name']) >= 3){
                             $cityList = $this->sdk->getAutoCompleteCity($request['name']);
                             $cityList = $cityList->response;
+                            $resultCity = array();
                             if( count( $cityList ) ){
                                 foreach($cityList as $key => $city){
-                                    $cityList[$key]['name'] = Utils::firstWordLiterUppercase($city['name']);
+                                    $resultCity[$key]['label'] = Utils::firstWordLiterUppercase($city['name']);
+                                    if($cityList[$key]['region'] != $cityList[$key]['label']) {
+                                        $resultCity[$key]['label'] .= ', '.$cityList[$key]['region'].' обл.';
+                                    }
+                                    $resultCity[$key]['id'] = $city['_id'];
                                 }
                             }
 
-                            echo json_encode(array(
-                                'displayData'=>$cityList,
-                                'request'=>array(
-                                    'name'=>$request['name'],
-                                    'action'=>'searchCity'
-                                )
-                            ));
+                            echo json_encode($resultCity);
 
                         }
                         return;
+                    case 'getCompanies':
+                        $dd_to = $request['ddcalc_to'];
+                        $dd_payment = $request['ddcalc_payment'];
+                        $dd_weight = $request['ddcalc_weight'];
+                        $dd_width = $request['ddcalc_width'];
+                        $dd_height = $request['ddcalc_height'];
+                        $dd_length = $request['ddcalc_length'];
 
+                        $pickup = $this->sdk->calculatorPickupForCity( $dd_to, $dd_width, $dd_height, $dd_length, $dd_weight, $dd_payment );
+                        $courier = $this->sdk->calculatorCourier( $dd_to, $dd_width, $dd_height, $dd_length, $dd_weight, $dd_payment );
+                        echo json_encode(
+                            array(
+                                'pickup' => $pickup->response,
+                                'courier' => $courier->response
+                            )
+                        );
+                        return;
                 }
             }
         }
@@ -1500,10 +1501,15 @@ use DDelivery\Sdk\Messager;
         {
             $comment = '';
             $point = $this->order->getPoint();
+
             if( $this->order->type == DDeliverySDK::TYPE_SELF ){
-                $comment = 'Самовывоз, ' . $this->order->cityName . ' ' . $point['address'];
+                $comment = 'Самовывоз, ' . $this->order->cityName . ' ' . $point['address'] .
+                            (', ' . $point['delivery_company_name']) .
+                            (', ' . $point['name'] . ', ID точки - ' . $point['_id'] ) .
+                            (', ' . (($point['type'] == 1)?'Постомат':'ПВЗ'));
             }else if( $this->order->type == DDeliverySDK::TYPE_COURIER ){
-                $comment = 'Доставка курьером по адресу '.$this->order->getFullAddress();
+                $comment = 'Доставка курьером по адресу '.$this->order->getFullAddress().
+                            (', ' . $point['delivery_company_name']) ;
             }
 
             $this->shop->onFinishChange( $this->order );
@@ -1513,7 +1519,7 @@ use DDelivery\Sdk\Messager;
                             'js'=>'change',
                             'comment'=>htmlspecialchars($comment),
                             'orderId' => $this->order->localId,
-                            'clientPrice'=>$this->getClientPrice($point, $this->order),
+                            'clientPrice'=>$this->getClientPrice($point, $this->order, $this->order->type),
                             'userInfo' => $this->getDDUserInfo($this->order),
                             );
             $returnArray = $this->shop->onFinishResultReturn( $this->order, $returnArray );
@@ -1620,7 +1626,7 @@ use DDelivery\Sdk\Messager;
                 $selfCompanies = $this->cachedCalculateSelfPrices( $this->order );
                 if(count( $selfCompanies )){
 
-                    $minPrice = $this->getClientPrice( $selfCompanies[0], $this->order );
+                    $minPrice = $this->getClientPrice( $selfCompanies[0], $this->order, DDeliverySDK::TYPE_SELF  );
                     $minTime = PHP_INT_MAX;
                     foreach( $selfCompanies as $selfCompany ) {
                         if($minTime > $selfCompany['delivery_time_min']){
@@ -1640,7 +1646,7 @@ use DDelivery\Sdk\Messager;
                 $courierCompanies = $this->cachedCalculateCourierPrices( $this->order );
 
                 if(count( $courierCompanies )){
-                    $minPrice = $this->getClientPrice( $courierCompanies[0], $this->order );
+                    $minPrice = $this->getClientPrice( $courierCompanies[0], $this->order, DDeliverySDK::TYPE_COURIER  );
                     $minTime = PHP_INT_MAX;
                     foreach( $courierCompanies as $courierCompany ) {
                         if($minTime > $courierCompany['delivery_time_min']){

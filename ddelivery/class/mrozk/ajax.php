@@ -33,8 +33,6 @@ $PHPShopSystem = new PHPShopSystem();
 
 
 include_once(implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'application', 'bootstrap.php')));
-
-
 include_once('IntegratorShop.php');
 // Turn off all error reporting
 try{

@@ -4,23 +4,24 @@ include_once( $_SERVER['DOCUMENT_ROOT'] .  '/phpshop/modules/ddelivery/class/mro
 /**
  * Настройка модуля
  */
-function ddelivery_option()
-{
-    $PHPShopOrm = new PHPShopOrm($GLOBALS['SysValue']['base']['pickpoint']['pickpoint_system']);
-    return $PHPShopOrm->select();
-}
 
-/**
- * Поиск доставки по имени
- */
-function search_ddelivery_delivery($city, $xid)
-{
-    $PHPShopOrm = new PHPShopOrm($GLOBALS['SysValue']['base']['delivery']);
-    $data = $PHPShopOrm->select(array('id'), array('city' => " REGEXP '" . $city . "'", 'id' => '=' . $xid,'is_folder'=>"!='1'"), false, array('limit' => 1));
-    if (is_array($data))
-        return $data['id'];
-}
+function search_ddelivery_delivery(){
 
+    $PHPShopOrm = new PHPShopOrm($GLOBALS['SysValue']['base']['ddelivery']['ddelivery_system']);
+    $data = $PHPShopOrm->select(array('settings'), array('id' => '=1'));
+
+
+
+    if( !isset($data['settings']) || empty( $data['settings']) ){
+        $settings = array('self_way' =>array(), 'courier_way' => array());
+    }else{
+        $settings = json_decode($data['settings'], true);
+    }
+
+    $dd = array_merge($settings['self_way'], $settings['courier_way']);
+
+    return $dd;
+}
 /**
  * Хук
  */
@@ -28,13 +29,10 @@ function delivery_hook($obj, $data)
 {
     $_RESULT=$data[0];
     $xid=$data[1];
-    $query = 'SELECT delivery_id FROM ddelivery_module_system WHERE id=1';
-    $cur = mysql_query($query);
-    $res = mysql_fetch_array($cur);
 
-    $dd = explode( ',', $res[0] );
-    if( is_array($dd) && in_array($xid, $dd) )
-    {
+    $dd = search_ddelivery_delivery();
+
+    if( is_array($dd) && in_array($xid, $dd) ){
         $ddID = (int)$_POST['order_id'];
         if( $ddID ){
             try{
@@ -54,6 +52,7 @@ function delivery_hook($obj, $data)
                            </table>';
         return  $hook;
     }
+
 }
 
 $addHandler = array

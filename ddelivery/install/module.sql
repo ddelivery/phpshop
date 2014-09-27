@@ -18,8 +18,8 @@ CREATE TABLE IF NOT EXISTS `ddelivery_module_system` (
   `def_lenght` varchar(64) NOT NULL,
   `def_height` varchar(64) NOT NULL,
   `def_weight` varchar(64) NOT NULL,
-  `pvz_companies` varchar(264) NOT NULL,
-  `cur_companies` varchar(264) NOT NULL,
+  `pvz_companies` text  NOT NULL,
+  `cur_companies` text NOT NULL,
   `from1` varchar(64) NOT NULL,
   `to1` varchar(64) NOT NULL,
   `method1` varchar(64) NOT NULL,
@@ -42,16 +42,16 @@ CREATE TABLE IF NOT EXISTS `ddelivery_module_system` (
   `methodval1` varchar(64) NOT NULL,
   `methodval2` varchar(64) NOT NULL,
   `methodval3` varchar(64) NOT NULL,
-  `delivery_id` varchar(64) NOT NULL,
   `ros_price` varchar(64) NOT NULL,
   `ros_duiring` varchar(64) NOT NULL,
-  `self_list` varchar(255) NOT NULL,
-  `courier_list` varchar(255) NOT NULL,
+  `self_list` text NOT NULL,
+  `courier_list` text NOT NULL,
+  `settings` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=cp1251 ;
 
 
-INSERT INTO `ddelivery_module_system` (`id`, `type`, `rezhim`, `declared`, `width`, `height`, `api`, `length`, `weight`, `payment`, `status`, `famile`, `name`, `def_width`, `def_lenght`, `def_height`, `def_weight`) VALUES(1, '0', '0', '100', 'option1', 'option3', '852af44bafef22e96d8277f3227f0998', 'option2', 'weight', '2', '23', 'famile', 'name', '10', '11', '10', '1');
+INSERT INTO `ddelivery_module_system` (`id`, `type`, `rezhim`, `declared`, `width`, `height`, `api`, `length`, `weight`, `payment`, `status`, `famile`, `name`, `def_width`, `def_lenght`, `def_height`, `def_weight`, `settings`) VALUES(1, '0', '0', '100', 'option1', 'option3', '852af44bafef22e96d8277f3227f0998', 'option2', 'weight', '2', '23', 'famile', 'name', '10', '11', '10', '1', '');
 
 DROP TABLE IF EXISTS `ddelivery_module_cache`;
 

@@ -30,7 +30,7 @@ abstract class DShopAdapter
      */
     const CACHING_TYPE_INDIVIDUAL = 'individual';
 
-    const SDK_VERSION = '2.1.3';
+    const SDK_VERSION = '2.1.7';
     /**
      * Имя редактируется
      */
@@ -159,6 +159,25 @@ abstract class DShopAdapter
             'prefix' => '',
         );
     }
+
+    /**
+     *
+     * Формируем сообщение для логов
+     *
+     * @param \Exception $e
+     * @param array $extraParams
+     * @return mixed
+     */
+    abstract public function  getErrorMsg( \Exception $e, $extraParams = array() );
+    /**
+     *
+     * Залоггировать ошибку
+     *
+     * @param \Exception $e
+     * @return mixed
+     */
+    abstract public function  logMessage( \Exception $e );
+
 
     /**
      *
@@ -599,9 +618,12 @@ abstract class DShopAdapter
      *
      * @param DDeliveryOrder $order
      * @param $price
+     * @param $orderType
+     * @param $companyArray
+     *
      * @return mixed
      */
-    public function  processClientPrice(  $order, $price ){
+    public function  processClientPrice(  $order, $price, $orderType, $companyArray  ){
         // Округление
         $price =  $this->aroundPrice( $price );
         return $price;

@@ -31,8 +31,21 @@ function actionUpdate() {
     $PHPShopOrm->debug=false;
     $_POST['pvz_companies_new'] = serialize($_POST['pvz_companies_new']);
     $_POST['cur_companies_new'] = serialize($_POST['cur_companies_new']);
+
+
     $_POST['courier_list_new'] = serialize($_POST['courier_list_new']);
     $_POST['self_list_new'] = serialize($_POST['self_list_new']);
+
+    if(! is_array( $_POST['self_way_new'] )){
+        $_POST['self_way_new'] = array();
+    }
+
+    if(! is_array( $_POST['courier_way_new'] )){
+        $_POST['courier_way_new'] = array();
+    }
+
+    $_POST['settings_new'] = json_encode( array('self_way' => $_POST['self_way_new'],
+                                                'courier_way' => $_POST['courier_way_new'] ) );
 
     if( $_POST['zabor_new'] != '1' ){
         $_POST['zabor_new'] = 0;
@@ -53,17 +66,12 @@ function actionSave() {
     $PHPShopGUI->setAction(1, 'actionStart', 'none');
 }
 
-function _prepareSelect( $val, $arrVals )
-{
-    for( $i = 0; $i < count($arrVals);$i++ )
-    {
+function _prepareSelect( $val, $arrVals ){
+    for( $i = 0; $i < count($arrVals);$i++ ){
 
-        if( $arrVals[$i][1] == $val )
-        {
+        if( $arrVals[$i][1] == $val ){
             $arrVals[$i][] = 'selected';
-        }
-        else
-        {
+        }else{
             $arrVals[$i][] = '';
         }
     }
@@ -80,23 +88,13 @@ function actionStart() {
     // Выборка
     $data = $PHPShopOrm->select();
     @extract($data);
-    if( empty($delivery_id) )
-    {
-        $phpshop_delivery = $GLOBALS['SysValue']['base']['delivery'];
-        $query = 'INSERT INTO ' . $phpshop_delivery .
-            '(`city`, `price`, `enabled`, `flag`, `price_null`, `price_null_enabled`, `PID`, `taxa`, `is_folder`)' .
-            'VALUES ' . "('DDelivery', 0, '1', '', 0, '', 0, 0, '0')";
-
-        mysql_query($query);
-        $delivery_id = mysql_insert_id();
-        $query = 'UPDATE ddelivery_module_system SET delivery_id = ' . $delivery_id;
-        mysql_query($query);
-    }
 
 
-    $type_value[]=array('ПВЗ и Курьеры','0');
+    $type_value[]=array('ПВЗ и Курьерская доставка','0');
     $type_value[]=array('ПВЗ','1');
-    $type_value[]=array('Курьеры','2');
+    $type_value[]=array('Курьерская доставка','2');
+    $type_value[]=array('Разделить ПВЗ и Курьерскую доставку','3');
+
 
     $type_value = _prepareSelect($type, $type_value);
 
@@ -113,10 +111,49 @@ function actionStart() {
     $Tab1 .= $PHPShopGUI->setField('API ключ(из личного кабинета)',
                                   $PHPShopGUI->setInputText(false,'api_new', $api,300));
 
-    $Tab1 .= $PHPShopGUI->setText('<b>ID способа доставки который соответсвует
-                                  ddelivery( способ создается автоматически ). Если нужно добавить еще, то ID добаавляете через запятую. Например(5746,5747)</b>', 'none');
-    $Tab1 .= $PHPShopGUI->setField('ID способа доставки DDelivery',
-        $PHPShopGUI->setInputText(false,'delivery_id_new', $delivery_id,300));
+
+    if( !isset($settings) || empty( $settings) ){
+        $settings = array('self_way' => array(), 'courier_way' => array());
+    }else{
+        $settings = json_decode($settings, true);
+    }
+    $self_way = $settings['self_way'];
+    $courier_way = $settings['courier_way'];
+
+
+    $PHPShopOrm = new PHPShopOrm($GLOBALS['SysValue']['base']['delivery']);
+    $data = $PHPShopOrm->select(array('id', 'city'), array('PID' => " = " . "0", 'enabled' => " = '" . "1'"), false /*, array('limit' => 1)*/);
+
+
+    $courier_way_select = '<select name="courier_way_new[]" size="8" multiple>';
+    $self_way_select =    '<select name="self_way_new[]" size="8" multiple>';
+
+    if (is_array($data)){
+        foreach( $data as $item ){
+
+            if( in_array($item['id'], $courier_way) ){
+                $selected_c = 'selected="selected"';
+            }else{
+                $selected_c = '';
+            }
+
+            if( in_array($item['id'], $self_way) ){
+                $selected_s = 'selected="selected"';
+            }else{
+                $selected_s = '';
+            }
+            $courier_way_select .= '<option ' . $selected_c . ' value="' . $item['id'] . '">' . $item['city'] . '</option>';
+            $self_way_select .= '<option ' . $selected_s . ' value="' . $item['id'] . '">' . $item['city'] . '</option>';
+        }
+    }
+    $courier_way_select .= '</select>';
+    $self_way_select .= '</select>';
+
+
+    $Tab1 .= $PHPShopGUI->setField('Соответствие способа доставки DDelivery самовывоз', $self_way_select);
+    $Tab1 .= $PHPShopGUI->setField('Соответствие способа доставки DDelivery курьер( Если способы доставки не разделены то не активна  )', $courier_way_select);
+
+
 
     $Tab1 .= $PHPShopGUI->setText('<b>Для отладки модуля используйте пожалуйста режим тестирования.</b>', 'none');
     $Tab1.=$PHPShopGUI->setField('Режим работы',$PHPShopGUI->setSelect('rezhim_new',$rezhim_value,400));
@@ -125,21 +162,6 @@ function actionStart() {
                                    доставки за счет снижения размеров страховки</b>', 'none');
     $Tab1.=$PHPShopGUI->setField('Какой % от стоимости товара страхуется',
                                 $PHPShopGUI->setInputText(false,'declared_new', $declared,300));
-    $Tab1.= $PHPShopGUI->setText('<b>Соответствие полей</b>', 'none');
-
-    /*
-    $Tab1.=$PHPShopGUI->setField('Ширина',
-                                $PHPShopGUI->setInputText(false,'width_new', $width,300));
-
-    $Tab1.=$PHPShopGUI->setField('Длина',
-        $PHPShopGUI->setInputText(false,'length_new', $length,300));
-
-    $Tab1.=$PHPShopGUI->setField('Высота',
-        $PHPShopGUI->setInputText(false,'height_new', $height,300));
-    */
-    $Tab1.=$PHPShopGUI->setField('Вес',
-        $PHPShopGUI->setInputText(false,'weight_new', $weight,300));
-
 
     $objBase=$GLOBALS['SysValue']['base']['table_name48'];
     $PHPShopOrm2 = new PHPShopOrm($objBase);
@@ -164,15 +186,11 @@ function actionStart() {
     $objBase=$GLOBALS['SysValue']['base']['order_status'];
     $PHPShopOrm3 = new PHPShopOrm($objBase);
     $status_base = $PHPShopOrm3->select();
-    if( count($status_base) )
-    {
+    if( count($status_base) ){
         foreach($status_base as $item){
-            if( $item['id'] == $status)
-            {
+            if( $item['id'] == $status){
                $s = 'selected';
-            }
-            else
-            {
+            }else{
                $s = '';
             }
             $status_value[] = array($item['name'], $item['id'], $s);
@@ -213,12 +231,8 @@ function actionStart() {
     $Tab5 .= $PHPShopGUI->setText('<b>Выберите статус при котором заявки из вашей системы будут уходить в DDelivery.
                                       Помните что отправка означает готовность отгрузить заказ на следующий рабочий день</b>', 'none');
     $Tab5 .= $PHPShopGUI->setField('Статус для отправки',$PHPShopGUI->setSelect('status_new',$status_value,400));
-    /*
-    $Tab5 .= $PHPShopGUI->setField('Фамилия',
-                $PHPShopGUI->setInputText(false,'famile_new', $famile,300));
-    $Tab5 .= $PHPShopGUI->setField('Имя',
-        $PHPShopGUI->setInputText(false,'name_new', $name,300));
-    */
+
+
     $Tab5.= $PHPShopGUI->setText('<b>Габариты по умолчанию</b>', 'none');
     $Tab5 .= $PHPShopGUI->setText('<b>Данные габариты используются для определения цены доставки в случае, если у
                                       товара не прописаны размеры. Просим внимательней отнестись к ввод данных полей</b>', 'none');
@@ -455,7 +469,7 @@ function actionStart() {
 
 
     // Вывод формы закладки
-    $PHPShopGUI->setTab(array("Основные",$Tab1,480),array("Дополнительные",$Tab5,740),array("Настройки способов доставки",$Tab2,520),
+    $PHPShopGUI->setTab(array("Основные",$Tab1,500),array("Дополнительные",$Tab5,740),array("Настройки способов доставки",$Tab2,520),
           array("Настройки цены доставки",$Tab3,300), array("Описание",$Tab7, 320) /*, array("Добавление собственных служб доставки",$Tab4,320) */);
 
     // Вывод кнопок сохранить и выход в футер

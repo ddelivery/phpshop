@@ -1,4 +1,7 @@
 @ComStartReg@
+<script src="phpshop/modules/ddelivery/class/mrozk/assets/jquery.min.js"></script>
+<script type="text/javascript">var jQuery_1_11 = jQuery.noConflict();</script>
+<script src="phpshop/modules/ddelivery/class/mrozk/assets/jquery.maskedinput.js"></script>
 <script src="phpshop/modules/ddelivery/class/html/js/ddelivery.js"></script>
 
 <style type="text/css">
@@ -319,6 +322,11 @@
         };
     }
 
+
+    jQuery_1_11(document).ready(function() {
+
+        jQuery_1_11("input[name='tel_name']").mask("+7(999)999-99-99");
+    });
 </script>
 
 <form onsubmit="return false;" method="post" name="forma_order" id="forma_order" action="/done/" >

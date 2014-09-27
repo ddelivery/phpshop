@@ -33,11 +33,17 @@ class IntegratorShop extends PluginFilters {
 
     public function __construct( $fields = array() )
     {
+
         $this->fields = $fields;
+
         $query = 'SELECT * FROM ddelivery_module_system WHERE id = 1';
         $cur = mysql_query($query);
         $this->cmsSettings = mysql_fetch_assoc($cur);
 
+        /*
+        $PHPShopOrm = new PHPShopOrm($PHPShopModules->getParam("base.ddelivery.ddelivery_system"));
+        $this->cmsSettings = $PHPShopOrm->select(array('*'), array('id' => '=1'));
+        */
     }
 
 
@@ -157,8 +163,7 @@ class IntegratorShop extends PluginFilters {
         $this->cmsSettings = mysql_fetch_assoc($cur);
     }
 
-    public function getOrderIDsByStatus()
-    {
+    public function getOrderIDsByStatus(){
         $orders = $GLOBALS['SysValue']['base']['orders'];
 
         $query = 'SELECT uid FROM ' . $orders . ' WHERE statusi =' . $this->cmsSettings['status'];
@@ -271,9 +276,13 @@ class IntegratorShop extends PluginFilters {
      * Возвращаем способ оплаты константой PluginFilters::PAYMENT_, предоплата или оплата на месте. Курьер
      * @return int
      */
-    public function filterPointByPaymentTypeCourier()
-    {
-        return $this->cmsSettings['payment'];
+    public function filterPointByPaymentTypeCourier( $order ){
+        if( $order->paymentVariant ==  $this->cmsSettings['payment'] ){
+            return self::PAYMENT_POST_PAYMENT;
+        }
+
+        return self::PAYMENT_PREPAYMENT;
+        //return $this->cmsSettings['payment'];
         /*
         return self::PAYMENT_POST_PAYMENT;
         // выбираем один из 3 вариантов(см документацию или комменты к констатам)
@@ -288,9 +297,12 @@ class IntegratorShop extends PluginFilters {
      * Возвращаем способ оплаты константой PluginFilters::PAYMENT_, предоплата или оплата на месте. Самовывоз
      * @return int
      */
-    public function filterPointByPaymentTypeSelf()
+    public function filterPointByPaymentTypeSelf( $order )
     {
-        return $this->cmsSettings['payment'];
+        if( $order->paymentVariant ==  $this->cmsSettings['payment'] ){
+            return self::PAYMENT_POST_PAYMENT;
+        }
+        return self::PAYMENT_PREPAYMENT;
         //return self::PAYMENT_POST_PAYMENT;
         // выбираем один из 3 вариантов(см документацию или комменты к констатам)
         /*
@@ -469,6 +481,25 @@ class IntegratorShop extends PluginFilters {
             return array(
                 \DDelivery\Sdk\DDeliverySDK::TYPE_COURIER,
             );
+        }elseif($this->cmsSettings['type'] == '3'){
+
+            if( !isset($this->cmsSettings['settings']) || empty( $this->cmsSettings['settings']) ){
+                $settings = array('self_way' =>array(), 'courier_way' => array());
+            }else{
+                $settings = json_decode($this->cmsSettings['settings'], true);
+            }
+            if( in_array($this->fields['dostavka_metod'], $settings['self_way']) ){
+                return \DDelivery\Sdk\DDeliverySDK::TYPE_SELF;
+            }elseif( in_array($this->fields['dostavka_metod'], $settings['courier_way']) ){
+                return \DDelivery\Sdk\DDeliverySDK::TYPE_COURIER;
+            }else{
+                return array(
+                    \DDelivery\Sdk\DDeliverySDK::TYPE_COURIER,
+                    \DDelivery\Sdk\DDeliverySDK::TYPE_SELF
+                );
+            }
+
+
         }
     }
 

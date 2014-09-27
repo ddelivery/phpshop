@@ -178,18 +178,30 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
 
     /**
      * Возвращаем способ оплаты  c наложенным платежем для курьера
+     *
+     * либо константа \DDelivery\Adapter\PluginFilters::PAYMENT_PREPAYMENT - если способ облаты - предоплата,
+     * либо константа \DDelivery\Adapter\PluginFilters::PAYMENT_POST_PAYMENT -  если способ оплаты оплата при получении
+     *
+     * @param $order DDeliveryOrder
+     *
      * @return int
      */
-    public function filterPointByPaymentTypeCourier(){
-        return 1;
+    public function filterPointByPaymentTypeCourier( $order ){
+        return \DDelivery\Adapter\PluginFilters::PAYMENT_PREPAYMENT;
     }
 
     /**
      * Возвращаем способ оплаты  c наложенным платежем для самовывоза
+     *
+     * либо константа \DDelivery\Adapter\PluginFilters::PAYMENT_PREPAYMENT - если способ облаты - предоплата,
+     * либо константа \DDelivery\Adapter\PluginFilters::PAYMENT_POST_PAYMENT -  если способ оплаты оплата при получении
+     *
+     * @param $order DDeliveryOrder
+     *
      * @return int
      */
-    public function filterPointByPaymentTypeSelf(){
-        return 2;
+    public function filterPointByPaymentTypeSelf( $order ){
+        return \DDelivery\Adapter\PluginFilters::PAYMENT_POST_PAYMENT;
     }
 
     /**
@@ -271,7 +283,7 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
      * @return string[]
      */
     public function getClientAddress() {
-        return array('1','2','3','4','5');
+        return array('Улица','Дом','Корпус','Квартира','5');
     }
 
     public function getClientEmail(){
@@ -341,7 +353,7 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
      * @return array
      */
     public function getSelfPaymentVariants( $order ){
-        return array(10, 2);
+        return array();
     }
 
     /**
@@ -350,7 +362,7 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
      * @return array
      */
     public function getCourierPaymentVariants( $order ){
-        return array(2);
+        return array();
     }
 
     /**
@@ -397,5 +409,13 @@ class IntegratorShop extends \DDelivery\Adapter\PluginFilters
         | self::FIELD_EDIT_PHONE | self::FIELD_REQUIRED_PHONE | self::FIELD_EDIT_EMAIL;
     }
 
+    /**
+     * Получить название шаблона для сдк ( разные цветовые схемы )
+     *
+     * @return string
+     */
+    public function getTemplate(){
+        return 'blue';
+    }
 
 }
