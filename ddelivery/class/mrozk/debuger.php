@@ -32,26 +32,28 @@ $PHPShopValutaArray= new PHPShopValutaArray();
 
 $PHPShopSystem = new PHPShopSystem();
 
-
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
 include_once(implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'application', 'bootstrap.php')));
 
 
 include_once('IntegratorShop.php');
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-// $IntegratorShop = new IntegratorShop();
+
+
+$IntegratorShop = new IntegratorShop();
+
 
 try
 {
-    echo 'xxx';
-    //$ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, false);
-    /*
+
+    $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, false);
+
     $order = $ddeliveryUI->getOrder();
     $order->type= 1;
     $ddeliveryUI->getAvailablePaymentVariants( $order );
     print_r($IntegratorShop->getSelfPaymentVariants( $orders ));
-    */
+
 
 }
 catch (\DDelivery\DDeliveryException $e)

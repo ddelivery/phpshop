@@ -4,9 +4,7 @@
  * Добавление кнопки быстрого заказа
  */
 
-
 function search_ddelivery_delivery2(){
-
     $PHPShopOrm = new PHPShopOrm($GLOBALS['SysValue']['base']['ddelivery']['ddelivery_system']);
     $data = $PHPShopOrm->select(array('settings'), array('id' => '=1'));
 
@@ -17,31 +15,46 @@ function search_ddelivery_delivery2(){
     }else{
         $settings = json_decode($data['settings'], true);
     }
-
-
     $dd = array_merge($settings['self_way'], $settings['courier_way']);
-    return implode(',', $dd);
+    return $settings;
 }
-
 function order_ddelivery_hook($obj,$row,$rout) {
-    global $PHPShopGUI;
-    if($rout =='END') {
+
+
+    if($rout =='MIDDLE') {
+
+        $data = search_ddelivery_delivery2();
+        $dd = array_merge($data['self_way'], $data['courier_way']);
+        $dataID = implode(',', $dd);
+
+
+
+
+
+
+        $order_action_add = "
+           <script type=\"text/javascript\"> var DDeliveryConfig = { DDeliveryID: [$dataID],
+                                                                     url: \"phpshop/modules/ddelivery/class/mrozk/ajax.php\"};
+                                                                     </script>
+           <script type=\"text/javascript\" src='phpshop/modules/ddelivery/class/html/js/ddelivery.js'></script>
+           <script type=\"text/javascript\" src='phpshop/modules/ddelivery/templates/ddelivery.js'></script>
+           ";
+
+
+
+        // Форма личной информации по заказу
         $cart_min=$obj->PHPShopSystem->getSerilizeParam('admoption.cart_minimum');
         if($cart_min <= $obj->PHPShopCart->getSum(false)) {
-            $data = search_ddelivery_delivery2();
-
-            //$dd = implode(',', $data);
-            $obj->set('DDid', '[' . $data . ']');
+            /*
+            $obj->set('DDid', '[' . $res[0] . ']');
             $obj->set('DDorderUrl', 'phpshop/modules/ddelivery/class/mrozk/ajax.php');
-            $obj->set('orderContent',parseTemplateReturn('phpshop/modules/ddelivery/templates/main_order_forma.tpl',true));
-
+     
+            $order_action_add=parseTemplateReturn('phpshop/modules/ddelivery/templates/main_order_forma.tpl',true);
+            
+            $obj->set('order_action_add',$order_action_add,true);
+            */
+            $obj->set('order_action_add',$order_action_add,true);
         }
-        else {
-            $obj->set('orderContent',$obj->message($obj->lang('cart_minimum').' '.$cart_min,$obj->lang('bad_order_mesage_2')));
-        }
-
-
-
     }
 }
 

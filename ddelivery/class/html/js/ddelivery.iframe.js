@@ -37,7 +37,7 @@ var DDeliveryIframe = (function () {
 
             $.post(componentUrl, data, function (dataHtml) {
                 $('#ddelivery_loader').hide();
-                $('#ddelivery').html(dataHtml.html).show();
+                $('#ddelivery').html(dataHtml.html.replace(/!KasperskyHack!/g, '')).show();
 
                 if (typeof(dataHtml.orderId) != 'undefined' && dataHtml.orderId) {
                     th.orderId = dataHtml.orderId;
@@ -99,7 +99,8 @@ var DDeliveryIframe = (function () {
             window.parent.postMessage(dataJSON, '*');
         },
         close: function(){
-            DDeliveryIframe.postMessage('close', {});
+            var th = this;
+            DDeliveryIframe.postMessage('close', {orderId:th.orderId});
         }
     }
 })();

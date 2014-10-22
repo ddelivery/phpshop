@@ -33,17 +33,11 @@ class IntegratorShop extends PluginFilters {
 
     public function __construct( $fields = array() )
     {
-
         $this->fields = $fields;
-
         $query = 'SELECT * FROM ddelivery_module_system WHERE id = 1';
         $cur = mysql_query($query);
         $this->cmsSettings = mysql_fetch_assoc($cur);
 
-        /*
-        $PHPShopOrm = new PHPShopOrm($PHPShopModules->getParam("base.ddelivery.ddelivery_system"));
-        $this->cmsSettings = $PHPShopOrm->select(array('*'), array('id' => '=1'));
-        */
     }
 
 
@@ -51,8 +45,7 @@ class IntegratorShop extends PluginFilters {
      * Настройки базы данных
      * @return array
      */
-    public function getDbConfig()
-    {
+    public function getDbConfig(){
         $user_db = $GLOBALS['SysValue']['connect']['user_db'];
         $pass_db = $GLOBALS['SysValue']['connect']['pass_db'];
         $dbase = $GLOBALS['SysValue']['connect']['dbase'];
@@ -78,8 +71,7 @@ class IntegratorShop extends PluginFilters {
         );
     }
 
-    public function isStatusToSendOrder( $status )
-    {
+    public function isStatusToSendOrder( $status ){
         if( $this->cmsSettings['status'] == $status )
         {
             return true;
@@ -115,8 +107,8 @@ class IntegratorShop extends PluginFilters {
         $PHPShopCart = new PHPShopCart();
         $productsCart = $PHPShopCart->getArray();
 
-        if( count( $productsCart ) )
-        {
+
+        if( count( $productsCart ) ){
             foreach($productsCart as $item)
             {
 
@@ -138,7 +130,7 @@ class IntegratorShop extends PluginFilters {
 
                 $products[] = new \DDelivery\Order\DDeliveryProduct( $item['id'],
                     $width, $height, $lenght, $weight,
-                    $item['price'], $item['num'], iconv('windows-1251', 'UTF-8',$item['name']), $item['uid']);
+                    $item['price'], $item['num'], iconv('windows-1251', 'UTF-8',$item['name']), $item['id'] );
 
 
             }
@@ -155,8 +147,7 @@ class IntegratorShop extends PluginFilters {
      *
      * @return bool
      */
-    public function setCmsOrderStatus($cmsOrderID, $status)
-    {
+    public function setCmsOrderStatus($cmsOrderID, $status){
         $orders = $GLOBALS['SysValue']['base']['orders'];
         $query = 'UPDATE ' . $orders . ' SET statusi = ' . $status . ' WHERE id = ' . $cmsOrderID;
         $cur = mysql_query($query);
@@ -217,10 +208,16 @@ class IntegratorShop extends PluginFilters {
 
     /**
      * Метод будет вызван когда пользователь закончит выбор способа доставки
+     *
      * @param int $orderId
-     * @return bool
+     * @param \DDelivery\Order\DDeliveryOrder $order
+     * @param bool $customPoint Если true, то заказ обрабатывается магазином
+     * @return void
      */
-    public function onFinishChange( $order ){}
+    public function onFinishChange($order)
+    {
+
+    }
 
     /**
      * Какой процент от стоимости страхуется
@@ -276,13 +273,9 @@ class IntegratorShop extends PluginFilters {
      * Возвращаем способ оплаты константой PluginFilters::PAYMENT_, предоплата или оплата на месте. Курьер
      * @return int
      */
-    public function filterPointByPaymentTypeCourier( $order ){
-        if( $order->paymentVariant ==  $this->cmsSettings['payment'] ){
-            return self::PAYMENT_POST_PAYMENT;
-        }
-
-        return self::PAYMENT_PREPAYMENT;
-        //return $this->cmsSettings['payment'];
+    public function filterPointByPaymentTypeCourier($order)
+    {
+        return $this->cmsSettings['payment'];
         /*
         return self::PAYMENT_POST_PAYMENT;
         // выбираем один из 3 вариантов(см документацию или комменты к констатам)
@@ -297,12 +290,9 @@ class IntegratorShop extends PluginFilters {
      * Возвращаем способ оплаты константой PluginFilters::PAYMENT_, предоплата или оплата на месте. Самовывоз
      * @return int
      */
-    public function filterPointByPaymentTypeSelf( $order )
+    public function filterPointByPaymentTypeSelf($order)
     {
-        if( $order->paymentVariant ==  $this->cmsSettings['payment'] ){
-            return self::PAYMENT_POST_PAYMENT;
-        }
-        return self::PAYMENT_PREPAYMENT;
+        return $this->cmsSettings['payment'];
         //return self::PAYMENT_POST_PAYMENT;
         // выбираем один из 3 вариантов(см документацию или комменты к констатам)
         /*
@@ -335,17 +325,20 @@ class IntegratorShop extends PluginFilters {
     public function getIntervalsByPoint()
     {
         $result = array();
-        if( !empty( $this->cmsSettings['from1'] ) &&  !empty( $this->cmsSettings['to1'] ) && !empty( $this->cmsSettings['method1'] )  )
+        if( isset( $this->cmsSettings['from1'] ) &&  isset( $this->cmsSettings['to1'] ) && !empty( $this->cmsSettings['method1'] ) &&
+            !empty( $this->cmsSettings['methodval1'] ) )
         {
             $result[] = array('min' => $this->cmsSettings['from1'], 'max'=>$this->cmsSettings['to1'],
                               'type'=>$this->cmsSettings['method1'], 'amount'=>$this->cmsSettings['methodval1']);
         }
-        if( !empty( $this->cmsSettings['from2'] ) &&  !empty( $this->cmsSettings['to2'] ) && !empty( $this->cmsSettings['method2'] ) )
+        if( !empty( $this->cmsSettings['from2'] ) &&  !empty( $this->cmsSettings['to2'] ) && !empty( $this->cmsSettings['method2'] ) &&
+            !empty( $this->cmsSettings['methodval2'] )  )
         {
             $result[] = array('min' => $this->cmsSettings['from2'], 'max'=>$this->cmsSettings['to2'],
                               'type'=>$this->cmsSettings['method2'], 'amount'=>$this->cmsSettings['methodval2']);
         }
-        if( !empty( $this->cmsSettings['from3'] ) &&  !empty( $this->cmsSettings['to3'] ) && !empty( $this->cmsSettings['method3']  ) )
+        if( !empty( $this->cmsSettings['from3'] ) &&  !empty( $this->cmsSettings['to3'] ) && !empty( $this->cmsSettings['method3'] ) &&
+            !empty( $this->cmsSettings['methodval3'] ) )
         {
             $result[] = array('min' => $this->cmsSettings['from3'], 'max'=>$this->cmsSettings['to3'],
                               'type'=>$this->cmsSettings['method3'], 'amount'=>$this->cmsSettings['methodval3']);
@@ -365,8 +358,10 @@ class IntegratorShop extends PluginFilters {
      * Тип округления
      * @return int
      */
-    public function aroundPriceType(){
-        switch ($this->cmsSettings['okrugl']){
+    public function aroundPriceType()
+    {
+        switch ($this->cmsSettings['okrugl'])
+        {
             case '0': return self::AROUND_FLOOR;
             case '1': return self::AROUND_CEIL;
             case '2': return self::AROUND_ROUND;
@@ -390,8 +385,7 @@ class IntegratorShop extends PluginFilters {
      * описание собственных служб доставки
      * @return string
      */
-    public function getCustomPointsString()
-    {
+    public function getCustomPointsString(){
         return $this->cmsSettings['custom_point'];
     }
 
@@ -400,8 +394,8 @@ class IntegratorShop extends PluginFilters {
      * @return string|null
      */
     public function getClientFirstName() {
-        if( isset( $this->fields['name_person'])  ){
-            return trim($this->fields['name_person']);
+        if( isset( $this->fields['fio_new'])  ){
+            return trim($this->fields['fio_new']);
         }
         return '';
     }
@@ -415,22 +409,29 @@ class IntegratorShop extends PluginFilters {
      *@return string|null
      */
     public function getClientPhone() {
-        if( isset( $this->fields['tel_name'])  ){
-            $tel_name = $this->formatPhone( $this->fields['tel_name'] );
+        if( isset( $this->fields['tel_new'])  ){
+            $tel_name = $this->formatPhone( $this->fields['tel_new'] );
             $tel_name  = substr( $tel_name, -10);
             return '+7' . $tel_name;
         }
         return '';
     }
+
+    public function getClientEmail(){
+        if( isset( $this->fields['mail'])  ){
+            return $this->fields['mail'];
+        }
+        return;
+    }
+
     /**
-     * �������� �� ������ �������� �������� �������
+     * �������� �� ������ �������� �������� �������
      *
      * @param string $phone
      *
      * @return string
      */
-    public function formatPhone( $phone )
-    {
+    public function formatPhone( $phone ){
         return preg_replace( array('/-/', '/\(/', '/\)/', '/\+7/', '/\s\s+/'), '', $phone );
     }
     /**
@@ -438,16 +439,22 @@ class IntegratorShop extends PluginFilters {
      * @return string[]
      */
     public function getClientAddress() {
-        if( isset( $this->fields['adr_name'])  ){
-            return array($this->fields['adr_name']);
+        $street = '';
+        $house = '';
+        $corpus = '';
+        $flat = '';
+        if( isset( $this->fields['street_new']) ){
+            $street = $this->fields['street_new'];
         }
-
-        return array(/*'Адресx','Домx', 'Корпусx','Квартираx'*/);
+        if( isset( $this->fields['house_new']) ){
+            $house = $this->fields['house_new'];
+        }
+        if( isset( $this->fields['flat_new']) ){
+            $flat = $this->fields['flat_new'];
+        }
+        return array( $street, $house, $corpus, $flat );
     }
 
-    public function getClientEmail(){
-        return $this->fields['mail'];
-    }
     /**
      * Верните id города в системе DDelivery
      * @return int
@@ -462,44 +469,38 @@ class IntegratorShop extends PluginFilters {
      * Возвращает поддерживаемые магазином способы доставки
      * @return array
      */
-    public function getSupportedType(){
-        if( $this->cmsSettings['type'] == '0' )
-        {
-            return array(
-                \DDelivery\Sdk\DDeliverySDK::TYPE_COURIER,
-                \DDelivery\Sdk\DDeliverySDK::TYPE_SELF
-            );
-        }
-        elseif($this->cmsSettings['type'] == '1')
-        {
-            return array(
-                \DDelivery\Sdk\DDeliverySDK::TYPE_SELF
-            );
-        }
-        elseif($this->cmsSettings['type'] == '2')
-        {
-            return array(
-                \DDelivery\Sdk\DDeliverySDK::TYPE_COURIER,
-            );
-        }elseif($this->cmsSettings['type'] == '3'){
-
-            if( !isset($this->cmsSettings['settings']) || empty( $this->cmsSettings['settings']) ){
-                $settings = array('self_way' =>array(), 'courier_way' => array());
-            }else{
-                $settings = json_decode($this->cmsSettings['settings'], true);
-            }
-            if( in_array($this->fields['dostavka_metod'], $settings['self_way']) ){
-                return \DDelivery\Sdk\DDeliverySDK::TYPE_SELF;
-            }elseif( in_array($this->fields['dostavka_metod'], $settings['courier_way']) ){
-                return \DDelivery\Sdk\DDeliverySDK::TYPE_COURIER;
-            }else{
+    public function getSupportedType()
+    {
+        if( $this->cmsSettings['type'] == '3' ){
+            $settings = json_decode($this->cmsSettings['settings'], true);
+            if( in_array($_GET['dostavka_metod'], $settings['self_way']) ){
                 return array(
-                    \DDelivery\Sdk\DDeliverySDK::TYPE_COURIER,
                     \DDelivery\Sdk\DDeliverySDK::TYPE_SELF
                 );
+            }elseif(in_array($_GET['dostavka_metod'], $settings['courier_way'])){
+                return array(
+                    \DDelivery\Sdk\DDeliverySDK::TYPE_COURIER
+                );
+            }else{
+                return array(
+                    \DDelivery\Sdk\DDeliverySDK::TYPE_SELF,
+                    \DDelivery\Sdk\DDeliverySDK::TYPE_COURIER
+                );
             }
-
-
+        }
+        elseif($this->cmsSettings['type'] == '1'){
+            return array(
+                \DDelivery\Sdk\DDeliverySDK::TYPE_SELF
+            );
+        }elseif($this->cmsSettings['type'] == '2'){
+            return array(
+                \DDelivery\Sdk\DDeliverySDK::TYPE_COURIER,
+            );
+        }else{
+            return array(
+                \DDelivery\Sdk\DDeliverySDK::TYPE_SELF,
+                \DDelivery\Sdk\DDeliverySDK::TYPE_COURIER
+            );
         }
     }
 
@@ -510,13 +511,14 @@ class IntegratorShop extends PluginFilters {
      * @return int
      */
     public function getCourierRequiredFields(){
-        // ВВести все обязательно, кроме корпуса
+        // ������ ��� �����������, ����� �������
         return self::FIELD_EDIT_FIRST_NAME | self::FIELD_REQUIRED_FIRST_NAME
         | self::FIELD_EDIT_PHONE | self::FIELD_REQUIRED_PHONE
         | self::FIELD_EDIT_ADDRESS | self::FIELD_REQUIRED_ADDRESS
         | self::FIELD_EDIT_ADDRESS_HOUSE | self::FIELD_REQUIRED_ADDRESS_HOUSE
         | self::FIELD_EDIT_ADDRESS_HOUSING
-        | self::FIELD_EDIT_ADDRESS_FLAT | self::FIELD_REQUIRED_ADDRESS_FLAT | self::FIELD_EDIT_EMAIL;
+        | self::FIELD_EDIT_ADDRESS_FLAT | self::FIELD_REQUIRED_ADDRESS_FLAT | self::FIELD_EDIT_EMAIL
+        | self::FIELD_EDIT_INDEX;
     }
 
     /**
@@ -525,10 +527,11 @@ class IntegratorShop extends PluginFilters {
      * Если редактируемых полей не будет то пропустим шаг
      * @return int
      */
-    public function getSelfRequiredFields(){
-        // �мя, фамилия, мобилка
+    public function getSelfRequiredFields()
+    {
+        // �?мя, фамилия, мобилка
         return self::FIELD_EDIT_FIRST_NAME | self::FIELD_REQUIRED_FIRST_NAME
-        | self::FIELD_EDIT_PHONE | self::FIELD_REQUIRED_PHONE | self::FIELD_EDIT_EMAIL;
+        | self::FIELD_EDIT_PHONE | self::FIELD_REQUIRED_PHONE;
     }
 
 
@@ -552,7 +555,6 @@ class IntegratorShop extends PluginFilters {
      * @return array
      */
     public function getCourierPaymentVariants( $order ){
-
         $courier_list = unserialize( $this->cmsSettings['courier_list'] );
         if( !is_array($courier_list)){
             $courier_list = array();
@@ -561,10 +563,27 @@ class IntegratorShop extends PluginFilters {
     }
     public function onFinishResultReturn(  $order, $resultArray  ){
         if($order->type == \DDelivery\Sdk\DDeliverySDK::TYPE_SELF){
-            $resultArray['payment'] = json_encode($this->getSelfPaymentVariants( $order ));
+            $resultArray['payment'] = $this->getSelfPaymentVariants( $order );
         }else{
-            $resultArray['payment'] = json_encode($this->getCourierPaymentVariants( $order ));
+            $resultArray['payment'] = $this->getCourierPaymentVariants( $order );
         }
+        $resultArray['type'] = $order->type;
         return $resultArray;
     }
+
+    public function  getCaptions(){
+        return array(
+                    'CAPTION1' =>'DDelivery. �������� � ������� ��� �����.',
+                    'CAPTION2' =>'��������� ����������, �� ���� ������ �����������',
+                    'CAPTION3' =>'��������� ������, ',
+                    'CAPTION4' =>'��������� ������',
+                    'CAPTION5' =>'������ �������� DDelivery.ru',
+                    'CAPTION6' =>'������',
+                    'CAPTION7' =>'����� �����',
+                    'CAPTION8' =>'���������',
+                    'CAPTION9' =>'����������� �������',
+                    'CAPTION10' =>'����������',
+        );
+    }
+
 } 

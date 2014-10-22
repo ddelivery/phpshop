@@ -219,6 +219,7 @@ Map = (function () {
                 if (filter.has_fitting_room && !point.has_fitting_room) {
                     return false;
                 }
+
                 if (filter.hideCompany.indexOf(point.company_id) != -1) {
                     return false;
                 }
@@ -228,6 +229,7 @@ Map = (function () {
             for (var pointKey in points) {
                 point = points[pointKey];
                 display = isDisplayPoint(point);
+
                 if (point.display != display) {
                     if (display) { // Скрыта, пказать
                         pointsAdd.push(point.placemark);
@@ -340,10 +342,10 @@ Map = (function () {
                     var check = $(this).hasClass('border');
                     if (check) {
                         $(this).removeClass('border').addClass('hasinfo');
-                        filter.hideCompany.push(parseInt($(this).data('id')));
+                        filter.hideCompany.push($(this).data('id'));
                     } else {
                         $(this).addClass('border').removeClass('hasinfo');
-                        filter.hideCompany.splice(filter.hideCompany.indexOf(parseInt($(this).data('id'))), 1);
+                        filter.hideCompany.splice(filter.hideCompany.indexOf($(this).data('id')), 1);
                     }
                     Map.filterPoints();
                 }
@@ -413,16 +415,16 @@ Map = (function () {
             $('.map-popup__info__table .rub').html('<img src="' + DDeliveryIframe.staticUrl + 'img/ajax_loader_min.gif"/> ');
             var payType = [];
             if (point.is_cash) {
-                payType.push('Наличными');
+                payType.push( ddCaptionConfig.caption3);
             }
             if (point.is_card) {
-                payType.push('Банковскими картами');
+                payType.push(ddCaptionConfig.caption4);
             }
             if (payType.length == 0) {
-                payType.push('Предоплата');
+                payType.push(ddCaptionConfig.caption5);
             }
             $('.map-popup__info__table .payType').html(payType.join('<br>'));
-            $('.map-popup__info__table .type').html(point.type == 1 ? 'Ячейка' : 'Живой пункт');
+            $('.map-popup__info__table .type').html(point.type == 1 ? ddCaptionConfig.caption1 :  ddCaptionConfig.caption2);
 
             $('.map-popup__info__table .day').hide();
 
@@ -450,7 +452,7 @@ Map = (function () {
 
                         $('.schedule', more).html(data.point.schedule.replace(/\n/g, "<br>"));
 
-                        var description = (data.point.description_out + '<br/>' + data.point.description_out).replace(/\n/g, '<br/>');
+                        var description = (data.point.description_in + '<br/>' + data.point.description_out).replace(/\n/g, '<br/>');
                         $('.more', more).html(description);
 
                         if(!data.point.metro) {

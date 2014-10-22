@@ -1,6 +1,7 @@
 <?php
 include_once( $_SERVER['DOCUMENT_ROOT'] .  '/phpshop/modules/ddelivery/class/application/bootstrap.php');
 include_once( $_SERVER['DOCUMENT_ROOT'] .  '/phpshop/modules/ddelivery/class/mrozk/IntegratorShop.php' );
+
 /**
  * Настройка модуля
  */
@@ -17,11 +18,11 @@ function search_ddelivery_delivery(){
     $dd = array_merge($settings['self_way'], $settings['courier_way']);
     return $dd;
 }
+
 /**
  * Хук
  */
-function deliveytry_hook($obj, $data)
-{
+function delivery_hook($obj, $data){
     $_RESULT=$data[0];
     $xid=$data[1];
 
@@ -41,16 +42,18 @@ function deliveytry_hook($obj, $data)
                 $ddeliveryUI->logMessage($e);
             }
         }
-        $hook['dellist'] = '<table collspan="0" rowspan="0"><tr><td>' . $_RESULT['dellist'] . '</td><td >' .
-                           '<a href="javascript::void(0)" onclick="DDeliveryIntegration.openPopup();" id="ddbutton" >Выбрать способ доставки</a>' .
-                           '</td></tr>
-                           </table>';
+        $hook['adresList'] = $_RESULT['adresList'];
+        $hook['dellist'] = '<table collspan="0" rowspan="0"><tr><td>' . $_RESULT['dellist'] . '</td><td valign="top" >' .
+                            '<button class="ddbutton" href="javascript::void(0)" style="padding:7px 9px 6px;display:block;background-color:#FDBC6E;color:white;border:0px;margin-left:10px;" onclick="DDeliveryIntegration.openPopup();return false;" id="ddbutton" >Выбрать способ доставки</button>' .
+                            '
+                            <div class="dd_comment" style="color: #FDAA5E;width:200px;padding:10px 10px"></div>
+                            </td></tr> </table>';
+
         return  $hook;
     }
 }
 
-$addHandler = array
-    (
+$addHandler = array(
     'delivery' => 'delivery_hook'
 );
 ?>
