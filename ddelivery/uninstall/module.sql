@@ -1,0 +1,1 @@
+DELETE FROM `phpshop_delivery`  WHERE `city` = 'DDelivery';
