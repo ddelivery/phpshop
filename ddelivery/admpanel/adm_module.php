@@ -166,11 +166,9 @@ function actionStart() {
     $objBase=$GLOBALS['SysValue']['base']['table_name48'];
     $PHPShopOrm2 = new PHPShopOrm($objBase);
     $payment_base = $PHPShopOrm2->select();
-    if( count($payment_base) )
-    {
+    if( count($payment_base) ){
         foreach($payment_base as $item){
-            if($item['enabled'])
-            {
+            if($item['enabled']){
                 if( $item['id'] == $payment )
                 {
                     $s = 'selected';

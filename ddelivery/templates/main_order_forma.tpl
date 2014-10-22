@@ -195,7 +195,6 @@
                 var callback = {
                     close: function(){
                         hideCover();
-                        document.getElementById('ddelivery_container').style.display = 'none';
                     },
                     change: function(data) {
                         goodPaymentVariants = JSON.parse(data.payment);

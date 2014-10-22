@@ -9,23 +9,18 @@ function search_ddelivery_delivery(){
 
     $PHPShopOrm = new PHPShopOrm($GLOBALS['SysValue']['base']['ddelivery']['ddelivery_system']);
     $data = $PHPShopOrm->select(array('settings'), array('id' => '=1'));
-
-
-
     if( !isset($data['settings']) || empty( $data['settings']) ){
         $settings = array('self_way' =>array(), 'courier_way' => array());
     }else{
         $settings = json_decode($data['settings'], true);
     }
-
     $dd = array_merge($settings['self_way'], $settings['courier_way']);
-
     return $dd;
 }
 /**
  * ’ÛÍ
  */
-function delivery_hook($obj, $data)
+function deliveytry_hook($obj, $data)
 {
     $_RESULT=$data[0];
     $xid=$data[1];
@@ -52,7 +47,6 @@ function delivery_hook($obj, $data)
                            </table>';
         return  $hook;
     }
-
 }
 
 $addHandler = array
