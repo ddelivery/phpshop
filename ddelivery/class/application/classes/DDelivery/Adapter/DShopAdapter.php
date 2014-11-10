@@ -29,7 +29,7 @@ abstract class DShopAdapter{
      */
     const CACHING_TYPE_INDIVIDUAL = 'individual';
 
-    const SDK_VERSION = '2.1.8.2';
+    const SDK_VERSION = '2.1.8.5';
     /**
      * Имя редактируется
      */
@@ -102,11 +102,11 @@ abstract class DShopAdapter{
     const FIELD_REQUIRED_EMAIL = 32768;
 
     /**
-     * Адресс, квартира редактируется
+     * Zip редактируется
      */
     const FIELD_EDIT_INDEX = 65536;
     /**
-     * Адресс, квартира обязательное
+     * Zip обязательное
      */
     const FIELD_REQUIRED_INDEX = 131072;
 
@@ -439,7 +439,16 @@ abstract class DShopAdapter{
      * @return string|null
      */
     public function getClientPhone() {
-        return '79211234567'; //null;
+        return null;
+    }
+
+    /**
+     * Если вы знаете индекс(zip code), то верните его тут
+     * @return string|null
+     */
+    public function getClientZipCode()
+    {
+        return null;
     }
 
     /**

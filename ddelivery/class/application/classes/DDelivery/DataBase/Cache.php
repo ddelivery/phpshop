@@ -38,13 +38,15 @@ class Cache {
      * @param string $prefix
      * @throws \DDelivery\DDeliveryException
      */
-    public function __construct($pdo, $prefix = ''){
+    public function __construct($pdo, $prefix = '')
+    {
         $this->pdo = $pdo;
         $this->prefix = $prefix;
         $this->pdoType = \DDelivery\DB\Utils::getDBType($pdo);
     }
 
-    public function createTable(){
+    public function createTable()
+    {
         if($this->pdoType == DShopAdapter::DB_MYSQL) {
             $query = 'CREATE TABLE `'.$this->prefix.'cache` (
                       `id`  int NOT NULL,

@@ -43,12 +43,14 @@ function delivery_hook($obj, $data){
             }
         }
         $hook['adresList'] = $_RESULT['adresList'];
+        $hook['dellist'] = '<table collspan="0" rowspan="0"><tr><td>' . $_RESULT['dellist'] . '</td><td >' . '<a href="javascript::void(0)" onclick="DDeliveryIntegration.openPopup()">Выбрать способ доставки</a>' . '</td></tr></table>';
+        /*
         $hook['dellist'] = '<table collspan="0" rowspan="0"><tr><td>' . $_RESULT['dellist'] . '</td><td valign="top" >' .
                             '<button class="ddbutton" href="javascript::void(0)" style="padding:7px 9px 6px;display:block;background-color:#FDBC6E;color:white;border:0px;margin-left:10px;" onclick="DDeliveryIntegration.openPopup();return false;" id="ddbutton" >Выбрать способ доставки</button>' .
                             '
                             <div class="dd_comment" style="color: #FDAA5E;width:200px;padding:10px 10px"></div>
                             </td></tr> </table>';
-
+        */
         return  $hook;
     }
 }

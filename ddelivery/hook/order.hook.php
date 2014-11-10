@@ -21,17 +21,11 @@ function search_ddelivery_delivery2(){
 function order_ddelivery_hook($obj,$row,$rout) {
 
 
-    if($rout =='MIDDLE') {
+    if($rout =='END') {
 
         $data = search_ddelivery_delivery2();
         $dd = array_merge($data['self_way'], $data['courier_way']);
         $dataID = implode(',', $dd);
-
-
-
-
-
-
         $order_action_add = "
            <script type=\"text/javascript\"> var DDeliveryConfig = { DDeliveryID: [$dataID],
                                                                      url: \"phpshop/modules/ddelivery/class/mrozk/ajax.php\"};
@@ -39,8 +33,6 @@ function order_ddelivery_hook($obj,$row,$rout) {
            <script type=\"text/javascript\" src='phpshop/modules/ddelivery/class/html/js/ddelivery.js'></script>
            <script type=\"text/javascript\" src='phpshop/modules/ddelivery/templates/ddelivery.js'></script>
            ";
-
-
 
         // Форма личной информации по заказу
         $cart_min=$obj->PHPShopSystem->getSerilizeParam('admoption.cart_minimum');
@@ -53,7 +45,10 @@ function order_ddelivery_hook($obj,$row,$rout) {
             
             $obj->set('order_action_add',$order_action_add,true);
             */
-            $obj->set('order_action_add',$order_action_add,true);
+            //$obj->set('order_action_add',$order_action_add,true);
+
+           $obj->set('orderContent',    $obj->get('orderContent') . $order_action_add);
+
         }
     }
 }

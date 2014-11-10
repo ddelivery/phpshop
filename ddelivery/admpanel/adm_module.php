@@ -255,10 +255,16 @@ function actionStart() {
     $pvz_companies = unserialize( $pvz_companies );
     $cur_companies = unserialize( $cur_companies );
 
+    $enableAll = false;
+    if( empty($pvz_companies) && empty($cur_companies) ){
+        $enableAll = true;
+    }
+
     $companiesArray = \DDelivery\DDeliveryUI::getCompanySubInfo();
     if( count($companiesArray) ){
         foreach($companiesArray as $key=>$value){
-            $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]', $key, iconv('UTF-8', 'windows-1251', $value['name']), (in_array($key,$pvz_companies)?1:0));
+            //echo ((in_array($key,$pvz_companies) || $enableAll)?"checked":'');
+            $Tab2.= $PHPShopGUI->setCheckbox('pvz_companies_new[]', $key, iconv('UTF-8', 'windows-1251', $value['name']), $checked = ((in_array($key,$pvz_companies) || $enableAll)?true:false));
         }
     }
 
@@ -266,7 +272,7 @@ function actionStart() {
 
     if( count($companiesArray) ){
         foreach($companiesArray as $key=>$value){
-            $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]', $key, iconv('UTF-8', 'windows-1251', $value['name']),(in_array(1,$cur_companies)?1:0));
+            $Tab2.= $PHPShopGUI->setCheckbox('cur_companies_new[]', $key, iconv('UTF-8', 'windows-1251', $value['name']), $checked = ((in_array(1,$cur_companies) || $enableAll)?true:false));
         }
     }
 

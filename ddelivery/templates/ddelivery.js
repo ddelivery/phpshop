@@ -23,6 +23,33 @@ if (typeof(topWindow.DDeliveryIntegration) == 'undefined')
         body.appendChild(div);
 
 
+        function UpdateDelivery2(xid, order_id) {
+            var req = new Subsys_JsHttpRequest_Js();
+            var sum = document.getElementById('OrderSumma').value;
+            var wsum = document.getElementById('WeightSumma').innerHTML;
+            req.onreadystatechange = function() {
+                if (req.readyState == 4) {
+                    if (req.responseJS) {
+                        document.getElementById('DosSumma').innerHTML = (req.responseJS.delivery || '');
+                        document.getElementById('d').value = xid;
+                        document.getElementById('TotalSumma').innerHTML = (req.responseJS.total || '');
+                        document.getElementById('seldelivery').innerHTML = (req.responseJS.dellist || '');
+                    }
+                }
+            }
+            req.caching = false;
+            var dir = dirPath();
+
+            req.open('POST', dir + '/phpshop/ajax/delivery.php', true);
+            req.send({
+                xid: xid,
+                sum: sum,
+                wsum: wsum,
+                order_id: order_id
+            });
+        }
+
+
         function showPrompt() {
             var cover = document.createElement('div');
             cover.id = 'ddelivery_cover';
@@ -39,77 +66,31 @@ if (typeof(topWindow.DDeliveryIntegration) == 'undefined')
         }
 
 
-        // просчёт доставки
-        function UpdateDeliveryJq2(xid, order_id) {
-            var req = new Subsys_JsHttpRequest_Js();
-            var sum = document.getElementById('OrderSumma').value;
-            var wsum = document.getElementById('WeightSumma').innerHTML;
-
-            // $("form[name='forma_order'] input[name=dostavka_metod]").attr('disabled', true);
-            $(this).html(waitText);
-
-            req.onreadystatechange = function() {
-                if (req.readyState == 4) {
-                    if (req.responseJS) {
-                        document.getElementById('DosSumma').innerHTML = (req.responseJS.delivery || '');
-                        document.getElementById('d').value = xid;
-                        document.getElementById('TotalSumma').innerHTML = (req.responseJS.total || '');
-                        // document.getElementById('seldelivery').innerHTML = (req.responseJS.dellist || '');
-
-                        //$("#userAdresData").hide();
-                        //document.getElementById('userAdresData').innerHTML = (req.responseJS.adresList || '');
-                        //$("#userAdresData").fadeIn("slow");
-
-                        // заполняем фио значением из личных данных
-                        if ($("form[name='forma_order'] input[name='fio_new']").val() == "")
-                            $("form[name='forma_order'] input[name='fio_new']").val($("form[name='forma_order'] input[name='name_new']").val());
-
-                        //заполняем данными адрес, если выбран
-                        $("#adres_id").change();
-                    }
-                }
-            }
-            req.caching = false;
-            // Подготваливаем объект.
-            // Реальное размещение
-            var dir = dirPath();
-
-            req.open('POST', dir + '/phpshop/ajax/delivery.php', true);
-            req.send({
-                xid: xid,
-                sum: sum,
-                wsum: wsum,
-                order_id:order_id
-            });
-        }
-
         function orderCallBack(data, dostavka_metod) {
-            $('[name="fio_new"]').val(data.userInfo.firstName);
-            $('[name="tel_new"]').val(data.userInfo.toPhone);
-            $('[name="dop_info"]').text(data.comment);
-
-            if(data.type == '2'){
-                $('[name="index_new"]').val(data.userInfo.toIndex);
-                $('[name="street_new"]').val(data.userInfo.toStreet);
-                $('[name="house_new"]').val(data.userInfo.toHouse);
-                $('[name="flat_new"]').val(data.userInfo.toFlat);
-            }
-            $('#ddelivery_id').val(data.orderId);
-            $('.dd_comment').text(data.comment);
+            document.getElementsByName('name_person')[0].value = data.userInfo.firstName;
+            document.getElementsByName('tel_name')[0].value = data.userInfo.toPhone;
+            document.getElementsByName('mail')[0].value = data.userInfo.toEmail;
+            document.getElementById('ddelivery_id').value = data.orderId;
+            document.getElementsByName('adr_name')[0].value = data.comment;
         }
 
         function getActiveDelivery(){
-            var dostavka_metod = $('input[name="dostavka_metod"]:checked ').val();
+            //var dostavka_metod = $('input[name="dostavka_metod"]:checked ').val();
+            var dostavka_metod = parseInt( document.getElementById('dostavka_metod').value );
             return dostavka_metod;
         }
 
         function disablePaymentDelivery(ids){
             if( ids.length > 0 ){
-                $('input[name="order_metod"]').each(function(){
-                      if( ids.indexOf( $(this).val()) != -1 ){
-                          $(this).parent().parent().css('display', 'none');
-                      }
-                });
+                var index;
+                var order_metod = document.getElementById('order_metod');
+                var option = order_metod.getElementsByTagName('option');
+                for (index = 0; index < option.length; index++){
+                    if( ids.indexOf(option[index].value) ){
+                        option[index].disabled = true;
+                    }
+                }
+
             }
         }
 
@@ -120,8 +101,20 @@ if (typeof(topWindow.DDeliveryIntegration) == 'undefined')
             $('.dd_comment').text("");
         }
 
+        function getSerializedForm(name){
+            var index;
+            var form = document.getElementsByName(name)[0];
+            var input = form.getElementsByTagName('input');
+            var result = '';
+            for (index = 0; index < input.length; index++) {
+                result += input[index].value + '=' + input[index].name + '&'
+            }
+            return result;
+        }
+
         return{
             openPopup: function(){
+
                 showPrompt();
                 var callback = {
                     close: function(){
@@ -130,45 +123,86 @@ if (typeof(topWindow.DDeliveryIntegration) == 'undefined')
                     change: function(data) {
                         var dostavka_metod = getActiveDelivery();
                         orderCallBack(data, dostavka_metod);
-                        UpdateDeliveryJq2( dostavka_metod, data.orderId );
+                        //UpdateDeliveryJq2( dostavka_metod, data.orderId );
+                        UpdateDelivery2(dostavka_metod, data.orderId);
                         console.log(data);
                         disablePaymentDelivery( data.payment );
                         hideCover();
                     }
                 };
-                var forma_order = $('#forma_order').serialize();
-                getActiveDelivery()
-
+                ///disablePaymentDelivery(12);
+                var forma_order = getSerializedForm('forma_order');
                 DDelivery.delivery('ddelivery_popup', ddeliveryConfig.url + '?' + forma_order /*'@DDorderUrl@' + paramsString */, { }, callback);
                 return void(0);
             },
 
             init:function( ddConfig ){
-
-                $(document).ready(function(){
-                    ddeliveryConfig = ddConfig;
-
-                    $('#seldelivery').on('click', function(){
-                        $('#ddelivery_id').val("");
-                        enablePayment();
-                    });
-
-                    $('#forma_order').append('<input type="hidden" id="ddelivery_id" name="ddelivery_id" value="">');
-                    $('#forma_order').submit(function(){
-                        var dostavka_metod = getActiveDelivery(); //document.getElementById("dostavka_metod").value;
-                            if( ddeliveryConfig.DDeliveryID.indexOf(parseInt(dostavka_metod)) != -1 ){
-                            if( parseInt( $('#ddelivery_id').val() ) > 0 ){
-                                return true;
-                            }
-                            alert('�������� ����� ��������');
-                            return false;
-                        }
-                        return true;
-                    });
+                ddeliveryConfig = ddConfig;
+                var ddelivery_id = document.createElement('input');
+                ddelivery_id.id = 'ddelivery_id';
+                ddelivery_id.type = 'hidden';
+                ddelivery_id.name = 'ddelivery_id';
+                ddelivery_id.value = '';
+                var forma_order = document.getElementsByName('forma_order');
+                forma_order[0].appendChild(ddelivery_id);
 
 
-
+                forma_order[0].onsubmit = function(){
+                        alert('bbbbbbbbbb');
+                        return false;
+                }
+                /*
+                var dostavka_metod = document.getElementById('dostavka_metod');
+                dostavka_metod.onchange = function(){
+                    alert('xxx');
+                    return true;
+                }
+                */
+                /*
+                $('#seldelivery').on('click', function(){
+                    $('#ddelivery_id').val("");
+                    enablePayment();
                 });
+                */
+                /*
+                window.onload = function(){
+                    var forma_order = document.getElementsByName('forma_order');
+                    forma_order[0].appendChild(ddelivery_id);
+                }
+                */
+
+                //console.log( ddelivery_id );
+                //$('#forma_order').append('<input type="hidden" id="ddelivery_id" name="ddelivery_id" value="">');
+                /*
+                try{
+                    $(document).ready(function(){
+                        ddeliveryConfig = ddConfig;
+
+                        $('#seldelivery').on('click', function(){
+                            $('#ddelivery_id').val("");
+                            enablePayment();
+                        });
+
+                        $('#forma_order').append('<input type="hidden" id="ddelivery_id" name="ddelivery_id" value="">');
+                        $('#forma_order').submit(function(){
+                            var dostavka_metod = getActiveDelivery(); //document.getElementById("dostavka_metod").value;
+                                if( ddeliveryConfig.DDeliveryID.indexOf(parseInt(dostavka_metod)) != -1 ){
+                                if( parseInt( $('#ddelivery_id').val() ) > 0 ){
+                                    return true;
+                                }
+                                alert('�������� ����� ��������');
+                                return false;
+                            }
+                            return true;
+                        });
+
+
+
+                    });
+                }catch (e){
+                    alert('������!');
+                }
+                */
             }
         }
     })();
