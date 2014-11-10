@@ -14,9 +14,7 @@ function mail_ddelivery_hook($obj,$row,$rout) {
 
         $id =  (int) $row['ddelivery_order_id'];
         $IntegratorShop = new IntegratorShop();
-        try
-        {
-
+        try{
             $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
 
             $order = $ddeliveryUI->initOrder($id);

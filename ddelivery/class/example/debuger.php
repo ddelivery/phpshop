@@ -18,7 +18,6 @@ include_once(implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'application', 'b
 // Добавьте адаптер и необходимые файлы для работы CMS
 include_once("IntegratorShop.php");
 
-//$task = $_GET['task'];
 
 $shopAdapter = new IntegratorShop();
 $DDeliveryUI = new DDelivery\DDeliveryUI( $shopAdapter );
@@ -42,7 +41,7 @@ $order->pointID = 2716;
 // print_r($selfCompanyList[0]['delivery_company']);
 $order->companyId = $selfCompanyList[0]['delivery_company'];
 //print_r($selfCompanyList[0]);
-echo $DDeliveryUI->sendOrderToDD($order);
+//echo $DDeliveryUI->sendOrderToDD($order);
 
 //print_r( $order->getJsonOrder() );
 //print_r($selfCompanyList[0]);
