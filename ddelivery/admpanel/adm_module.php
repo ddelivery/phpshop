@@ -205,8 +205,8 @@ function actionStart() {
     //print_r($pvz_companies);
     $self_list = unserialize( $self_list );
     $courier_list = unserialize( $courier_list );
-    $payment_courier = '<select name="courier_list_new[]" size="8" multiple>';
-    $payment_self =    '<select name="self_list_new[]" size="8" multiple>';
+    $payment_courier = '<select name="courier_list_new[]" size="8" >';
+    $payment_self =    '<select name="self_list_new[]" size="8" >';
     foreach( $payment_value as $item ){
         if( in_array($item[1], $courier_list) ){
             $selected_c = 'selected="selected"';
