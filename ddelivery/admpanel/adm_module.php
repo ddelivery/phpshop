@@ -127,8 +127,8 @@ function actionStart() {
     $PHPShopOrm = new PHPShopOrm($GLOBALS['SysValue']['base']['delivery']);
     $data = $PHPShopOrm->select(array('id', 'city'), array('PID' => " = " . "0", 'enabled' => " = '" . "1'"), false /*, array('limit' => 1)*/);
 
-    $courier_way_select = '<select name="courier_way_new[]" size="8" multiple>';
-    $self_way_select =    '<select name="self_way_new[]" size="8" multiple>';
+    $courier_way_select = '<select name="courier_way_new[]" size="8" >';
+    $self_way_select =    '<select name="self_way_new[]" size="8" >';
 
     if (is_array($data)){
         foreach( $data as $item ){
@@ -203,10 +203,11 @@ function actionStart() {
                                       Ќапример "оплата курьеру". ” вас в системе может быть только 1 такой способ</b>', 'none');
     $Tab5 .= $PHPShopGUI->setField('ќплата на месте',$PHPShopGUI->setSelect('payment_new',$payment_value,400));
     //print_r($pvz_companies);
+    /*
     $self_list = unserialize( $self_list );
     $courier_list = unserialize( $courier_list );
-    $payment_courier = '<select name="courier_list_new[]" size="8" >';
-    $payment_self =    '<select name="self_list_new[]" size="8" >';
+    $payment_courier = '<select name="courier_list_new[]" >';
+    $payment_self =    '<select name="self_list_new[]" >';
     foreach( $payment_value as $item ){
         if( in_array($item[1], $courier_list) ){
             $selected_c = 'selected="selected"';
@@ -226,7 +227,7 @@ function actionStart() {
 
     $Tab5 .= $PHPShopGUI->setField('ƒоступные способы оплаты дл€ курьерской доставки', $payment_courier);
     $Tab5 .= $PHPShopGUI->setField('ƒоступные способы оплаты дл€ самовывоза', $payment_self);
-
+    */
 
 
     $Tab5 .= $PHPShopGUI->setText('<b>¬ыберите статус при котором за€вки из вашей системы будут уходить в DDelivery.
