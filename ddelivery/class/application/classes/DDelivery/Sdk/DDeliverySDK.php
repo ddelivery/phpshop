@@ -73,6 +73,7 @@ class DDeliverySDK {
      * @param String  $to_flat
      * @param String  $to_email
      * @param String $metadata
+     * @param string $to_index
      *
      * @throws DDeliveryException
      *
@@ -82,7 +83,7 @@ class DDeliverySDK {
     		                         $dimensionSide2, $dimensionSide3, $shop_refnum,
                                      $confirmed, $weight, $to_name, $to_phone, $goods_description,
     		                         $declaredPrice, $paymentPrice, $to_street, $to_house, $to_flat,
-                                     $to_email = '', $metadata = '' )
+                                     $to_email = '', $metadata = '', $to_index )
     {
         $params = array(
             'type' => self::TYPE_COURIER,
@@ -103,7 +104,8 @@ class DDeliverySDK {
             'to_house' => $to_house,
             'to_flat' => $to_flat,
             'to_email' => $to_email,
-            'metadata' => $metadata
+            'metadata' => $metadata,
+            'to_index' => $to_index
         );
     	$response = $this->requestProvider->request( 'order_create', $params, 'post' );
 
@@ -128,9 +130,8 @@ class DDeliverySDK {
     {
     	$params = array( 'order' => $orderID );
     	$response = $this->requestProvider->request( 'order_status', $params,'get' );
-    	
-    	if( !count ( $response->response ))
-    	{
+
+    	if( !count ( $response->response )){
             $errorMsg = (is_array($response->errorMessage))?implode(', ', $response->errorMessage):$response->errorMessage;
             return array();
             throw new DDeliveryException( $errorMsg );
@@ -191,6 +192,23 @@ class DDeliverySDK {
         return $response;
     }
 
+    /**
+     *
+     * Возможность НПП в городе или регионе
+     *
+     * @param $city
+     * @param $company
+     *
+     * @return DDeliverySDKResponse $response
+     */
+    public function paymentPriceEnable( $city, $company ){
+        $params = array(
+            'city' => $city,
+            'company' => $company
+        );
+        $response = $this->requestProvider->request( 'paymentprice', $params );
+        return $response;
+    }
 
     /**
      * Получить список точек для самовывоза
@@ -207,8 +225,7 @@ class DDeliverySDK {
     			'companies' => $companies
     	);
     	$response = $this->requestProvider->request('geoip', $params, 'get', $this->server . 'node');
-    	if( !$response->success )
-    	{
+    	if( !$response->success ){
             $errorMsg = (is_array($response->errorMessage))?implode(', ', $response->errorMessage):$response->errorMessage;
             throw new DDeliveryException( $errorMsg );
     	}
@@ -354,6 +371,18 @@ class DDeliverySDK {
         return $response;
     }
 
+    public function getCityById( $id ){
+        $params = array(
+            '_action' => 'city',
+            '_id' => $id
+        );
+        $response = $this->requestProvider->request('city', $params, 'get', $this->server . 'node') ;
+        if( !$response->success ){
+            $errorMsg = (is_array($response->errorMessage))?implode(', ', $response->errorMessage):$response->errorMessage;
+            throw new DDeliveryException( $errorMsg );
+        }
+        return $response;
+    }
 
     /**
      * Получить автокомплит для города
@@ -371,8 +400,7 @@ class DDeliverySDK {
     	);
     	$response = $this->requestProvider->request('autocomplete', $params,
     											    'get', $this->server . 'node') ;
-    	if( !$response->success )
-        {
+    	if( !$response->success ){
             $errorMsg = (is_array($response->errorMessage))?implode(', ', $response->errorMessage):$response->errorMessage;
             throw new DDeliveryException( $errorMsg );
         }
@@ -383,8 +411,7 @@ class DDeliverySDK {
      * Возвращает true если ключ валиден
      * @return bool
      */
-    function checkApiKey()
-    {
+    function checkApiKey(){
         $result = $this->requestProvider->request('order_status');
         return $result->errorMessage != 'Shop not found!';
     }
@@ -393,8 +420,7 @@ class DDeliverySDK {
      * Возвращает id городов с болшим кол-вом людей, может когда-нибудь будет на сервере
      * @return array
      */
-    public function getTopCityId()
-    {
+    public function getTopCityId(){
         return array(
             151184, // 'Москва',
             151185, // 'Санкт-Петербург',

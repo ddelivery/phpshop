@@ -11,15 +11,14 @@ function addDDeliveryPanel( $data ){
         $IntegratorShop = new IntegratorShop();
         $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
         $ddOrder = $ddeliveryUI->getOrderByCmsID($data['uid']) ;   // ( $_REQUEST['visitorID'] ) ;
-
-        if( $ddOrder !== null )
-        {
+        $getPoint = $ddOrder->getPoint();
+        if( $ddOrder !== null ){
             $ddeliveryPrice =  $ddeliveryUI->getOrderClientDeliveryPrice( $ddOrder);
             $ddID = (empty($ddOrder->ddeliveryID)? 'Заявка на DDelivery.ru не создана': 'ID заявки на DDelivery.ru - ' . $ddOrder->ddeliveryID);
             $Tab1 = $PHPShopGUI->setField(__("DDelivery"), 'Стоимость доставки - ' . $ddeliveryPrice . '<br /> ' . $ddID, 'left');
             $Tab1 .= $PHPShopGUI->setField(__("Информация о заказе"), 'Тип доставки - ' . (($ddOrder->type == 1)?'Самовывоз':'Курьером') . '<br /> ' .
-                                              'Срок - ' . $ddOrder->getPoint()['delivery_time_avg'] . ' дня' . '<br /> ' .
-                                              'Компания - ' . iconv('UTF-8', 'windows-1251',$ddOrder->getPoint()['delivery_company_name']) );
+                                              'Срок - ' . $getPoint['delivery_time_avg'] . ' дня' . '<br /> ' .
+                                              'Компания - ' . iconv('UTF-8', 'windows-1251',$getPoint['delivery_company_name']) );
 
             $PHPShopGUI->addTab(array("Доставка DDelivery",$Tab1,450));
 
@@ -50,15 +49,12 @@ function checkCreateDDelivery( $post ){
         $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
         $ddOrder = $ddeliveryUI->getOrderByCmsID($data['uid']) ;   // ( $_REQUEST['visitorID'] ) ;
 
-        if( $ddOrder !== null )
-        {
-
+        if( $ddOrder !== null ){
            echo $ddeliveryUI->onCmsChangeStatus( $data['uid'], $post['statusi_new']);
         }
     }catch ( \DDelivery\DDeliveryException $e){
         $ddeliveryUI->logMessage($e);
-        echo $e->getMessage();
-        exit();
+        echo  iconv('UTF-8', 'windows-1251',  $e->getMessage());
     }
 
 

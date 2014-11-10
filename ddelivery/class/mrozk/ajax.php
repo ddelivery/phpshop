@@ -31,12 +31,14 @@ $PHPShopValutaArray= new PHPShopValutaArray();
 $PHPShopSystem = new PHPShopSystem();
 
 
-header('Content-Type: text/html; charset=utf-8');
+
 include_once(implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'application', 'bootstrap.php')));
+
+
 include_once('IntegratorShop.php');
 // Turn off all error reporting
 try{
-
+    header("Content-Type: text/html; charset=windows-1251");
     $IntegratorShop = new IntegratorShop( $_GET );
     $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop);
     // В зависимости от параметров может выводить полноценный html или json

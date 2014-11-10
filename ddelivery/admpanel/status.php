@@ -45,12 +45,10 @@ try
 {
     $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
     if( $_GET['action'] == '1' ){
-        $pull = $ddeliveryUI->createPullOrders();
-        if(count($pull))
-        {
-            foreach($pull as $p)
-            {
-
+        /*
+        $pull = $ddeliveryUI->getNotFinishedOrders();
+        if(count($pull)){
+            foreach($pull as $p){
                 echo ' ddelivery order ID - ' . $p['ddId'] . '<br />';
                 echo ' cms order ID - ' . $p['localID'] . '<hr/>';
             }
@@ -59,16 +57,14 @@ try
         {
             echo 'NO ORDERS';
         }
-
-    }
-    else if($_GET['action'] == '2'){
+        */
+    }else if($_GET['action'] == '2'){
         $orders = $GLOBALS['SysValue']['base']['order_status'];
 
         $query = 'SELECT id,name FROM ' . $orders ;
         $cur = mysql_query($query);
         $result = array();
-        while ($k = mysql_fetch_array($cur))
-        {
+        while ($k = mysql_fetch_array($cur)){
             $n = iconv('CP1251','UTF-8',$k[1]);
             $result[$k[0]] = $n;
         }
