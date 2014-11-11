@@ -38,7 +38,7 @@ include_once(implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'application', 'b
 include_once('IntegratorShop.php');
 // Turn off all error reporting
 try{
-    header("Content-Type: text/html; charset=windows-1251");
+    //header("Content-Type: text/html; charset=windows-1251");
     $IntegratorShop = new IntegratorShop( $_GET );
     $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop);
     // В зависимости от параметров может выводить полноценный html или json

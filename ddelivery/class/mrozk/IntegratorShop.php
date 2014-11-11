@@ -52,7 +52,7 @@ class IntegratorShop extends PluginFilters {
         $host = $GLOBALS['SysValue']['connect']['host'];
 
         return array(
-            'pdo' => new \PDO('mysql:host=' . $host . ';dbname=' . $dbase , $user_db, $pass_db, array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES cp1251")),
+            'pdo' => new \PDO('mysql:host=' . $host . ';dbname=' . $dbase , $user_db, $pass_db),
             'prefix' => 'ddelivery_module_',
         );
 
@@ -511,7 +511,7 @@ class IntegratorShop extends PluginFilters {
      * @return int
      */
     public function getCourierRequiredFields(){
-        // ÂÂåñòè âñå îáÿçàòåëüíî, êðîìå êîðïóñà
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         return self::FIELD_EDIT_FIRST_NAME | self::FIELD_REQUIRED_FIRST_NAME
         | self::FIELD_EDIT_PHONE | self::FIELD_REQUIRED_PHONE
         | self::FIELD_EDIT_ADDRESS | self::FIELD_REQUIRED_ADDRESS
@@ -573,16 +573,16 @@ class IntegratorShop extends PluginFilters {
 
     public function  getCaptions(){
         return array(
-                    'CAPTION1' =>'DDelivery. Äîñòàâêà â óäîáíóþ Âàì òî÷êó.',
-                    'CAPTION2' =>'Ïîäîæäèòå ïîæàëóéñòà, ìû èùåì ëó÷øèå ïðåäëîæåíèÿ',
-                    'CAPTION3' =>'Ïðîèçîøëà îøèáêà, ',
-                    'CAPTION4' =>'ïîâòîðèòü çàïðîñ',
-                    'CAPTION5' =>'Ñåðâèñ äîñòàâêè DDelivery.ru',
-                    'CAPTION6' =>'ß÷åéêà',
-                    'CAPTION7' =>'Æèâîé ïóíêò',
-                    'CAPTION8' =>'Íàëè÷íûìè',
-                    'CAPTION9' =>'Áàíêîâñêèìè êàðòàìè',
-                    'CAPTION10' =>'Ïðåäîïëàòà',
+                    'CAPTION1' =>'DDelivery. Ð”Ð¾ÑÑ‚Ð°Ð²ÐºÐ° Ð² ÑƒÐ´Ð¾Ð±Ð½ÑƒÑŽ Ð’Ð°Ð¼ Ñ‚Ð¾Ñ‡ÐºÑƒ.',
+                    'CAPTION2' =>'ÐŸÐ¾Ð´Ð¾Ð¶Ð´Ð¸Ñ‚Ðµ Ð¿Ð¾Ð¶Ð°Ð»ÑƒÐ¹ÑÑ‚Ð°, Ð¼Ñ‹ Ð¸Ñ‰ÐµÐ¼ Ð»ÑƒÑ‡ÑˆÐ¸Ðµ Ð¿Ñ€ÐµÐ´Ð»Ð¾Ð¶ÐµÐ½Ð¸Ñ',
+                    'CAPTION3' =>'ÐŸÑ€Ð¾Ð¸Ð·Ð¾ÑˆÐ»Ð° Ð¾ÑˆÐ¸Ð±ÐºÐ°, ',
+                    'CAPTION4' =>'Ð¿Ð¾Ð²Ñ‚Ð¾Ñ€Ð¸Ñ‚ÑŒ Ð·Ð°Ð¿Ñ€Ð¾Ñ',
+                    'CAPTION5' =>'Ð¡ÐµÑ€Ð²Ð¸Ñ Ð´Ð¾ÑÑ‚Ð°Ð²ÐºÐ¸ DDelivery.ru',
+                    'CAPTION6' =>'Ð¯Ñ‡ÐµÐ¹ÐºÐ°',
+                    'CAPTION7' =>'Ð–Ð¸Ð²Ð¾Ð¹ Ð¿ÑƒÐ½ÐºÑ‚',
+                    'CAPTION8' =>'ÐÐ°Ð»Ð¸Ñ‡Ð½Ñ‹Ð¼Ð¸',
+                    'CAPTION9' =>'Ð‘Ð°Ð½ÐºÐ¾Ð²ÑÐºÐ¸Ð¼Ð¸ ÐºÐ°Ñ€Ñ‚Ð°Ð¼Ð¸',
+                    'CAPTION10' =>'ÐŸÑ€ÐµÐ´Ð¾Ð¿Ð»Ð°Ñ‚Ð°'
         );
     }
 
