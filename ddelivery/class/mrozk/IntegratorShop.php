@@ -394,8 +394,8 @@ class IntegratorShop extends PluginFilters {
      * @return string|null
      */
     public function getClientFirstName() {
-        if( isset( $this->fields['fio_new'])  ){
-            return trim($this->fields['fio_new']);
+        if( isset( $this->fields['name_person'])  ){
+            return trim($this->fields['name_person']);
         }
         return '';
     }
@@ -409,8 +409,8 @@ class IntegratorShop extends PluginFilters {
      *@return string|null
      */
     public function getClientPhone() {
-        if( isset( $this->fields['tel_new'])  ){
-            $tel_name = $this->formatPhone( $this->fields['tel_new'] );
+        if( isset( $this->fields['tel_name'])  ){
+            $tel_name = $this->formatPhone( $this->fields['tel_name'] );
             $tel_name  = substr( $tel_name, -10);
             return '+7' . $tel_name;
         }
@@ -439,10 +439,12 @@ class IntegratorShop extends PluginFilters {
      * @return string[]
      */
     public function getClientAddress() {
+        return array();
         $street = '';
         $house = '';
         $corpus = '';
         $flat = '';
+
         if( isset( $this->fields['street_new']) ){
             $street = $this->fields['street_new'];
         }
@@ -453,6 +455,7 @@ class IntegratorShop extends PluginFilters {
             $flat = $this->fields['flat_new'];
         }
         return array( $street, $house, $corpus, $flat );
+
     }
 
     /**

@@ -27,11 +27,16 @@ function order_ddelivery_hook($obj,$row,$rout) {
         $dd = array_merge($data['self_way'], $data['courier_way']);
         $dataID = implode(',', $dd);
         $order_action_add = "
-           <script type=\"text/javascript\"> var DDeliveryConfig = { DDeliveryID: [$dataID],
-                                                                     url: \"phpshop/modules/ddelivery/class/mrozk/ajax.php\"};
+           <script src=\"//code.jquery.com/jquery-1.11.0.min.js\"></script>
+           <script type=\"text/javascript\"> var DDeliveryConfig = {
+                                                                    DDeliveryID: [$dataID],
+                                                                    url: \"phpshop/modules/ddelivery/class/mrozk/ajax.php\"
+                                                                    };
+                                                                     var j = jQuery.noConflict();
                                                                      </script>
            <script type=\"text/javascript\" src='phpshop/modules/ddelivery/class/html/js/ddelivery.js'></script>
            <script type=\"text/javascript\" src='phpshop/modules/ddelivery/templates/ddelivery.js'></script>
+           <!--<script type=\"text/javascript\" src='phpshop/modules/ddelivery/templates/ddelivery.js'></script>-->
            ";
 
         // Форма личной информации по заказу

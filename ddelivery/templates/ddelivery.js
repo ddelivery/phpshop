@@ -9,16 +9,26 @@ if (typeof(topWindow.DDeliveryIntegration) == 'undefined')
         var ddeliveryConfig;
 
         var style = document.createElement('STYLE');
+        /*
         style.innerHTML = // РЎРєСЂС‹РІР°РµРј РЅРµРЅСѓР¶РЅСѓСЋ РєРЅРѕРїРєСѓ
             " #delivery_info_ddelivery_all a{display: none;} " +
             " #ddelivery_popup { display: inline-block; vertical-align: middle; margin: 10px auto; width: 1000px; height: 650px;} " +
             " #ddelivery_container {  z-index: 9999;display: none; width: 100%; height: 100%; text-align: center;  } " +
             " #ddelivery_container:before { display: inline-block; height: 100%; content: ''; vertical-align: middle;} " +
             " #ddelivery_cover {overflow: auto;position: fixed; top: 0; left: 0; right:0; bottom:0; z-index: 9000; width: 100%; height: 100%; background-color: #000; background: rgba(0, 0, 0, 0.5); filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = #7F000000, endColorstr = #7F000000); } ";
+        */
+
+        style.innerHTML = // Скрываем ненужную кнопку
+            " #delivery_info_ddelivery_all a{display: none;} " +
+            "#ddelivery_container { overflow:hidden;background: #eee;width: 1000px; margin: 0px auto;padding: 0px; }"+
+            "#ddelivery_cover > * {-webkit-transform: translateZ(0px);}"+
+            "#ddelivery_cover {zoom: 1;z-index:9999;position: fixed;bottom: 0;left: 0;top: 0;right: 0; overflow: auto;-webkit-overflow-scrolling: touch;background-color: #000; background: rgba(0, 0, 0, 0.5); filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = #7F000000, endColorstr = #7F000000); "
+
+
         var body = document.getElementsByTagName('body')[0];
         body.appendChild(style);
         var div = document.createElement('div');
-        div.innerHTML = '<div id="ddelivery_popup"></div>';
+        //div.innerHTML = '<div id="ddelivery_popup"></div>';
         div.id = 'ddelivery_container';
         body.appendChild(div);
 
@@ -57,7 +67,6 @@ if (typeof(topWindow.DDeliveryIntegration) == 'undefined')
             document.body.appendChild(cover);
             document.getElementById('ddelivery_container').style.display = 'block';
             document.body.style.overflow = 'hidden';
-            document.getElementById('ddelivery_popup').innerHTML = '';
         }
 
         function hideCover() {
@@ -107,7 +116,7 @@ if (typeof(topWindow.DDeliveryIntegration) == 'undefined')
             var input = form.getElementsByTagName('input');
             var result = '';
             for (index = 0; index < input.length; index++) {
-                result += input[index].value + '=' + input[index].name + '&'
+                result += input[index].name + '=' + input[index].value + '&'
             }
             return result;
         }
@@ -132,7 +141,8 @@ if (typeof(topWindow.DDeliveryIntegration) == 'undefined')
                 };
                 ///disablePaymentDelivery(12);
                 var forma_order = getSerializedForm('forma_order');
-                DDelivery.delivery('ddelivery_popup', ddeliveryConfig.url + '?' + forma_order /*'@DDorderUrl@' + paramsString */, { }, callback);
+                console.log(forma_order);
+                DDelivery.delivery('ddelivery_container', ddeliveryConfig.url + '?' + forma_order /*'@DDorderUrl@' + paramsString */, { }, callback);
                 return void(0);
             },
 
@@ -146,11 +156,11 @@ if (typeof(topWindow.DDeliveryIntegration) == 'undefined')
                 var forma_order = document.getElementsByName('forma_order');
                 forma_order[0].appendChild(ddelivery_id);
 
-
-                forma_order[0].onsubmit = function(){
-                        alert('bbbbbbbbbb');
-                        return false;
-                }
+                j(document).ready(function(){
+                    j('[name="forma_order"]').on('submit', function(){
+                        alert('dddd');
+                    });
+                });
                 /*
                 var dostavka_metod = document.getElementById('dostavka_metod');
                 dostavka_metod.onchange = function(){
@@ -208,3 +218,25 @@ if (typeof(topWindow.DDeliveryIntegration) == 'undefined')
     })();
 
 DDeliveryIntegration.init( DDeliveryConfig );
+function OrderChek(){
+
+    var s1 = window.document.forms.forma_order.mail.value;
+    var s2 = window.document.forms.forma_order.name_person.value;
+    var s3 = window.document.forms.forma_order.tel_name.value;
+    var s4 = window.document.forms.forma_order.adr_name.value;
+    if (document.getElementById("makeyourchoise").value == "DONE") {
+        bad = 0;
+    } else {
+        bad = 1;
+    }
+
+    if (s1 == "" || s2 == "" || s3 == "" || s4 == "") {
+        alert("Ошибка заполнения полей");
+    } else if (bad == 1) {
+        alert("Ошибка заполнения полей");
+    } else {
+        //console.log(DDeliveryIntegration.ddeliveryConfig);
+        //return false;
+        document.forma_order.submit();
+    }
+}
