@@ -11,8 +11,9 @@ function addDDeliveryPanel( $data ){
         $IntegratorShop = new IntegratorShop();
         $ddeliveryUI = new \DDelivery\DDeliveryUI($IntegratorShop, true);
         $ddOrder = $ddeliveryUI->getOrderByCmsID($data['uid']) ;   // ( $_REQUEST['visitorID'] ) ;
-        $getPoint = $ddOrder->getPoint();
+
         if( $ddOrder !== null ){
+            $getPoint = $ddOrder->getPoint();
             $ddeliveryPrice =  $ddeliveryUI->getOrderClientDeliveryPrice( $ddOrder);
             $ddID = (empty($ddOrder->ddeliveryID)? 'Заявка на DDelivery.ru не создана': 'ID заявки на DDelivery.ru - ' . $ddOrder->ddeliveryID);
             $Tab1 = $PHPShopGUI->setField(__("DDelivery"), 'Стоимость доставки - ' . $ddeliveryPrice . '<br /> ' . $ddID, 'left');
