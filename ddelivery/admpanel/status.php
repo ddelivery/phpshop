@@ -39,7 +39,7 @@ include_once(implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'class', 'applica
 include_once(implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'class', 'mrozk', 'IntegratorShop.php')));
 
 $IntegratorShop = new IntegratorShop();
-
+error_reporting(E_ALL);
 // Turn off all error reporting
 try
 {
@@ -76,12 +76,15 @@ try
 
         if(count($pull)){
             foreach($pull as $p){
+
                 $result = $ddeliveryUI->changeOrderStatus( $p );
                 if( count($result) ){
                     echo ' cms order ID ' . $result['cms_order_id'] . '<br />';
-                    echo ' DDelivery status - ' .  $result['ddStatus'] . ' ' .
-                        ' (' . $ddeliveryUI->getDDStatusDescription($result['ddStatus']) . ')<br />';
-                    echo ' CMS status  - ' . $p['localStatus'] . '<hr />';
+                    echo ' DDelivery status - ' .  $result['ddStatus'] . ' - ' . $ddeliveryUI->getDDStatusDescription($result['ddStatus']) . '<br />';
+                    echo ' CMS status - ' .  $result['localStatus'];
+                    echo '<br/>';
+                    echo '--------------------------------------';
+                    echo '<br/>';
                 }
 
             }
@@ -90,8 +93,7 @@ try
         }
     }
 
-}
-catch (\DDelivery\DDeliveryException $e)
-{
+}catch (\DDelivery\DDeliveryException $e) {
+    echo $e->getMessage();
     $ddeliveryUI->logMessage($e);
 }

@@ -145,7 +145,19 @@ if (typeof(topWindow.DDeliveryIntegration) == 'undefined')
                 DDelivery.delivery('ddelivery_container', ddeliveryConfig.url + '?' + forma_order /*'@DDorderUrl@' + paramsString */, { }, callback);
                 return void(0);
             },
-
+            getConfig: function(){
+                return ddeliveryConfig;
+            },
+            isDDeliveryMethodActive: function(){
+                var active = parseInt(getActiveDelivery());
+                if( ddeliveryConfig.DDeliveryID.indexOf(active) != -1 ){
+                    return true;
+                }
+                return false;
+            },
+            getActiveMethod: function (){
+                return getActiveDelivery();
+            },
             init:function( ddConfig ){
                 ddeliveryConfig = ddConfig;
                 var ddelivery_id = document.createElement('input');
@@ -156,11 +168,13 @@ if (typeof(topWindow.DDeliveryIntegration) == 'undefined')
                 var forma_order = document.getElementsByName('forma_order');
                 forma_order[0].appendChild(ddelivery_id);
 
+                /*
                 j(document).ready(function(){
                     j('[name="forma_order"]').on('submit', function(){
                         alert('dddd');
                     });
                 });
+                */
                 /*
                 var dostavka_metod = document.getElementById('dostavka_metod');
                 dostavka_metod.onchange = function(){
@@ -235,8 +249,11 @@ function OrderChek(){
     } else if (bad == 1) {
         alert("Ошибка заполнения полей");
     } else {
-        //console.log(DDeliveryIntegration.ddeliveryConfig);
-        //return false;
+        var orderId = document.getElementById('ddelivery_id').value;
+        if(  DDeliveryIntegration.isDDeliveryMethodActive() && orderId == "" ){
+            alert('Выберите пункт доставки');
+            return false;
+        }
         document.forma_order.submit();
     }
 }
