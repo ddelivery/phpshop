@@ -8,8 +8,7 @@ include_once( $_SERVER['DOCUMENT_ROOT'] .  '/phpshop/modules/ddelivery/class/mro
  * Date: 6/18/14
  * Time: 1:26 PM
  */
-function action_order_ddelivery_hook()
-{
+function action_order_ddelivery_hook(){
     $formaContent = $GLOBALS['SysValue']['other']['formaContent'];
     $IntegratorShop = new IntegratorShop();
     $order_id =  $_GET['order'];
